@@ -1,6 +1,7 @@
-import { Eye, Edit, Plus } from 'lucide-react';
+import { Eye, Edit, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { CreateUser } from './CreateUser';
+import { Breadcrumb } from './Breadcrumb';
 
 const users = [
   {
@@ -71,6 +72,8 @@ const users = [
 
 export function Settings() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [searchExpanded, setSearchExpanded] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -93,24 +96,42 @@ export function Settings() {
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl mb-2">Settings</h1>
-        </div>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Create
-        </button>
-      </div>
+      {/* Breadcrumb */}
+      <Breadcrumb
+        items={[
+          { label: 'Settings' },
+        ]}
+      />
 
-      {/* Users Table */}
-      <div className="bg-white rounded-lg shadow-sm">
-        <div className="px-6 py-4 border-b border-gray-200">
+      {/* User Management Table */}
+      <div className="bg-white rounded-lg shadow-sm mt-6">
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2>Users</h2>
+          <div className="flex items-center gap-2">
+            {searchExpanded && (
+              <input
+                type="text"
+                placeholder="Search users..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
+                autoFocus
+              />
+            )}
+            <button
+              onClick={() => setSearchExpanded(!searchExpanded)}
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              <Search className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Create
+            </button>
+          </div>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">

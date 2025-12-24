@@ -1,4 +1,4 @@
-import { Package, TrendingUp, Clock, MapPin, Bell, User, LogOut, Search, Ship, Truck, CheckCircle, AlertCircle, Menu, X, FileText, DollarSign, AlertTriangle, Upload, Navigation, ChevronLeft, ChevronRight, LayoutDashboard, BarChart3, Folder, Users, Settings as SettingsIcon } from 'lucide-react';
+import { Package, TrendingUp, Clock, MapPin, Bell, User, LogOut, Search, Ship, Truck, CheckCircle, AlertCircle, Menu, X, FileText, DollarSign, AlertTriangle, Upload, Navigation as NavigationIcon, ChevronLeft, ChevronRight, LayoutDashboard, BarChart3, Folder, Users, Settings as SettingsIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Logo } from './Logo';
 import { SimpleFooter } from './SimpleFooter';
@@ -8,6 +8,8 @@ import { Settings } from './Settings';
 import { PaymentsInvoicing } from './PaymentsInvoicing';
 import { Analytics } from './Analytics';
 import { Documents } from './Documents';
+import { UploadDocuments } from './UploadDocuments';
+import { Breadcrumb } from './Breadcrumb';
 
 interface DashboardProps {
   onSignOut: () => void;
@@ -53,10 +55,10 @@ const recentShipments = [
 ];
 
 const stats = [
-  { label: 'Shipments in Progress', value: '12', change: '+3', icon: Ship, color: 'blue' },
-  { label: 'Pending Docs', value: '8', change: '+2', icon: FileText, color: 'orange' },
-  { label: 'Payments Due', value: '5', change: '-1', icon: DollarSign, color: 'green' },
-  { label: 'Alerts', value: '3', change: '+1', icon: AlertTriangle, color: 'red' },
+  { label: 'Active Shipments', value: '12', change: '+3', icon: Ship, color: 'green', status: 'ok' },
+  { label: 'Pending Compliance', value: '8', change: '+2', icon: FileText, color: 'amber', status: 'action' },
+  { label: 'Payments Due', value: '5', change: '-1', icon: DollarSign, color: 'amber', status: 'action' },
+  { label: 'Exceptions / Alerts', value: '3', change: '+1', icon: AlertTriangle, color: 'red', status: 'risk' },
 ];
 
 export function Dashboard({ onSignOut }: DashboardProps) {
@@ -82,8 +84,29 @@ export function Dashboard({ onSignOut }: DashboardProps) {
     }
   };
 
+  const handleStatClick = (statLabel: string) => {
+    // Handle navigation based on the stat clicked
+    switch (statLabel) {
+      case 'Active Shipments':
+        setActiveMenu('shipments');
+        break;
+      case 'Pending Compliance':
+        setActiveMenu('documents');
+        break;
+      case 'Payments Due':
+        setActiveMenu('payments');
+        break;
+      case 'Exceptions / Alerts':
+        // Could open an alerts modal or navigate to a filtered view
+        console.log('Show alerts');
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header - Fixed and Full Width */}
       <header className="bg-white border-b border-gray-200 fixed top-0 left-0 right-0 z-50 shadow-sm">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
@@ -204,12 +227,82 @@ export function Dashboard({ onSignOut }: DashboardProps) {
 
           {/* Mobile Menu */}
           {showMobileMenu && (
-            <div className="md:hidden py-4 border-t border-gray-200">
+            <div className="md:hidden py-4 border-t border-gray-200 bg-white">
               <nav className="flex flex-col space-y-2">
-                <button className="text-left px-4 py-2 text-blue-600 bg-blue-50 rounded">Dashboard</button>
-                <button className="text-left px-4 py-2 text-gray-600 hover:bg-gray-50 rounded">Shipments</button>
-                <button className="text-left px-4 py-2 text-gray-600 hover:bg-gray-50 rounded">Analytics</button>
-                <button className="text-left px-4 py-2 text-gray-600 hover:bg-gray-50 rounded">Documents</button>
+                <button 
+                  onClick={() => { setActiveMenu('dashboard'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'dashboard' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <LayoutDashboard className="w-5 h-5" />
+                    <span>Dashboard</span>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => { setActiveMenu('shipments'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'shipments' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Ship className="w-5 h-5" />
+                    <span>Shipments</span>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => { setActiveMenu('partner-directory'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'partner-directory' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Users className="w-5 h-5" />
+                    <span>Partner Directory</span>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => { setActiveMenu('analytics'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'analytics' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <BarChart3 className="w-5 h-5" />
+                    <span>Analytics</span>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => { setActiveMenu('documents'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'documents' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Folder className="w-5 h-5" />
+                    <span>Documents</span>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => { setActiveMenu('payments'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'payments' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <DollarSign className="w-5 h-5" />
+                    <span>Payments & Invoicing</span>
+                  </div>
+                </button>
+                <button 
+                  onClick={() => { setActiveMenu('settings'); setShowMobileMenu(false); }}
+                  className={`text-left px-4 py-2 rounded ${activeMenu === 'settings' ? 'text-blue-600 bg-blue-50' : 'text-gray-600 hover:bg-gray-50'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <SettingsIcon className="w-5 h-5" />
+                    <span>Settings</span>
+                  </div>
+                </button>
+                <div className="border-t border-gray-200 mt-2 pt-2">
+                  <button 
+                    onClick={onSignOut}
+                    className="text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded w-full"
+                  >
+                    <div className="flex items-center gap-3">
+                      <LogOut className="w-5 h-5" />
+                      <span>Sign Out</span>
+                    </div>
+                  </button>
+                </div>
               </nav>
             </div>
           )}
@@ -232,12 +325,17 @@ export function Dashboard({ onSignOut }: DashboardProps) {
                       green: 'bg-green-100 text-green-600',
                       orange: 'bg-orange-100 text-orange-600',
                       red: 'bg-red-100 text-red-600',
+                      amber: 'bg-amber-100 text-amber-600',
                     }[stat.color];
 
                     return (
-                      <div key={index} className="bg-white p-6 rounded-lg shadow-sm">
+                      <button 
+                        key={index} 
+                        onClick={() => handleStatClick(stat.label)}
+                        className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02] w-full text-left"
+                      >
                         <div className="flex items-center justify-between mb-4">
-                          <div className={`w-12 h-12 ${colorClasses} rounded-lg flex items-center justify-center`}>
+                          <div className={`w-12 h-12 ${colorClasses} rounded-lg flex items-center justify-center transition-all duration-200`}>
                             <Icon className="w-6 h-6" />
                           </div>
                           <span className={`text-sm ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}`}>
@@ -246,19 +344,19 @@ export function Dashboard({ onSignOut }: DashboardProps) {
                         </div>
                         <div className="text-3xl mb-1">{stat.value}</div>
                         <div className="text-sm text-gray-600">{stat.label}</div>
-                      </div>
+                      </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Faster Workflows, Risk Visibility, and Context - Single Row */}
+              {/* Quick Links, Exceptions / Alerts, and Recent Activity - Single Row */}
               <div className="mb-8">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                   {/* Quick Actions */}
                   <div className="flex flex-col">
                     <div className="mb-4">
-                      <h2 className="text-lg">Faster Workflows</h2>
+                      <h2 className="text-lg">Quick Links</h2>
                     </div>
                     <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
                       <a href="#" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group">
@@ -287,7 +385,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
 
                       <a href="#" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group">
                         <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                          <Navigation className="w-5 h-5 text-purple-600" />
+                          <NavigationIcon className="w-5 h-5 text-purple-600" />
                         </div>
                         <div>
                           <h3 className="text-sm mb-0.5">Track Cargo</h3>
@@ -300,7 +398,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
                   {/* Alerts Panel */}
                   <div className="flex flex-col">
                     <div className="mb-4">
-                      <h2 className="text-lg">Risk Visibility</h2>
+                      <h2 className="text-lg">Exceptions / Alerts</h2>
                     </div>
                     <div className="bg-white rounded-lg shadow-sm p-6 flex-1 flex flex-col">
                       <div className="space-y-4 flex-1">
@@ -370,7 +468,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
                   {/* Recent Activity */}
                   <div className="flex flex-col">
                     <div className="mb-4">
-                      <h2 className="text-lg">Context</h2>
+                      <h2 className="text-lg">Recent Activity</h2>
                     </div>
                     <div className="bg-white rounded-lg shadow-sm p-6 flex-1 flex flex-col">
                       <div className="space-y-4 flex-1">
@@ -452,9 +550,10 @@ export function Dashboard({ onSignOut }: DashboardProps) {
           {activeMenu === 'shipments' && <Shipments />}
           {activeMenu === 'partner-directory' && <PartnerDirectory />}
           {activeMenu === 'settings' && <Settings />}
-          {activeMenu === 'payments-invoicing' && <PaymentsInvoicing />}
+          {activeMenu === 'payments' && <PaymentsInvoicing />}
           {activeMenu === 'analytics' && <Analytics />}
-          {activeMenu === 'documents' && <Documents />}
+          {activeMenu === 'documents' && <Documents onNavigateToUpload={() => setActiveMenu('upload-documents')} />}
+          {activeMenu === 'upload-documents' && <UploadDocuments />}
         </main>
 
         {/* Footer */}
@@ -531,6 +630,19 @@ export function Dashboard({ onSignOut }: DashboardProps) {
               {!sidebarCollapsed && <span>Partner Directory</span>}
             </button>
 
+            {/* Payments Invoicing */}
+            <button
+              onClick={() => setActiveMenu('payments')}
+              className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+                activeMenu === 'payments' 
+                  ? 'bg-blue-50 text-blue-600' 
+                  : 'text-gray-700 hover:bg-gray-100'
+              }`}
+            >
+              <DollarSign className="w-5 h-5 flex-shrink-0" />
+              {!sidebarCollapsed && <span>Payments Invoicing</span>}
+            </button>
+
             {/* Settings */}
             <button
               onClick={() => setActiveMenu('settings')}
@@ -542,19 +654,6 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             >
               <SettingsIcon className="w-5 h-5 flex-shrink-0" />
               {!sidebarCollapsed && <span>Settings</span>}
-            </button>
-
-            {/* Payments Invoicing */}
-            <button
-              onClick={() => setActiveMenu('payments-invoicing')}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-                activeMenu === 'payments-invoicing' 
-                  ? 'bg-blue-50 text-blue-600' 
-                  : 'text-gray-700 hover:bg-gray-100'
-              }`}
-            >
-              <DollarSign className="w-5 h-5 flex-shrink-0" />
-              {!sidebarCollapsed && <span>Payments Invoicing</span>}
             </button>
           </nav>
 

@@ -73,6 +73,8 @@ const invoices = [
   },
 ];
 
+import { Breadcrumb } from './Breadcrumb';
+
 export function PaymentsInvoicing() {
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -89,13 +91,15 @@ export function PaymentsInvoicing() {
 
   return (
     <div>
-      {/* Page Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl mb-2">Payments & Invoicing</h1>
-      </div>
+      {/* Breadcrumb */}
+      <Breadcrumb
+        items={[
+          { label: 'Payments & Invoicing' },
+        ]}
+      />
 
       {/* Invoices Table */}
-      <div className="bg-white rounded-lg shadow-sm">
+      <div className="bg-white rounded-lg shadow-sm mt-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50">

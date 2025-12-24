@@ -11,11 +11,16 @@ import {
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CreateShipment } from "./CreateShipment";
+import { ViewShipmentDetails } from "./ViewShipmentDetails";
+import { ModifyShipment } from "./ModifyShipment";
 import { mockApi } from "../services/mock-api";
 import type { Shipment } from "../types";
+import { Breadcrumb } from "./Breadcrumb";
 
 export function Shipments() {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [selectedShipment, setSelectedShipment] = useState<Shipment | null>(null);
+  const [modifyingShipment, setModifyingShipment] = useState<Shipment | null>(null);
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [shipments, setShipments] = useState<Shipment[]>([]);
@@ -88,24 +93,36 @@ export function Shipments() {
     );
   }
 
+  if (selectedShipment) {
+    return (
+      <ViewShipmentDetails
+        shipment={selectedShipment}
+        onBack={() => setSelectedShipment(null)}
+      />
+    );
+  }
+
+  if (modifyingShipment) {
+    return (
+      <ModifyShipment
+        shipment={modifyingShipment}
+        onBack={() => setModifyingShipment(null)}
+        onShipmentModified={fetchShipments}
+      />
+    );
+  }
+
   return (
     <div className="h-full flex flex-col overflow-hidden">
-      {/* Page Header */}
-      <div className="mb-6 flex items-center justify-between flex-shrink-0">
-        <div>
-          <h1 className="text-2xl mb-2">Shipments</h1>
-        </div>
-        <button
-          onClick={() => setShowCreateForm(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Create
-        </button>
-      </div>
+      {/* Breadcrumb */}
+      <Breadcrumb
+        items={[
+          { label: 'Shipments' },
+        ]}
+      />
 
       {/* Shipments Table */}
-      <div className="bg-white rounded-lg shadow-sm flex-1 flex flex-col overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm flex-1 flex flex-col overflow-hidden mt-6">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
           <h2>Recent Shipments</h2>
           <div className="flex items-center gap-2">
@@ -124,6 +141,13 @@ export function Shipments() {
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <Search className="w-5 h-5 text-gray-600" />
+            </button>
+            <button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+              Create
             </button>
           </div>
         </div>
@@ -206,12 +230,14 @@ export function Shipments() {
                         <button
                           className="p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
                           title="View"
+                          onClick={() => setSelectedShipment(shipment)}
                         >
                           <Eye className="w-4 h-4" />
                         </button>
                         <button
                           className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
                           title="Modify"
+                          onClick={() => setModifyingShipment(shipment)}
                         >
                           <Pencil className="w-4 h-4" />
                         </button>
