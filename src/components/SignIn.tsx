@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Logo } from './Logo';
 import { SimpleFooter } from './SimpleFooter';
 import { mockApi } from '../services/mock-api';
+import { TopRibbon } from './TopRibbon';
 
 interface SignInProps {
   onClose: () => void;
@@ -42,11 +43,12 @@ export function SignIn({ onClose, onSwitchToSignUp, onSignInSuccess }: SignInPro
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-white shadow-sm">
+      <TopRibbon />
+      <header className="bg-white shadow-sm sticky top-10 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-16">
+          <div className="flex items-center h-20">
             <button onClick={onClose} className="hover:opacity-80 transition-opacity">
-              <Logo className="h-12" />
+              <Logo className="h-14" />
             </button>
           </div>
         </div>
