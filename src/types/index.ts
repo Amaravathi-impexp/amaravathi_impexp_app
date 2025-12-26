@@ -45,6 +45,9 @@ export interface User {
   role: string;
   phone?: string;
   cell?: string;
+  originCountry?: string;
+  destinationCountry?: string;
+  product?: string;
   notifications?: {
     email: boolean;
     sms: boolean;
@@ -60,6 +63,20 @@ export interface CreateUserRequest {
   role: string;
   phone?: string;
   cell?: string;
+  notifications?: {
+    email: boolean;
+    sms: boolean;
+    push: boolean;
+  };
+}
+
+export interface UpdateUserRequest {
+  role?: string;
+  phone?: string;
+  cell?: string;
+  originCountry?: string;
+  destinationCountry?: string;
+  product?: string;
   notifications?: {
     email: boolean;
     sms: boolean;

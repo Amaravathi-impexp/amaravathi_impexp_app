@@ -1,7 +1,9 @@
-import { ArrowLeft, Package, Globe, Truck, Calendar, CheckCircle, AlertCircle, Ship, Plane, Box, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowLeft, Package, Globe, Truck, Calendar, CheckCircle, AlertCircle, Ship, Plane, Box, Loader2, Users, Plus, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { mockApi } from '../services/mock-api';
 import { Breadcrumb } from './Breadcrumb';
+import { CreatePartner } from './CreatePartner';
+import type { Partner } from '../types';
 
 interface CreateShipmentProps {
   onBack: () => void;
@@ -21,20 +23,62 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
   const [mode, setMode] = useState('');
   const [pickupDate, setPickupDate] = useState('');
   const [eta, setEta] = useState('');
+  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [partnerSearchQuery, setPartnerSearchQuery] = useState('');
+  const [showCreatePartner, setShowCreatePartner] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    fetchPartners();
+  }, []);
+
+  const fetchPartners = async () => {
+    try {
+      const response = await mockApi.partners.getAll({ page: 1, limit: 100 });
+      setPartners(response.data);
+    } catch (error) {
+      console.error('Failed to fetch partners:', error);
+    }
+  };
+
+  const handlePartnerCreated = async (newPartner: Partner) => {
+    await fetchPartners();
+    setSelectedPartner(newPartner);
+    setShowCreatePartner(false);
+    setCurrentStep(4); // Return to Partner Selection step
+  };
+
+  const filteredPartners = partners.filter(partner =>
+    partner.companyName.toLowerCase().includes(partnerSearchQuery.toLowerCase()) ||
+    partner.country.toLowerCase().includes(partnerSearchQuery.toLowerCase())
+  );
+
+  // If showing create partner screen, render it
+  if (showCreatePartner) {
+    const preselectedPartnerType = shipmentType === 'import' ? 'importer' : 'exporter';
+    return (
+      <CreatePartner
+        onBack={() => setShowCreatePartner(false)}
+        onPartnerCreated={handlePartnerCreated}
+        preselectedPartnerType={preselectedPartnerType}
+      />
+    );
+  }
 
   const steps = [
     { number: 1, title: 'Shipment Type', icon: Package },
     { number: 2, title: 'Cargo Details', icon: Box },
     { number: 3, title: 'Route & Logistics', icon: Globe },
-    { number: 4, title: 'Review & Submit', icon: CheckCircle },
+    { number: 4, title: 'Partner Selection', icon: Users },
+    { number: 5, title: 'Review & Submit', icon: CheckCircle },
   ];
 
   const handleSubmit = async () => {
     // Only submit if we're on the final step
-    if (currentStep !== 4) {
+    if (currentStep !== 5) {
       return;
     }
     
@@ -60,6 +104,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
         value: 0, // You can add this to the form if needed
         currency: 'USD',
         incoterms: 'FOB',
+        partnerId: selectedPartner?.id || '',
       });
       
       setSuccess(true);
@@ -81,7 +126,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     // Prevent Enter key from submitting form on steps 1-3
-    if (e.key === 'Enter' && currentStep !== 4) {
+    if (e.key === 'Enter' && currentStep !== 5) {
       e.preventDefault();
     }
   };
@@ -91,9 +136,11 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
       case 1:
         return shipmentType !== '';
       case 2:
-        return productName !== '' && quantity !== '' && weight !== '';
+        return hsCode !== '' && productName !== '' && quantity !== '' && weight !== '';
       case 3:
         return originCountry !== '' && destinationCountry !== '' && mode !== '' && pickupDate !== '' && eta !== '';
+      case 4:
+        return selectedPartner !== null;
       default:
         return true;
     }
@@ -420,7 +467,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                 {/* HS Code */}
                 <div>
                   <label htmlFor="hsCode" className="block text-sm mb-2">
-                    HS Code <span className="text-gray-400">(Optional)</span>
+                    HS Code <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -429,6 +476,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                     onChange={(e) => setHsCode(e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., 8471.30.00"
+                    required
                   />
                   <p className="text-xs text-gray-500 mt-1">Harmonized System tariff code</p>
                 </div>
@@ -767,8 +815,93 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
           </div>
         )}
 
-        {/* Step 4: Review & Submit */}
+        {/* Step 4: Partner Selection */}
         {currentStep === 4 && (
+          <div className="bg-white rounded-lg shadow-sm p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-blue-600" />
+              </div>
+              <div>
+                <h2 className="text-xl">Select a Partner</h2>
+                <p className="text-sm text-gray-600">Choose a partner to handle your shipment</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {/* Partner Search Dropdown */}
+              <div>
+                <label htmlFor="partnerSelect" className="block text-sm mb-2">
+                  Select Partner <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <select
+                    id="partnerSelect"
+                    value={selectedPartner?.id || ''}
+                    onChange={(e) => {
+                      const partner = partners.find(p => p.id === e.target.value);
+                      setSelectedPartner(partner || null);
+                    }}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
+                  >
+                    <option value="">Search and select a partner...</option>
+                    {partners.map(partner => (
+                      <option key={partner.id} value={partner.id}>
+                        {partner.companyName} - {partner.country}
+                      </option>
+                    ))}
+                  </select>
+                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Selected Partner Details */}
+              {selectedPartner && (
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h3 className="text-sm mb-3">Selected Partner Details</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Company Name</p>
+                      <p>{selectedPartner.companyName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Contact Person</p>
+                      <p>{selectedPartner.contactPerson}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Email</p>
+                      <p>{selectedPartner.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Country</p>
+                      <p>{selectedPartner.country}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* OR Separator */}
+              <div className="flex items-center gap-4 my-6">
+                <div className="flex-1 border-t border-gray-300"></div>
+                <span className="text-gray-500 px-3">OR</span>
+                <div className="flex-1 border-t border-gray-300"></div>
+              </div>
+
+              {/* Create New Partner Button */}
+              <button
+                type="button"
+                onClick={() => setShowCreatePartner(true)}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-dashed border-gray-300 text-gray-700 rounded-lg hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+              >
+                <Plus className="w-5 h-5" />
+                Create New Partner
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 5: Review & Submit */}
+        {currentStep === 5 && (
           <div className="bg-white rounded-lg shadow-sm p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -834,7 +967,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
               </div>
 
               {/* Schedule */}
-              <div>
+              <div className="border-b border-gray-200 pb-4">
                 <h3 className="text-sm text-gray-600 mb-3">Schedule</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -846,6 +979,55 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                     <p>{eta || '-'}</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Partner */}
+              <div className="border-b border-gray-200 pb-4">
+                <h3 className="text-sm text-gray-600 mb-3">Partner Details</h3>
+                {selectedPartner ? (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-500">Company Name</p>
+                        <p>{selectedPartner.companyName}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Partner Type</p>
+                        <p className="capitalize">{selectedPartner.partnerType?.replace('_', ' ')}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Contact Person</p>
+                        <p>{selectedPartner.contactPerson}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Email</p>
+                        <p>{selectedPartner.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Phone</p>
+                        <p>{selectedPartner.phone}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Country</p>
+                        <p>{selectedPartner.country}</p>
+                      </div>
+                      {selectedPartner.city && (
+                        <div>
+                          <p className="text-sm text-gray-500">City</p>
+                          <p>{selectedPartner.city}</p>
+                        </div>
+                      )}
+                      {selectedPartner.address && (
+                        <div className="md:col-span-2">
+                          <p className="text-sm text-gray-500">Address</p>
+                          <p>{selectedPartner.address}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-gray-500">No partner selected</p>
+                )}
               </div>
             </div>
 
@@ -871,7 +1053,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
             </button>
           )}
           
-          {currentStep < 4 ? (
+          {currentStep < 5 ? (
             <button
               type="button"
               onClick={() => setCurrentStep(currentStep + 1)}

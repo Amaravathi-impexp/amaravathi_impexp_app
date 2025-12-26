@@ -170,28 +170,37 @@ let mockUsers: User[] = [
     role: 'Admin',
     phone: '+1-555-1001',
     cell: '+1-555-2001',
+    originCountry: 'India',
+    destinationCountry: 'USA',
+    product: 'Rice',
     notifications: { email: true, sms: true, push: true },
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-12-22T00:00:00Z',
   },
   {
     id: 'USER-002',
-    name: 'John Manager',
-    email: 'john@amaravathi.com',
-    role: 'Manager',
+    name: 'Importer User',
+    email: 'importer@gmail.com',
+    role: 'Importer',
     phone: '+1-555-1002',
     cell: '+1-555-2002',
+    originCountry: 'China',
+    destinationCountry: 'UK',
+    product: 'Turmeric',
     notifications: { email: true, sms: false, push: true },
     createdAt: '2024-02-15T00:00:00Z',
     updatedAt: '2024-12-22T00:00:00Z',
   },
   {
     id: 'USER-003',
-    name: 'Sarah Operator',
-    email: 'sarah@amaravathi.com',
-    role: 'Operator',
+    name: 'Exporter User',
+    email: 'exporter@gmail.com',
+    role: 'Exporter',
     phone: '+1-555-1003',
     cell: '+1-555-2003',
+    originCountry: 'India',
+    destinationCountry: 'Singapore',
+    product: 'Chillies',
     notifications: { email: true, sms: true, push: false },
     createdAt: '2024-03-20T00:00:00Z',
     updatedAt: '2024-12-22T00:00:00Z',
@@ -263,10 +272,27 @@ export const mockApi = {
     login: async (credentials: LoginRequest): Promise<LoginResponse> => {
       await delay();
       
+      // Check for Admin
       if (credentials.email === 'admin@gmail.com' && credentials.password === 'admin') {
         return {
           token: 'mock-jwt-token-' + Date.now(),
           user: mockUsers[0],
+        };
+      }
+      
+      // Check for Importer
+      if (credentials.email === 'importer@gmail.com' && credentials.password === 'importer') {
+        return {
+          token: 'mock-jwt-token-' + Date.now(),
+          user: mockUsers[1],
+        };
+      }
+      
+      // Check for Exporter
+      if (credentials.email === 'exporter@gmail.com' && credentials.password === 'exporter') {
+        return {
+          token: 'mock-jwt-token-' + Date.now(),
+          user: mockUsers[2],
         };
       }
       
@@ -301,6 +327,21 @@ export const mockApi = {
     getCurrentUser: async (): Promise<User> => {
       await delay();
       return mockUsers[0];
+    },
+
+    updateCurrentUser: async (userId: string, updates: Partial<User>): Promise<User> => {
+      await delay();
+      
+      const index = mockUsers.findIndex(u => u.id === userId);
+      if (index === -1) throw new Error('User not found');
+      
+      mockUsers[index] = {
+        ...mockUsers[index],
+        ...updates,
+        updatedAt: new Date().toISOString(),
+      };
+      
+      return mockUsers[index];
     },
   },
 

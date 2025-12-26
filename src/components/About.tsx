@@ -11,9 +11,10 @@ interface AboutProps {
   onCareersClick?: () => void;
   onContactClick?: () => void;
   onSignInClick?: () => void;
+  currentView?: string;
 }
 
-export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick }: AboutProps) {
+export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick, currentView }: AboutProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navigation 
@@ -22,6 +23,7 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
         onAboutClick={onAboutClick}
         onCareersClick={onCareersClick}
         onContactClick={onContactClick}
+        currentView={currentView}
       />
 
       <main className="flex-1">
@@ -117,72 +119,27 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
           </div>
         </section>
 
-        {/* Leadership Team */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl text-center mb-12">Leadership Team</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                  <Users className="w-24 h-24 text-white opacity-50" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl mb-1">Rajesh Kumar</h3>
-                  <p className="text-blue-600 mb-3">Chief Executive Officer</p>
-                  <p className="text-gray-600 text-sm">
-                    With 25 years in the maritime industry, Rajesh leads our global operations and strategic vision.
-                  </p>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                  <Users className="w-24 h-24 text-white opacity-50" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl mb-1">Priya Sharma</h3>
-                  <p className="text-blue-600 mb-3">Chief Operations Officer</p>
-                  <p className="text-gray-600 text-sm">
-                    Priya oversees our day-to-day operations, ensuring seamless logistics across all continents.
-                  </p>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg overflow-hidden shadow-md">
-                <div className="h-48 bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center">
-                  <Users className="w-24 h-24 text-white opacity-50" />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl mb-1">Michael Chen</h3>
-                  <p className="text-blue-600 mb-3">Chief Technology Officer</p>
-                  <p className="text-gray-600 text-sm">
-                    Michael drives our digital transformation and innovation in logistics technology.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Global Presence */}
-        <section className="py-16">
+        <section className="py-16 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-3xl text-center mb-12">Global Presence</h2>
             <div className="grid md:grid-cols-4 gap-6">
-              <div className="text-center p-6 bg-blue-50 rounded-lg">
+              <div className="text-center p-6 bg-white rounded-lg shadow-md">
                 <Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="text-xl mb-2">Asia Pacific</h3>
                 <p className="text-gray-600">Singapore, Mumbai, Shanghai</p>
               </div>
-              <div className="text-center p-6 bg-blue-50 rounded-lg">
+              <div className="text-center p-6 bg-white rounded-lg shadow-md">
                 <Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="text-xl mb-2">Europe</h3>
                 <p className="text-gray-600">Rotterdam, Hamburg, Antwerp</p>
               </div>
-              <div className="text-center p-6 bg-blue-50 rounded-lg">
+              <div className="text-center p-6 bg-white rounded-lg shadow-md">
                 <Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="text-xl mb-2">Americas</h3>
                 <p className="text-gray-600">Los Angeles, New York, Santos</p>
               </div>
-              <div className="text-center p-6 bg-blue-50 rounded-lg">
+              <div className="text-center p-6 bg-white rounded-lg shadow-md">
                 <Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
                 <h3 className="text-xl mb-2">Middle East</h3>
                 <p className="text-gray-600">Dubai, Jebel Ali, Doha</p>

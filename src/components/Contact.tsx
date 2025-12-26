@@ -10,9 +10,10 @@ interface ContactProps {
   onCareersClick?: () => void;
   onContactClick?: () => void;
   onSignInClick?: () => void;
+  currentView?: string;
 }
 
-export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick }: ContactProps) {
+export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick, currentView }: ContactProps) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -83,6 +84,7 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
         onAboutClick={onAboutClick}
         onCareersClick={onCareersClick}
         onContactClick={onContactClick}
+        currentView={currentView}
       />
 
       <main className="flex-1">
@@ -240,35 +242,6 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                   </button>
                 </div>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Office Locations */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl text-center mb-12">Our Global Offices</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {offices.map((office, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <MapPin className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl mb-1">{office.city}</h3>
-                  <p className="text-gray-500 text-sm mb-4">{office.country}</p>
-                  <div className="space-y-2 text-sm text-gray-600">
-                    <p>{office.address}</p>
-                    <p className="flex items-center gap-2">
-                      <Phone className="w-4 h-4" />
-                      {office.phone}
-                    </p>
-                    <p className="flex items-center gap-2">
-                      <Mail className="w-4 h-4" />
-                      {office.email}
-                    </p>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         </section>

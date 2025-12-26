@@ -1,4 +1,4 @@
-import { ArrowLeft, User, Mail, Phone, Smartphone, Shield, Bell, CheckCircle2, UserPlus } from 'lucide-react';
+import { ArrowLeft, User, Mail, Phone, Smartphone, Shield, Bell, CheckCircle2, UserPlus, Globe, Package } from 'lucide-react';
 import { useState } from 'react';
 import { Breadcrumb } from './Breadcrumb';
 
@@ -12,8 +12,9 @@ export function CreateUser({ onBack }: CreateUserProps) {
     email: '',
     role: '',
     phone: '',
-    cell: '',
-    department: '',
+    originCountry: '',
+    destinationCountry: '',
+    product: '',
     notifications: {
       email: true,
       sms: false,
@@ -52,7 +53,8 @@ export function CreateUser({ onBack }: CreateUserProps) {
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
-          { label: 'Settings', onClick: onBack },
+          { label: 'Admin', onClick: onBack },
+          { label: 'Users', onClick: onBack },
           { label: 'Create User' },
         ]}
       />
@@ -137,32 +139,10 @@ export function CreateUser({ onBack }: CreateUserProps) {
                 />
               </div>
             </div>
-
-            {/* Cell */}
-            <div>
-              <label htmlFor="cell" className="block text-sm text-gray-700 mb-2">
-                Mobile Number <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Smartphone className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  type="tel"
-                  id="cell"
-                  name="cell"
-                  value={formData.cell}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="+1 (555) 000-0000"
-                  required
-                />
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Role & Department Card */}
+        {/* Role & Permissions Card */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <div className="p-2 bg-purple-100 rounded-lg">
@@ -170,7 +150,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
             </div>
             <div>
               <h2 className="text-lg">Role & Permissions</h2>
-              <p className="text-sm text-gray-600">Define user access and department</p>
+              <p className="text-sm text-gray-600">Define user access level</p>
             </div>
           </div>
 
@@ -190,34 +170,8 @@ export function CreateUser({ onBack }: CreateUserProps) {
               >
                 <option value="">Select a role</option>
                 <option value="Admin">Admin</option>
-                <option value="Manager">Manager</option>
-                <option value="Exporter">Exporter</option>
                 <option value="Importer">Importer</option>
-                <option value="Freight Forwarder">Freight Forwarder</option>
-                <option value="Customs Agent">Customs Agent</option>
-                <option value="Viewer">Viewer</option>
-              </select>
-            </div>
-
-            {/* Department */}
-            <div>
-              <label htmlFor="department" className="block text-sm text-gray-700 mb-2">
-                Department
-              </label>
-              <select
-                id="department"
-                name="department"
-                value={formData.department}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              >
-                <option value="">Select department</option>
-                <option value="Operations">Operations</option>
-                <option value="Sales">Sales</option>
-                <option value="Customer Service">Customer Service</option>
-                <option value="Finance">Finance</option>
-                <option value="Compliance">Compliance</option>
-                <option value="IT">IT</option>
+                <option value="Exporter">Exporter</option>
               </select>
             </div>
           </div>
@@ -228,15 +182,125 @@ export function CreateUser({ onBack }: CreateUserProps) {
               <p className="text-sm text-gray-700">
                 <span className="font-medium">Role Permissions:</span>
                 {formData.role === 'Admin' && ' Full system access with user management capabilities.'}
-                {formData.role === 'Manager' && ' Can manage shipments, view reports, and coordinate team activities.'}
-                {formData.role === 'Exporter' && ' Can create export shipments and upload documentation.'}
                 {formData.role === 'Importer' && ' Can create import shipments and track deliveries.'}
-                {formData.role === 'Freight Forwarder' && ' Can manage logistics and coordinate shipments.'}
-                {formData.role === 'Customs Agent' && ' Can handle customs clearance and documentation.'}
-                {formData.role === 'Viewer' && ' Read-only access to shipment information.'}
+                {formData.role === 'Exporter' && ' Can create export shipments and upload documentation.'}
               </p>
             </div>
           )}
+        </div>
+
+        {/* Route Information Card */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-teal-100 rounded-lg">
+              <Globe className="w-5 h-5 text-teal-600" />
+            </div>
+            <div>
+              <h2 className="text-lg">Route Information</h2>
+              <p className="text-sm text-gray-600">Specify origin and destination countries</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Origin Country */}
+            <div>
+              <label htmlFor="originCountry" className="block text-sm text-gray-700 mb-2">
+                Origin Country <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="originCountry"
+                name="originCountry"
+                value={formData.originCountry}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              >
+                <option value="">Select origin country</option>
+                <option value="India">India</option>
+                <option value="China">China</option>
+                <option value="USA">United States</option>
+                <option value="UAE">United Arab Emirates</option>
+                <option value="Singapore">Singapore</option>
+                <option value="Japan">Japan</option>
+                <option value="South Korea">South Korea</option>
+                <option value="Thailand">Thailand</option>
+                <option value="Vietnam">Vietnam</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="Germany">Germany</option>
+                <option value="UK">United Kingdom</option>
+                <option value="France">France</option>
+                <option value="Netherlands">Netherlands</option>
+              </select>
+            </div>
+
+            {/* Destination Country */}
+            <div>
+              <label htmlFor="destinationCountry" className="block text-sm text-gray-700 mb-2">
+                Destination Country <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="destinationCountry"
+                name="destinationCountry"
+                value={formData.destinationCountry}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              >
+                <option value="">Select destination country</option>
+                <option value="India">India</option>
+                <option value="China">China</option>
+                <option value="USA">United States</option>
+                <option value="UAE">United Arab Emirates</option>
+                <option value="Singapore">Singapore</option>
+                <option value="Japan">Japan</option>
+                <option value="South Korea">South Korea</option>
+                <option value="Thailand">Thailand</option>
+                <option value="Vietnam">Vietnam</option>
+                <option value="Malaysia">Malaysia</option>
+                <option value="Indonesia">Indonesia</option>
+                <option value="Germany">Germany</option>
+                <option value="UK">United Kingdom</option>
+                <option value="France">France</option>
+                <option value="Netherlands">Netherlands</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Product Information Card */}
+        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-orange-100 rounded-lg">
+              <Package className="w-5 h-5 text-orange-600" />
+            </div>
+            <div>
+              <h2 className="text-lg">Product Information</h2>
+              <p className="text-sm text-gray-600">Select the product type</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Product Name */}
+            <div>
+              <label htmlFor="product" className="block text-sm text-gray-700 mb-2">
+                Product Name <span className="text-red-500">*</span>
+              </label>
+              <select
+                id="product"
+                name="product"
+                value={formData.product}
+                onChange={handleChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                required
+              >
+                <option value="">Select a product</option>
+                <option value="Rice">Rice</option>
+                <option value="Turmeric">Turmeric</option>
+                <option value="Chillies">Chillies</option>
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Notification Preferences Card */}

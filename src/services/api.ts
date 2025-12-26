@@ -3,6 +3,8 @@
  * This file provides the core HTTP client for making REST API calls
  */
 
+import { store } from '../store';
+
 // API Configuration
 const API_CONFIG = {
   baseURL: process.env.REACT_APP_API_URL || 'https://api.amaravathi.com/v1',
@@ -32,19 +34,10 @@ export class ApiError extends Error {
   }
 }
 
-// Get auth token from localStorage
+// Get auth token from Redux store
 const getAuthToken = (): string | null => {
-  return localStorage.getItem('auth_token');
-};
-
-// Set auth token in localStorage
-export const setAuthToken = (token: string): void => {
-  localStorage.setItem('auth_token', token);
-};
-
-// Remove auth token from localStorage
-export const removeAuthToken = (): void => {
-  localStorage.removeItem('auth_token');
+  const state = store.getState();
+  return state.auth.token;
 };
 
 // Base fetch wrapper with error handling

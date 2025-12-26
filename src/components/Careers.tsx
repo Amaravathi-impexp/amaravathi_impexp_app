@@ -1,6 +1,6 @@
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
-import { Briefcase, TrendingUp, Users, Coffee, Heart, Zap, MapPin, Clock } from 'lucide-react';
+import { Construction, Hammer, HardHat, Wrench, Cog, Sparkles } from 'lucide-react';
 
 interface CareersProps {
   onClose: () => void;
@@ -9,87 +9,10 @@ interface CareersProps {
   onCareersClick?: () => void;
   onContactClick?: () => void;
   onSignInClick?: () => void;
+  currentView?: string;
 }
 
-export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick }: CareersProps) {
-  const jobOpenings = [
-    {
-      title: 'Senior Logistics Coordinator',
-      location: 'Mumbai, India',
-      type: 'Full-time',
-      department: 'Operations',
-      description: 'Lead logistics operations and coordinate shipments across Asia Pacific region.'
-    },
-    {
-      title: 'Fleet Operations Manager',
-      location: 'Singapore',
-      type: 'Full-time',
-      department: 'Operations',
-      description: 'Manage and optimize fleet operations, ensuring efficient vessel utilization.'
-    },
-    {
-      title: 'Software Engineer',
-      location: 'Bangalore, India',
-      type: 'Full-time',
-      department: 'Technology',
-      description: 'Develop and maintain our cutting-edge logistics tracking and management systems.'
-    },
-    {
-      title: 'Customer Success Manager',
-      location: 'Dubai, UAE',
-      type: 'Full-time',
-      department: 'Sales',
-      description: 'Build strong relationships with clients and ensure exceptional service delivery.'
-    },
-    {
-      title: 'Data Analyst',
-      location: 'Remote',
-      type: 'Full-time',
-      department: 'Analytics',
-      description: 'Analyze logistics data to drive insights and improve operational efficiency.'
-    },
-    {
-      title: 'Maritime Operations Specialist',
-      location: 'Rotterdam, Netherlands',
-      type: 'Full-time',
-      department: 'Operations',
-      description: 'Coordinate vessel schedules and port operations across European routes.'
-    }
-  ];
-
-  const benefits = [
-    {
-      icon: TrendingUp,
-      title: 'Career Growth',
-      description: 'Continuous learning opportunities and clear advancement paths'
-    },
-    {
-      icon: Heart,
-      title: 'Health & Wellness',
-      description: 'Comprehensive health insurance and wellness programs'
-    },
-    {
-      icon: Coffee,
-      title: 'Work-Life Balance',
-      description: 'Flexible working hours and remote work options'
-    },
-    {
-      icon: Users,
-      title: 'Global Team',
-      description: 'Work with diverse, talented professionals worldwide'
-    },
-    {
-      icon: Zap,
-      title: 'Innovation Focus',
-      description: 'Access to latest technology and tools in the industry'
-    },
-    {
-      icon: Briefcase,
-      title: 'Competitive Package',
-      description: 'Market-leading salary and performance bonuses'
-    }
-  ];
-
+export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick, currentView }: CareersProps) {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navigation 
@@ -98,132 +21,171 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
         onAboutClick={onAboutClick}
         onCareersClick={onCareersClick}
         onContactClick={onContactClick}
+        currentView={currentView}
       />
 
-      <main className="flex-1">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl mb-6">Join Our Team</h1>
-            <p className="text-xl max-w-3xl">
-              Build your career with a global leader in shipping and logistics. Be part of a team that's 
-              connecting the world.
-            </p>
-          </div>
-        </section>
-
-        {/* Why Join Us */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl text-center mb-12">Why Work With Us</h2>
-            <div className="grid md:grid-cols-3 gap-8">
-              {benefits.map((benefit, index) => (
-                <div key={index} className="bg-gray-50 p-6 rounded-lg">
-                  <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
-                    <benefit.icon className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <h3 className="text-xl mb-3">{benefit.title}</h3>
-                  <p className="text-gray-600">{benefit.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Open Positions */}
-        <section className="py-16 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl text-center mb-12">Open Positions</h2>
-            <div className="space-y-6">
-              {jobOpenings.map((job, index) => (
-                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl mb-2">{job.title}</h3>
-                      <div className="flex flex-wrap gap-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          <span>{job.location}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          <span>{job.type}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Briefcase className="w-4 h-4" />
-                          <span>{job.department}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <button className="mt-4 md:mt-0 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">
-                      Apply Now
-                    </button>
-                  </div>
-                  <p className="text-gray-600">{job.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Culture Section */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                <h2 className="text-3xl mb-6">Our Culture</h2>
-                <p className="text-gray-600 mb-4">
-                  At Amaravathi, we believe in creating an environment where innovation thrives and every 
-                  team member can reach their full potential. Our culture is built on collaboration, 
-                  respect, and a shared commitment to excellence.
-                </p>
-                <p className="text-gray-600 mb-4">
-                  We celebrate diversity and encourage fresh perspectives. Whether you're working from 
-                  one of our global offices or remotely, you'll be part of a supportive community that 
-                  values your contributions.
-                </p>
-                <p className="text-gray-600">
-                  Join us in shaping the future of global logistics while building a rewarding career 
-                  that makes a real impact.
-                </p>
+      <main className="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-orange-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          {/* Animated Construction Icons */}
+          <div className="relative mb-12">
+            <div className="flex items-center justify-center gap-6 mb-8">
+              <div className="animate-bounce delay-0">
+                <HardHat className="w-16 h-16 text-orange-500" />
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <div className="text-blue-600 text-3xl mb-2">2,500+</div>
-                  <div className="text-gray-600">Global Employees</div>
+              <div className="animate-bounce delay-100">
+                <Construction className="w-20 h-20 text-blue-600" />
+              </div>
+              <div className="animate-bounce delay-200">
+                <Wrench className="w-16 h-16 text-orange-500" />
+              </div>
+            </div>
+            
+            {/* Rotating Gears */}
+            <div className="absolute top-0 left-1/4 animate-spin-slow opacity-20">
+              <Cog className="w-12 h-12 text-gray-400" />
+            </div>
+            <div className="absolute bottom-0 right-1/4 animate-spin-slow-reverse opacity-20">
+              <Cog className="w-16 h-16 text-gray-400" />
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm mb-4">
+              <Sparkles className="w-4 h-4" />
+              <span>Coming Soon</span>
+            </div>
+            
+            <h1 className="text-5xl md:text-6xl mb-6 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+              Under Construction
+            </h1>
+            
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+              We're building something amazing! Our Careers page is currently under development. 
+              We're crafting the perfect space to showcase exciting opportunities at Amaravathi.
+            </p>
+
+            {/* Construction Progress Bar */}
+            <div className="max-w-md mx-auto mb-8">
+              <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-orange-500 h-full rounded-full animate-progress" style={{ width: '65%' }}>
+                  <div className="h-full w-full bg-white/20 animate-shimmer"></div>
                 </div>
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <div className="text-blue-600 text-3xl mb-2">45+</div>
-                  <div className="text-gray-600">Nationalities</div>
-                </div>
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <div className="text-blue-600 text-3xl mb-2">98%</div>
-                  <div className="text-gray-600">Employee Satisfaction</div>
-                </div>
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <div className="text-blue-600 text-3xl mb-2">15+</div>
-                  <div className="text-gray-600">Training Programs</div>
-                </div>
+              </div>
+              <p className="text-sm text-gray-500 mt-2">65% Complete</p>
+            </div>
+
+            {/* Quick Stats */}
+            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12">
+              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-blue-100">
+                <div className="text-3xl text-blue-600 mb-2">50+</div>
+                <div className="text-sm text-gray-600">Positions Planned</div>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-orange-100">
+                <div className="text-3xl text-orange-500 mb-2">15+</div>
+                <div className="text-sm text-gray-600">Global Locations</div>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-blue-100">
+                <div className="text-3xl text-blue-600 mb-2">100%</div>
+                <div className="text-sm text-gray-600">Worth the Wait</div>
+              </div>
+            </div>
+
+            {/* Call to Action */}
+            <div className="mt-12 p-8 bg-blue-50 rounded-2xl border-2 border-blue-200 max-w-2xl mx-auto">
+              <h3 className="text-2xl mb-3">Interested in joining us?</h3>
+              <p className="text-gray-600 mb-6">
+                In the meantime, feel free to reach out to our HR team directly.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button 
+                  onClick={onContactClick}
+                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Contact Us
+                </button>
+                <a 
+                  href="mailto:careers@amaravathi.com"
+                  className="px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                >
+                  Email: careers@amaravathi.com
+                </a>
               </div>
             </div>
           </div>
-        </section>
 
-        {/* CTA Section */}
-        <section className="py-16 bg-blue-600 text-white">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl mb-6">Don't See the Right Role?</h2>
-            <p className="text-xl mb-8">
-              Send us your resume and we'll keep you in mind for future opportunities.
-            </p>
-            <button className="px-8 py-3 bg-white text-blue-600 rounded-lg hover:bg-gray-100 transition-colors">
-              Submit Your Resume
-            </button>
+          {/* Decorative Elements */}
+          <div className="mt-16 flex items-center justify-center gap-3 text-gray-400">
+            <Hammer className="w-5 h-5 animate-pulse" />
+            <span className="text-sm">Building with care...</span>
+            <Hammer className="w-5 h-5 animate-pulse" />
           </div>
-        </section>
+        </div>
       </main>
 
       <Footer />
+
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes progress {
+          0% {
+            width: 0%;
+          }
+          100% {
+            width: 65%;
+          }
+        }
+
+        @keyframes shimmer {
+          0% {
+            transform: translateX(-100%);
+          }
+          100% {
+            transform: translateX(100%);
+          }
+        }
+
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes spin-slow-reverse {
+          from {
+            transform: rotate(360deg);
+          }
+          to {
+            transform: rotate(0deg);
+          }
+        }
+
+        .animate-progress {
+          animation: progress 2s ease-out;
+        }
+
+        .animate-shimmer {
+          animation: shimmer 2s infinite;
+        }
+
+        .animate-spin-slow {
+          animation: spin-slow 8s linear infinite;
+        }
+
+        .animate-spin-slow-reverse {
+          animation: spin-slow-reverse 8s linear infinite;
+        }
+
+        .delay-100 {
+          animation-delay: 0.1s;
+        }
+
+        .delay-200 {
+          animation-delay: 0.2s;
+        }
+      `}} />
     </div>
   );
 }

@@ -9,9 +9,10 @@ interface NavigationProps {
   onAboutClick?: () => void;
   onCareersClick?: () => void;
   onContactClick?: () => void;
+  currentView?: string;
 }
 
-export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareersClick, onContactClick }: NavigationProps) {
+export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareersClick, onContactClick, currentView = 'home' }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -29,10 +30,30 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
 
             {/* Desktop Navigation - aligned right */}
             <div className="hidden md:flex items-center space-x-6">
-              <button onClick={onHomeClick} className="hover:text-blue-600">Home</button>
-              <button onClick={onAboutClick} className="hover:text-blue-600">About</button>
-              <button onClick={onCareersClick} className="hover:text-blue-600">Careers</button>
-              <button onClick={onContactClick} className="hover:text-blue-600">Contact</button>
+              <button 
+                onClick={onHomeClick} 
+                className={`hover:text-blue-600 transition-colors ${currentView === 'home' ? 'text-blue-600 font-medium' : ''}`}
+              >
+                Home
+              </button>
+              <button 
+                onClick={onAboutClick} 
+                className={`hover:text-blue-600 transition-colors ${currentView === 'about' ? 'text-blue-600 font-medium' : ''}`}
+              >
+                About
+              </button>
+              <button 
+                onClick={onCareersClick} 
+                className={`hover:text-blue-600 transition-colors ${currentView === 'careers' ? 'text-blue-600 font-medium' : ''}`}
+              >
+                Careers
+              </button>
+              <button 
+                onClick={onContactClick} 
+                className={`hover:text-blue-600 transition-colors ${currentView === 'contact' ? 'text-blue-600 font-medium' : ''}`}
+              >
+                Contact
+              </button>
               <button className="p-2 hover:bg-gray-100 rounded-full">
                 <Search className="w-5 h-5" />
               </button>
@@ -57,10 +78,30 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-200">
               <div className="flex flex-col space-y-4">
-                <button onClick={onHomeClick} className="text-left">Home</button>
-                <button onClick={onAboutClick} className="text-left">About</button>
-                <button onClick={onCareersClick} className="text-left">Careers</button>
-                <button onClick={onContactClick} className="text-left">Contact</button>
+                <button 
+                  onClick={onHomeClick} 
+                  className={`text-left ${currentView === 'home' ? 'text-blue-600 font-medium' : ''}`}
+                >
+                  Home
+                </button>
+                <button 
+                  onClick={onAboutClick} 
+                  className={`text-left ${currentView === 'about' ? 'text-blue-600 font-medium' : ''}`}
+                >
+                  About
+                </button>
+                <button 
+                  onClick={onCareersClick} 
+                  className={`text-left ${currentView === 'careers' ? 'text-blue-600 font-medium' : ''}`}
+                >
+                  Careers
+                </button>
+                <button 
+                  onClick={onContactClick} 
+                  className={`text-left ${currentView === 'contact' ? 'text-blue-600 font-medium' : ''}`}
+                >
+                  Contact
+                </button>
                 <button
                   onClick={onSignInClick}
                   className="px-4 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50"

@@ -1,16 +1,18 @@
 import { ArrowLeft, Building2, Users, Mail, MapPin, CheckCircle, AlertCircle, Loader2, Package, Ship, Plane } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mockApi } from '../services/mock-api';
 import { Breadcrumb } from './Breadcrumb';
+import type { Partner } from '../types';
 
 interface CreatePartnerProps {
   onBack: () => void;
-  onPartnerCreated?: () => void;
+  onPartnerCreated?: (partner: Partner) => void;
+  preselectedPartnerType?: string;
 }
 
-export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) {
+export function CreatePartner({ onBack, onPartnerCreated, preselectedPartnerType }: CreatePartnerProps) {
   const [currentStep, setCurrentStep] = useState(1);
-  const [partnerType, setPartnerType] = useState('');
+  const [partnerType, setPartnerType] = useState(preselectedPartnerType || '');
   const [name, setName] = useState('');
   const [contactPerson, setContactPerson] = useState('');
   const [email, setEmail] = useState('');
@@ -24,11 +26,17 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
+  // Skip step 1 if partner type is preselected
+  useEffect(() => {
+    if (preselectedPartnerType) {
+      setCurrentStep(2);
+    }
+  }, [preselectedPartnerType]);
+
   const steps = [
     { number: 1, title: 'Partner Type', icon: Building2 },
-    { number: 2, title: 'Company Info', icon: Users },
-    { number: 3, title: 'Contact Details', icon: Mail },
-    { number: 4, title: 'Review & Submit', icon: CheckCircle },
+    { number: 2, title: 'Company Info & Contact', icon: Users },
+    { number: 3, title: 'Review & Submit', icon: CheckCircle },
   ];
 
   const partnerTypes = [
@@ -69,7 +77,7 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
   ];
 
   const handleSubmit = async () => {
-    if (currentStep !== 4) {
+    if (currentStep !== 3) {
       return;
     }
 
@@ -77,7 +85,7 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
     setLoading(true);
 
     try {
-      await mockApi.partners.create({
+      const partner = await mockApi.partners.create({
         companyName: name,
         contactPerson: contactPerson,
         email: email,
@@ -96,7 +104,7 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
       // Redirect back after 2 seconds
       setTimeout(() => {
         if (onPartnerCreated) {
-          onPartnerCreated();
+          onPartnerCreated(partner);
         } else {
           onBack();
         }
@@ -121,9 +129,7 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
       case 1:
         return partnerType !== '';
       case 2:
-        return name !== '' && country !== '';
-      case 3:
-        return email !== '' && cell !== '';
+        return name !== '' && country !== '' && email !== '' && cell !== '';
       default:
         return true;
     }
@@ -399,7 +405,7 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
           </div>
         )}
 
-        {/* Step 2: Company Info */}
+        {/* Step 2: Company Info & Contact */}
         {currentStep === 2 && (
           <div className="bg-white rounded-lg shadow-sm p-8">
             <div className="flex items-center gap-3 mb-6">
@@ -407,8 +413,8 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
                 <Users className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-xl">Company Information</h2>
-                <p className="text-sm text-gray-600">Enter the partner company details</p>
+                <h2 className="text-xl">Company Information & Contact</h2>
+                <p className="text-sm text-gray-600">Enter the partner company details and contact information</p>
               </div>
             </div>
 
@@ -510,6 +516,46 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
                     placeholder="e.g., 400001"
                   />
                 </div>
+
+                {/* Email */}
+                <div>
+                  <label htmlFor="email" className="block text-sm mb-2">
+                    Email Address <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="email"
+                      id="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="contact@example.com"
+                      required
+                    />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Primary email for communication</p>
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label htmlFor="cell" className="block text-sm mb-2">
+                    Phone Number <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="tel"
+                      id="cell"
+                      value={cell}
+                      onChange={(e) => setCell(e.target.value)}
+                      className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="+1-555-0123"
+                      required
+                    />
+                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Include country code</p>
+                </div>
               </div>
 
               {/* Services Offered */}
@@ -553,79 +599,8 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
           </div>
         )}
 
-        {/* Step 3: Contact Details */}
+        {/* Step 3: Review & Submit */}
         {currentStep === 3 && (
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Mail className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl">Contact Details</h2>
-                <p className="text-sm text-gray-600">How can we reach this partner?</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className="block text-sm mb-2">
-                    Email Address <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      placeholder="contact@example.com"
-                      required
-                    />
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Primary email for communication</p>
-                </div>
-
-                {/* Phone */}
-                <div>
-                  <label htmlFor="cell" className="block text-sm mb-2">
-                    Phone Number <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="tel"
-                      id="cell"
-                      value={cell}
-                      onChange={(e) => setCell(e.target.value)}
-                      className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                      placeholder="+1-555-0123"
-                      required
-                    />
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Include country code</p>
-                </div>
-              </div>
-
-              {/* Info Box */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h4 className="text-sm text-blue-900 mb-1">Contact Information</h4>
-                  <p className="text-sm text-blue-700">
-                    This contact information will be used for all communication related to shipments and logistics coordination.
-                    Make sure it's accurate and up to date.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Review & Submit */}
-        {currentStep === 4 && (
           <div className="bg-white rounded-lg shadow-sm p-8">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -734,7 +709,7 @@ export function CreatePartner({ onBack, onPartnerCreated }: CreatePartnerProps) 
             </button>
           )}
 
-          {currentStep < 4 ? (
+          {currentStep < 3 ? (
             <button
               type="button"
               onClick={() => setCurrentStep(currentStep + 1)}

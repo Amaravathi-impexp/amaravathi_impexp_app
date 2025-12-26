@@ -16,7 +16,7 @@ import { NotificationDropdown } from './NotificationDropdown';
 import { ProfileMenu } from './ProfileMenu';
 import { TopRibbon } from './TopRibbon';
 
-interface DashboardHeaderProps {
+interface HeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   showMobileMenu: boolean;
@@ -26,7 +26,7 @@ interface DashboardHeaderProps {
   onSignOut: () => void;
 }
 
-export function DashboardHeader({
+export function Header({
   searchQuery,
   onSearchChange,
   showMobileMenu,
@@ -34,7 +34,7 @@ export function DashboardHeader({
   activeMenu,
   onMenuChange,
   onSignOut,
-}: DashboardHeaderProps) {
+}: HeaderProps) {
   const handleMobileMenuClick = (menu: string) => {
     onMenuChange(menu);
     onToggleMobileMenu();
@@ -74,7 +74,11 @@ export function DashboardHeader({
               <NotificationDropdown />
 
               {/* Profile */}
-              <ProfileMenu onSignOut={onSignOut} />
+              <ProfileMenu 
+                onSignOut={onSignOut} 
+                onSettingsClick={() => onMenuChange('settings')}
+                onProfileClick={() => onMenuChange('profile')}
+              />
 
               {/* Mobile Menu Button */}
               <button

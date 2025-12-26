@@ -1,5 +1,5 @@
 import { Navigation } from './components/Navigation';
-import { Hero } from './components/Hero';
+import { HeroCarousel } from './components/HeroCarousel';
 import { Services } from './components/Services';
 import { Solutions } from './components/Solutions';
 import { Stats } from './components/Stats';
@@ -7,25 +7,38 @@ import { CTASection } from './components/CTASection';
 import { Footer } from './components/Footer';
 import { SignIn } from './components/SignIn';
 import { SignUp } from './components/SignUp';
-import { Dashboard } from './components/Dashboard';
+import { Verification } from './components/Verification';
+import { MainLayout } from './components/MainLayout';
 import { About } from './components/About';
 import { Careers } from './components/Careers';
 import { Contact } from './components/Contact';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { setCurrentView } from './store/slices/uiSlice';
+import { logout } from './store/slices/authSlice';
 
-export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'signin' | 'signup' | 'dashboard' | 'about' | 'careers' | 'contact'>('home');
+function AppContent() {
+  const dispatch = useAppDispatch();
+  const currentView = useAppSelector((state) => state.ui.currentView);
+  const [verificationEmail, setVerificationEmail] = useState('');
 
   useEffect(() => {
     document.title = 'Amaravathi Imports & Exports';
   }, []);
 
+  const handleSignOut = () => {
+    dispatch(logout());
+    dispatch(setCurrentView('home'));
+  };
+
   if (currentView === 'signin') {
     return (
       <SignIn 
-        onClose={() => setCurrentView('home')} 
-        onSwitchToSignUp={() => setCurrentView('signup')}
-        onSignInSuccess={() => setCurrentView('dashboard')}
+        onClose={() => dispatch(setCurrentView('home'))} 
+        onSwitchToSignUp={() => dispatch(setCurrentView('signup'))}
+        onSignInSuccess={() => dispatch(setCurrentView('dashboard'))}
       />
     );
   }
@@ -33,64 +46,90 @@ export default function App() {
   if (currentView === 'signup') {
     return (
       <SignUp 
-        onClose={() => setCurrentView('home')} 
-        onSwitchToSignIn={() => setCurrentView('signin')}
+        onClose={() => dispatch(setCurrentView('home'))} 
+        onSwitchToSignIn={() => dispatch(setCurrentView('signin'))}
+        onSignUpSuccess={(email) => {
+          setVerificationEmail(email);
+          dispatch(setCurrentView('verification'));
+        }}
+      />
+    );
+  }
+
+  if (currentView === 'verification') {
+    return (
+      <Verification
+        onClose={() => dispatch(setCurrentView('home'))}
+        onSwitchToSignIn={() => dispatch(setCurrentView('signin'))}
+        email={verificationEmail}
       />
     );
   }
 
   if (currentView === 'dashboard') {
-    return <Dashboard onSignOut={() => setCurrentView('home')} />;
+    return <MainLayout onSignOut={handleSignOut} />;
   }
 
   if (currentView === 'about') {
     return <About 
-      onClose={() => setCurrentView('home')}
-      onSignInClick={() => setCurrentView('signin')}
-      onHomeClick={() => setCurrentView('home')}
-      onAboutClick={() => setCurrentView('about')}
-      onCareersClick={() => setCurrentView('careers')}
-      onContactClick={() => setCurrentView('contact')}
+      onClose={() => dispatch(setCurrentView('home'))}
+      onSignInClick={() => dispatch(setCurrentView('signin'))}
+      onHomeClick={() => dispatch(setCurrentView('home'))}
+      onAboutClick={() => dispatch(setCurrentView('about'))}
+      onCareersClick={() => dispatch(setCurrentView('careers'))}
+      onContactClick={() => dispatch(setCurrentView('contact'))}
+      currentView={currentView}
     />;
   }
 
   if (currentView === 'careers') {
     return <Careers 
-      onClose={() => setCurrentView('home')}
-      onSignInClick={() => setCurrentView('signin')}
-      onHomeClick={() => setCurrentView('home')}
-      onAboutClick={() => setCurrentView('about')}
-      onCareersClick={() => setCurrentView('careers')}
-      onContactClick={() => setCurrentView('contact')}
+      onClose={() => dispatch(setCurrentView('home'))}
+      onSignInClick={() => dispatch(setCurrentView('signin'))}
+      onHomeClick={() => dispatch(setCurrentView('home'))}
+      onAboutClick={() => dispatch(setCurrentView('about'))}
+      onCareersClick={() => dispatch(setCurrentView('careers'))}
+      onContactClick={() => dispatch(setCurrentView('contact'))}
+      currentView={currentView}
     />;
   }
 
   if (currentView === 'contact') {
     return <Contact 
-      onClose={() => setCurrentView('home')}
-      onSignInClick={() => setCurrentView('signin')}
-      onHomeClick={() => setCurrentView('home')}
-      onAboutClick={() => setCurrentView('about')}
-      onCareersClick={() => setCurrentView('careers')}
-      onContactClick={() => setCurrentView('contact')}
+      onClose={() => dispatch(setCurrentView('home'))}
+      onSignInClick={() => dispatch(setCurrentView('signin'))}
+      onHomeClick={() => dispatch(setCurrentView('home'))}
+      onAboutClick={() => dispatch(setCurrentView('about'))}
+      onCareersClick={() => dispatch(setCurrentView('careers'))}
+      onContactClick={() => dispatch(setCurrentView('contact'))}
+      currentView={currentView}
     />;
   }
 
   return (
     <div className="min-h-screen bg-white">
       <Navigation 
-        onSignInClick={() => setCurrentView('signin')}
-        onHomeClick={() => setCurrentView('home')}
-        onAboutClick={() => setCurrentView('about')}
-        onCareersClick={() => setCurrentView('careers')}
-        onContactClick={() => setCurrentView('contact')}
+        onSignInClick={() => dispatch(setCurrentView('signin'))}
+        onHomeClick={() => dispatch(setCurrentView('home'))}
+        onAboutClick={() => dispatch(setCurrentView('about'))}
+        onCareersClick={() => dispatch(setCurrentView('careers'))}
+        onContactClick={() => dispatch(setCurrentView('contact'))}
+        currentView={currentView}
       />
-      <Hero />
+      <HeroCarousel />
       <Services />
       <Solutions />
       <Stats />
       <CTASection />
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <Provider store={store}>
+      <AppContent />
+    </Provider>
   );
 }
