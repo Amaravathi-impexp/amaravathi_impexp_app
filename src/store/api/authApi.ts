@@ -1,83 +1,136 @@
 /**
  * RTK Query - Auth API
- * Handles authentication endpoints
+ * Handles authentication endpoints with REAL backend integration
+ * NO MOCK DATA - All endpoints use actual backend
  */
 
 import { baseApi } from './baseApi';
+import type { Country, ProductType, Role } from './types';
 
-export interface LoginRequest {
-  email: string;
-  password: string;
+// Re-export shared types for backward compatibility
+export type { Country, ProductType, Role };
+
+// Token Details interface
+export interface TokenDetails {
+  tokenType: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresInSeconds: number;
 }
 
-export interface LoginResponse {
-  token: string;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    role: 'Admin' | 'Importer' | 'Exporter';
+// User interface matching backend response
+export interface UserProfile {
+  id: number;
+  fullName: string;
+  email: string;
+  phone: string;
+  status: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  originCountry: Country;
+  destinationCountry: Country;
+  productType: ProductType;
+  roles: Role[];
+  tokenDetails: TokenDetails;
+  // Notification preferences
+  appNotificationEnabled?: boolean;
+  emailNotificationEnabled?: boolean;
+  phoneNotificationEnabled?: boolean;
+  // Optional fields that may be included in some responses
+  createdAt?: string;
+  updatedAt?: string;
+  notifications?: {
+    email?: boolean;
+    sms?: boolean;
+    push?: boolean;
   };
 }
 
-export interface SignUpRequest {
-  name: string;
+// Sign-in request/response
+export interface SignInRequest {
   email: string;
   password: string;
-  role: 'Importer' | 'Exporter';
+}
+
+export interface SignInResponse extends UserProfile {}
+
+// Sign-up request/response
+export interface SignUpRequest {
+  fullName: string;
+  email: string;
+  phone: string;
+  password: string;
+}
+
+export interface SignUpResponse {
+  message: string;
+}
+
+// Logout request
+export interface LogoutRequest {
+  refreshToken: string;
+  allSessions?: boolean;
+}
+
+// Refresh token request/response
+export interface RefreshTokenRequest {
+  refreshToken: string;
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
+  refreshToken: string;
+  expiresInSeconds: number;
 }
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Login
-    login: builder.mutation<LoginResponse, LoginRequest>({
+    // Sign In - POST /auth/sign-in
+    signIn: builder.mutation<SignInResponse, SignInRequest>({
       query: (credentials) => ({
-        url: '/auth/login',
+        url: '/auth/sign-in',
         method: 'POST',
         body: credentials,
       }),
       invalidatesTags: ['Auth'],
     }),
     
-    // Sign Up
-    signUp: builder.mutation<LoginResponse, SignUpRequest>({
+    // Sign Up - POST /auth/sign-up
+    signUp: builder.mutation<SignUpResponse, SignUpRequest>({
       query: (data) => ({
-        url: '/auth/signup',
+        url: '/auth/sign-up',
         method: 'POST',
         body: data,
       }),
       invalidatesTags: ['Auth'],
     }),
     
-    // Get Current User
-    getCurrentUser: builder.query<LoginResponse['user'], void>({
-      query: () => '/auth/me',
-      providesTags: ['Auth'],
-    }),
-    
-    // Logout
-    logout: builder.mutation<void, void>({
-      query: () => ({
+    // Logout - POST /auth/logout
+    logout: builder.mutation<{ message: string }, LogoutRequest>({
+      query: (data) => ({
         url: '/auth/logout',
         method: 'POST',
+        body: data,
       }),
       invalidatesTags: ['Auth'],
     }),
     
-    // Refresh Token
-    refreshToken: builder.mutation<{ token: string }, void>({
-      query: () => ({
-        url: '/auth/refresh',
+    // Refresh Token - POST /auth/refresh-token
+    refreshToken: builder.mutation<RefreshTokenResponse, RefreshTokenRequest>({
+      query: (data) => ({
+        url: '/auth/refresh-token',
         method: 'POST',
+        body: data,
       }),
+      invalidatesTags: ['Auth'],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {
-  useLoginMutation,
+  useSignInMutation,
   useSignUpMutation,
-  useGetCurrentUserQuery,
   useLogoutMutation,
   useRefreshTokenMutation,
 } = authApi;

@@ -1,35 +1,117 @@
-import { ArrowLeft, Package, Globe, Truck, Calendar, CheckCircle, AlertCircle, Ship, Plane, Box, Loader2, Users, Plus, Search } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import {
+  Stepper,
+  Step,
+  StepLabel,
+  TextField,
+  Button,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  FormLabel,
+  Select,
+  MenuItem,
+  InputLabel,
+  Alert,
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  Divider,
+  CircularProgress,
+  Autocomplete,
+  Chip,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { logger } from '../utils/logger';
+import {
+  Package,
+  Globe,
+  Truck,
+  CheckCircle,
+  AlertCircle,
+  Ship,
+  Plane,
+  Box as BoxIcon,
+  Loader2,
+  Users,
+  Plus,
+  FileText,
+  Upload,
+  X,
+  File,
+} from 'lucide-react';
 import { mockApi } from '../services/mock-api';
 import { Breadcrumb } from './Breadcrumb';
 import { CreatePartner } from './CreatePartner';
-import type { Partner } from '../types';
+import { CountryDropdown } from './common/CountryDropdown';
+import { AnimatedStepper, StepConfig } from './common/AnimatedStepper';
+import { SelectionCard } from './common/SelectionCard';
+import type { LegacyPartner } from '../types';
+import type { Country } from '../store/api/referenceDataApi';
 
 interface CreateShipmentProps {
   onBack: () => void;
   onShipmentCreated?: () => void;
 }
 
+interface UploadedDocument {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  uploadDate: Date;
+  documentType: string;
+  status: 'uploading' | 'uploaded' | 'processing' | 'ready' | 'failed';
+}
+
+const shipmentSteps: StepConfig[] = [
+  { label: 'Shipment Type', icon: Package, description: 'Choose import or export' },
+  { label: 'Cargo Details', icon: BoxIcon, description: 'Product information' },
+  { label: 'Route & Logistics', icon: Globe, description: 'Origin and destination' },
+  { label: 'Partner Selection', icon: Users, description: 'Choose shipping partner' },
+  { label: 'Documents', icon: FileText, description: 'Upload documents (optional)' },
+  { label: 'Review & Submit', icon: CheckCircle, description: 'Confirm and submit' },
+];
+
 export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [shipmentType, setShipmentType] = useState<'import' | 'export'>('import');
   const [hsCode, setHsCode] = useState('');
   const [productName, setProductName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [weight, setWeight] = useState('');
   const [complianceCritical, setComplianceCritical] = useState<'yes' | 'no'>('no');
-  const [originCountry, setOriginCountry] = useState('');
-  const [destinationCountry, setDestinationCountry] = useState('');
+  const [originCountry, setOriginCountry] = useState<Country | null>(null);
+  const [destinationCountry, setDestinationCountry] = useState<Country | null>(null);
   const [mode, setMode] = useState('');
-  const [pickupDate, setPickupDate] = useState('');
-  const [eta, setEta] = useState('');
-  const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
-  const [partners, setPartners] = useState<Partner[]>([]);
-  const [partnerSearchQuery, setPartnerSearchQuery] = useState('');
+  const [pickupDate, setPickupDate] = useState<Date | null>(null);
+  const [eta, setEta] = useState<Date | null>(null);
+  const [selectedPartners, setSelectedPartners] = useState<LegacyPartner[]>([]);
+  const [partners, setPartners] = useState<LegacyPartner[]>([]);
   const [showCreatePartner, setShowCreatePartner] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [uploadedDocuments, setUploadedDocuments] = useState<UploadedDocument[]>([]);
+  const [selectedDocumentType, setSelectedDocumentType] = useState<string>('commercial_invoice');
+  const [dragActive, setDragActive] = useState(false);
 
   useEffect(() => {
     fetchPartners();
@@ -40,23 +122,17 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
       const response = await mockApi.partners.getAll({ page: 1, limit: 100 });
       setPartners(response.data);
     } catch (error) {
-      console.error('Failed to fetch partners:', error);
+      logger.error('Failed to fetch partners', { error });
     }
   };
 
   const handlePartnerCreated = async (newPartner: Partner) => {
     await fetchPartners();
-    setSelectedPartner(newPartner);
+    setSelectedPartners([...selectedPartners, newPartner]);
     setShowCreatePartner(false);
-    setCurrentStep(4); // Return to Partner Selection step
+    setCurrentStep(3); // Return to Partner Selection step
   };
 
-  const filteredPartners = partners.filter(partner =>
-    partner.companyName.toLowerCase().includes(partnerSearchQuery.toLowerCase()) ||
-    partner.country.toLowerCase().includes(partnerSearchQuery.toLowerCase())
-  );
-
-  // If showing create partner screen, render it
   if (showCreatePartner) {
     const preselectedPartnerType = shipmentType === 'import' ? 'importer' : 'exporter';
     return (
@@ -68,48 +144,34 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
     );
   }
 
-  const steps = [
-    { number: 1, title: 'Shipment Type', icon: Package },
-    { number: 2, title: 'Cargo Details', icon: Box },
-    { number: 3, title: 'Route & Logistics', icon: Globe },
-    { number: 4, title: 'Partner Selection', icon: Users },
-    { number: 5, title: 'Review & Submit', icon: CheckCircle },
-  ];
-
   const handleSubmit = async () => {
-    // Only submit if we're on the final step
-    if (currentStep !== 5) {
-      return;
-    }
-    
+    if (currentStep !== 5) return;
+
     setError('');
     setLoading(true);
-    
+
     try {
-      // Generate shipment ID
       const shipmentId = `AMRV-2024-${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}`;
-      
-      // Call the create API
+
       await mockApi.shipments.create({
         shipmentId,
-        customerName: 'Customer Name', // You can add this to the form if needed
-        origin: originCountry,
-        destination: destinationCountry,
-        departureDate: pickupDate,
-        arrivalDate: eta,
+        customerName: 'Customer Name',
+        origin: originCountry?.name || '',
+        destination: destinationCountry?.name || '',
+        departureDate: pickupDate?.toISOString().split('T')[0] || '',
+        arrivalDate: eta?.toISOString().split('T')[0] || '',
         containerType: mode,
         cargoType: productName,
         weight: parseFloat(weight) || 0,
         volume: parseFloat(quantity) || 0,
-        value: 0, // You can add this to the form if needed
+        value: 0,
         currency: 'USD',
         incoterms: 'FOB',
-        partnerId: selectedPartner?.id || '',
+        partnerId: selectedPartners.map(partner => partner.id).join(',') || '',
       });
-      
+
       setSuccess(true);
-      
-      // Redirect back after 2 seconds
+
       setTimeout(() => {
         if (onShipmentCreated) {
           onShipmentCreated();
@@ -124,23 +186,16 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Prevent Enter key from submitting form on steps 1-3
-    if (e.key === 'Enter' && currentStep !== 5) {
-      e.preventDefault();
-    }
-  };
-
   const isStepValid = (step: number) => {
     switch (step) {
-      case 1:
+      case 0:
         return shipmentType !== '';
-      case 2:
+      case 1:
         return hsCode !== '' && productName !== '' && quantity !== '' && weight !== '';
+      case 2:
+        return originCountry !== null && destinationCountry !== null && mode !== '' && pickupDate !== null && eta !== null;
       case 3:
-        return originCountry !== '' && destinationCountry !== '' && mode !== '' && pickupDate !== '' && eta !== '';
-      case 4:
-        return selectedPartner !== null;
+        return selectedPartners.length > 0;
       default:
         return true;
     }
@@ -148,166 +203,67 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
 
   const canProceed = isStepValid(currentStep);
 
+  const handleNext = () => {
+    if (canProceed && currentStep < 5) {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const newDocuments: UploadedDocument[] = Array.from(files).map(file => ({
+        id: String(Math.floor(Math.random() * 10000)),
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        uploadDate: new Date(),
+        documentType: selectedDocumentType,
+        status: 'uploaded',
+      }));
+      setUploadedDocuments([...uploadedDocuments, ...newDocuments]);
+    }
+  };
+
+  const handleRemoveDocument = (id: string) => {
+    setUploadedDocuments(uploadedDocuments.filter(doc => doc.id !== id));
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-12">
-      {/* Full-Screen Loading Overlay */}
+      {/* Loading Overlay */}
       {loading && (
-        <div className="fixed inset-0 bg-white flex items-center justify-center z-50">
-          <div className="text-center px-4">
-            {/* Circular Progress */}
-            <div className="relative w-48 h-48 mx-auto mb-6">
-              {/* Background Circle */}
-              <svg className="w-48 h-48 transform -rotate-90">
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="88"
-                  stroke="#E5E7EB"
-                  strokeWidth="12"
-                  fill="none"
-                />
-                {/* Animated Progress Circle */}
-                <circle
-                  cx="96"
-                  cy="96"
-                  r="88"
-                  stroke="url(#gradient)"
-                  strokeWidth="12"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeDasharray="552.92"
-                  className="animate-progress-circle"
-                  style={{
-                    animation: 'progressCircle 2s ease-in-out infinite'
-                  }}
-                />
-                <defs>
-                  <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="50%" stopColor="#2563EB" />
-                    <stop offset="100%" stopColor="#1D4ED8" />
-                  </linearGradient>
-                </defs>
-              </svg>
-              
-              {/* Center Content - Rotating Icons */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative w-32 h-32">
-                  {/* Package - Top */}
-                  <div 
-                    className="absolute top-0 left-1/2 -translate-x-1/2 animate-icon-rotate"
-                    style={{ animationDelay: '0s' }}
-                  >
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                      <Package className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  
-                  {/* Ship - Right */}
-                  <div 
-                    className="absolute top-1/2 right-0 -translate-y-1/2 animate-icon-rotate"
-                    style={{ animationDelay: '0.66s' }}
-                  >
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                      <Ship className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  
-                  {/* Plane - Left */}
-                  <div 
-                    className="absolute top-1/2 left-0 -translate-y-1/2 animate-icon-rotate"
-                    style={{ animationDelay: '1.33s' }}
-                  >
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shadow-lg">
-                      <Plane className="w-6 h-6 text-white" />
-                    </div>
-                  </div>
-                  
-                  {/* Center Spinning Loader */}
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <Loader2 className="w-10 h-10 text-blue-600 animate-spin" />
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Text */}
-            <h2 className="text-2xl text-gray-900 mb-2">Creating Your Shipment</h2>
-            <p className="text-gray-600 mb-4">Please wait while we process your shipment details...</p>
-            
-            {/* Animated Dots */}
-            <div className="flex justify-center gap-2">
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0s' }}></div>
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-            </div>
-          </div>
-          
-          <style>{`
-            @keyframes progressCircle {
-              0% { 
-                strokeDashoffset: 552.92;
-              }
-              50% { 
-                strokeDashoffset: 138.23;
-              }
-              100% { 
-                strokeDashoffset: 0;
-              }
-            }
-            
-            @keyframes icon-rotate {
-              0%, 100% { 
-                transform: scale(1);
-                opacity: 1;
-              }
-              50% { 
-                transform: scale(1.2);
-                opacity: 0.8;
-              }
-            }
-            
-            .animate-icon-rotate {
-              animation: icon-rotate 2s ease-in-out infinite;
-            }
-            
-            @keyframes scale-in {
-              0% { transform: scale(0.9); opacity: 0; }
-              100% { transform: scale(1); opacity: 1; }
-            }
-            .animate-scale-in {
-              animation: scale-in 0.3s ease-out;
-            }
-          `}</style>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <Paper elevation={3} sx={{ p: 4, textAlign: 'center' }}>
+            <CircularProgress size={80} />
+            <Typography variant="h5" sx={{ mt: 3 }}>
+              Creating Your Shipment
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Please wait while we process your shipment details...
+            </Typography>
+          </Paper>
         </div>
       )}
 
       {/* Success Overlay */}
       {success && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md mx-4 transform scale-100 animate-scale-in">
-            <div className="text-center">
-              <div className="relative inline-block mb-4">
-                <CheckCircle className="w-20 h-20 text-green-600" />
-                <div className="absolute inset-0 bg-green-600 rounded-full animate-ping opacity-20"></div>
-              </div>
-              <h2 className="text-2xl text-green-900 mb-2">Shipment Created!</h2>
-              <p className="text-gray-600 mb-4">Your shipment has been successfully created and is ready for processing.</p>
-              <div className="w-full bg-green-200 rounded-full h-2">
-                <div className="bg-green-600 h-2 rounded-full" style={{ width: '100%' }}></div>
-              </div>
-              <p className="text-sm text-green-700 mt-4">Redirecting to shipments...</p>
-            </div>
-          </div>
-          <style>{`
-            @keyframes scale-in {
-              0% { transform: scale(0.9); opacity: 0; }
-              100% { transform: scale(1); opacity: 1; }
-            }
-            .animate-scale-in {
-              animation: scale-in 0.3s ease-out;
-            }
-          `}</style>
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+          <Paper elevation={3} sx={{ p: 4, textAlign: 'center', maxWidth: 400 }}>
+            <CheckCircle className="w-20 h-20 text-green-600 mx-auto" />
+            <Typography variant="h5" sx={{ mt: 2, color: 'success.dark' }}>
+              Shipment Created!
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              Your shipment has been successfully created and is ready for processing.
+            </Typography>
+          </Paper>
         </div>
       )}
 
@@ -319,766 +275,1142 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
         ]}
       />
 
-      {/* Progress Steps */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mb-8 mt-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              const isActive = currentStep === step.number;
-              const isCompleted = currentStep > step.number;
-              
-              return (
-                <div key={step.number} className="flex items-center flex-1">
-                  <div className="flex flex-col items-center flex-1">
-                    <div
-                      className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
-                        isCompleted
-                          ? 'bg-green-500 text-white'
-                          : isActive
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-gray-200 text-gray-500'
-                      }`}
-                    >
-                      {isCompleted ? (
-                        <CheckCircle className="w-6 h-6" />
-                      ) : (
-                        <Icon className="w-6 h-6" />
-                      )}
-                    </div>
-                    <div className="mt-2 text-center">
-                      <p className={`text-sm ${isActive ? 'text-blue-600' : isCompleted ? 'text-green-600' : 'text-gray-500'}`}>
-                        {step.title}
-                      </p>
-                    </div>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className="flex-1 h-1 bg-gray-200 mx-2 -mt-8">
-                      <div
-                        className={`h-full transition-all duration-300 ${
-                          currentStep > step.number ? 'bg-green-500' : 'bg-gray-200'
-                        }`}
-                      ></div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      {/* Stepper */}
+      <Box sx={{ maxWidth: 1200, mx: 'auto', px: 3, mt: 4 }}>
+        <Paper elevation={2} sx={{ p: 3 }}>
+          <AnimatedStepper activeStep={currentStep} steps={shipmentSteps} />
+        </Paper>
+      </Box>
 
       {/* Form */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Step 1: Shipment Type */}
-        {currentStep === 1 && (
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Package className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl">Select Shipment Type</h2>
-                <p className="text-sm text-gray-600">Choose whether this is an import or export shipment</p>
-              </div>
-            </div>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Box sx={{ maxWidth: 1200, mx: 'auto', px: 3, mt: 4 }}>
+          {/* Step 0: Shipment Type */}
+          {currentStep === 0 && (
+            <Paper elevation={2} sx={{ p: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <Package className="w-8 h-8 text-blue-600" />
+                <Box>
+                  <Typography variant="h5">Select Shipment Type</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Choose whether this is an import or export shipment
+                  </Typography>
+                </Box>
+              </Box>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label
-                className={`relative flex items-center p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                  shipmentType === 'import'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-blue-300'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipmentType"
-                  value="import"
-                  checked={shipmentType === 'import'}
-                  onChange={() => setShipmentType('import')}
-                  className="sr-only"
-                />
-                <div className="flex items-center gap-4 w-full">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                    shipmentType === 'import' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    <Ship className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="mb-1">Import</h3>
-                    <p className="text-sm text-gray-600">Bringing goods into the country</p>
-                  </div>
-                  {shipmentType === 'import' && (
-                    <CheckCircle className="w-6 h-6 text-blue-600" />
-                  )}
-                </div>
-              </label>
+              <FormControl component="fieldset">
+                <RadioGroup
+                  value={shipmentType}
+                  onChange={(e) => setShipmentType(e.target.value as 'import' | 'export')}
+                >
+                  <Grid container spacing={2}>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <Card
+                        variant="outlined"
+                        sx={{
+                          p: 2,
+                          cursor: 'pointer',
+                          border: shipmentType === 'import' ? 2 : 1,
+                          borderColor: shipmentType === 'import' ? 'primary.main' : 'divider',
+                          bgcolor: shipmentType === 'import' ? 'primary.50' : 'background.paper',
+                          transition: 'all 0.2s ease-in-out',
+                          '&:hover': {
+                            borderColor: 'primary.main',
+                            boxShadow: 2,
+                            '& .import-icon': {
+                              color: '#1e40af',
+                              transform: 'scale(1.1)',
+                            },
+                          },
+                        }}
+                        onClick={() => setShipmentType('import')}
+                      >
+                        <FormControlLabel
+                          value="import"
+                          control={<Radio />}
+                          label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                              <Ship 
+                                className="w-8 h-8 import-icon" 
+                                style={{
+                                  color: shipmentType === 'import' ? '#2563eb' : '#6b7280',
+                                  transition: 'all 0.2s ease-in-out',
+                                }}
+                              />
+                              <Box>
+                                <Typography variant="h6">Import</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Bringing goods into the country
+                                </Typography>
+                              </Box>
+                            </Box>
+                          }
+                        />
+                      </Card>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <Card
+                        variant="outlined"
+                        sx={{
+                          p: 2,
+                          cursor: 'pointer',
+                          border: shipmentType === 'export' ? 2 : 1,
+                          borderColor: shipmentType === 'export' ? 'primary.main' : 'divider',
+                          bgcolor: shipmentType === 'export' ? 'primary.50' : 'background.paper',
+                          transition: 'all 0.2s ease-in-out',
+                          '&:hover': {
+                            borderColor: 'primary.main',
+                            boxShadow: 2,
+                            '& .export-icon': {
+                              color: '#1e40af',
+                              transform: 'scale(1.1)',
+                            },
+                          },
+                        }}
+                        onClick={() => setShipmentType('export')}
+                      >
+                        <FormControlLabel
+                          value="export"
+                          control={<Radio />}
+                          label={
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                              <Plane 
+                                className="w-8 h-8 export-icon" 
+                                style={{
+                                  color: shipmentType === 'export' ? '#2563eb' : '#6b7280',
+                                  transition: 'all 0.2s ease-in-out',
+                                }}
+                              />
+                              <Box>
+                                <Typography variant="h6">Export</Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                  Sending goods out of the country
+                                </Typography>
+                              </Box>
+                            </Box>
+                          }
+                        />
+                      </Card>
+                    </Grid>
+                  </Grid>
+                </RadioGroup>
+              </FormControl>
+            </Paper>
+          )}
 
-              <label
-                className={`relative flex items-center p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                  shipmentType === 'export'
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-gray-200 hover:border-blue-300'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="shipmentType"
-                  value="export"
-                  checked={shipmentType === 'export'}
-                  onChange={() => setShipmentType('export')}
-                  className="sr-only"
-                />
-                <div className="flex items-center gap-4 w-full">
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                    shipmentType === 'export' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    <Plane className="w-6 h-6" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="mb-1">Export</h3>
-                    <p className="text-sm text-gray-600">Sending goods out of the country</p>
-                  </div>
-                  {shipmentType === 'export' && (
-                    <CheckCircle className="w-6 h-6 text-blue-600" />
-                  )}
-                </div>
-              </label>
-            </div>
-          </div>
-        )}
+          {/* Step 1: Cargo Details */}
+          {currentStep === 1 && (
+            <Paper elevation={2} sx={{ p: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <BoxIcon className="w-8 h-8 text-blue-600" />
+                <Box>
+                  <Typography variant="h5">Cargo Details</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Provide information about your cargo
+                  </Typography>
+                </Box>
+              </Box>
 
-        {/* Step 2: Cargo Details */}
-        {currentStep === 2 && (
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Box className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl">Cargo Details</h2>
-                <p className="text-sm text-gray-600">Provide information about your cargo</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* HS Code */}
-                <div>
-                  <label htmlFor="hsCode" className="block text-sm mb-2">
-                    HS Code <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="hsCode"
+              <Grid container spacing={3}>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="HS Code"
+                    required
                     value={hsCode}
                     onChange={(e) => setHsCode(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., 8471.30.00"
-                    required
+                    helperText="Harmonized System tariff code"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Harmonized System tariff code</p>
-                </div>
-
-                {/* Product Name */}
-                <div>
-                  <label htmlFor="productName" className="block text-sm mb-2">
-                    Product Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="productName"
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Product Name"
+                    required
                     value={productName}
                     onChange={(e) => setProductName(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., Electronic Components"
-                    required
                   />
-                </div>
-
-                {/* Quantity */}
-                <div>
-                  <label htmlFor="quantity" className="block text-sm mb-2">
-                    Quantity (CBM) <span className="text-red-500">*</span>
-                  </label>
-                  <input
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Quantity (CBM)"
+                    required
                     type="number"
-                    id="quantity"
                     value={quantity}
                     onChange={(e) => setQuantity(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., 20"
-                    required
+                    helperText="Cubic meters"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Cubic meters</p>
-                </div>
-
-                {/* Weight */}
-                <div>
-                  <label htmlFor="weight" className="block text-sm mb-2">
-                    Weight (KG) <span className="text-red-500">*</span>
-                  </label>
-                  <input
+                </Grid>
+                <Grid size={{ xs: 12, md: 6 }}>
+                  <TextField
+                    fullWidth
+                    label="Weight (KG)"
+                    required
                     type="number"
-                    id="weight"
                     value={weight}
                     onChange={(e) => setWeight(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                     placeholder="e.g., 5000"
-                    required
+                    helperText="Total weight in kilograms"
                   />
-                  <p className="text-xs text-gray-500 mt-1">Total weight in kilograms</p>
-                </div>
-              </div>
+                </Grid>
+                <Grid size={{ xs: 12 }}>
+                  <Divider sx={{ my: 2 }} />
+                  <FormControl component="fieldset">
+                    <FormLabel>Compliance Critical Cargo</FormLabel>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 2 }}>
+                      Requires special handling
+                    </Typography>
+                    <RadioGroup
+                      value={complianceCritical}
+                      onChange={(e) => setComplianceCritical(e.target.value as 'yes' | 'no')}
+                    >
+                      <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Card
+                            variant="outlined"
+                            sx={{
+                              p: 2,
+                              cursor: 'pointer',
+                              border: complianceCritical === 'yes' ? 2 : 1,
+                              borderColor: complianceCritical === 'yes' ? 'warning.main' : 'divider',
+                              bgcolor: complianceCritical === 'yes' ? 'warning.50' : 'background.paper',
+                            }}
+                            onClick={() => setComplianceCritical('yes')}
+                          >
+                            <FormControlLabel
+                              value="yes"
+                              control={<Radio />}
+                              label="Yes - Requires Special Compliance"
+                            />
+                          </Card>
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Card
+                            variant="outlined"
+                            sx={{
+                              p: 2,
+                              cursor: 'pointer',
+                              border: complianceCritical === 'no' ? 2 : 1,
+                              borderColor: complianceCritical === 'no' ? 'success.main' : 'divider',
+                              bgcolor: complianceCritical === 'no' ? 'success.50' : 'background.paper',
+                            }}
+                            onClick={() => setComplianceCritical('no')}
+                          >
+                            <FormControlLabel
+                              value="no"
+                              control={<Radio />}
+                              label="No - Standard Cargo"
+                            />
+                          </Card>
+                        </Grid>
+                      </Grid>
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Paper>
+          )}
 
-              {/* Compliance Critical */}
-              <div className="border-t border-gray-200 pt-6">
-                <label className="block mb-3">
-                  Compliance Critical Cargo <span className="text-gray-400">(Requires special handling)</span>
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label
-                    className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      complianceCritical === 'yes'
-                        ? 'border-orange-500 bg-orange-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="complianceCritical"
-                      value="yes"
-                      checked={complianceCritical === 'yes'}
-                      onChange={() => setComplianceCritical('yes')}
-                      className="sr-only"
-                    />
-                    <div className="flex items-center gap-3 w-full">
-                      <AlertCircle className={`w-5 h-5 ${complianceCritical === 'yes' ? 'text-orange-600' : 'text-gray-400'}`} />
-                      <span>Yes - Requires Special Compliance</span>
-                      {complianceCritical === 'yes' && <CheckCircle className="w-5 h-5 text-orange-600 ml-auto" />}
-                    </div>
-                  </label>
-                  <label
-                    className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                      complianceCritical === 'no'
-                        ? 'border-green-500 bg-green-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="complianceCritical"
-                      value="no"
-                      checked={complianceCritical === 'no'}
-                      onChange={() => setComplianceCritical('no')}
-                      className="sr-only"
-                    />
-                    <div className="flex items-center gap-3 w-full">
-                      <CheckCircle className={`w-5 h-5 ${complianceCritical === 'no' ? 'text-green-600' : 'text-gray-400'}`} />
-                      <span>No - Standard Cargo</span>
-                      {complianceCritical === 'no' && <CheckCircle className="w-5 h-5 text-green-600 ml-auto" />}
-                    </div>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+          {/* Step 2: Route & Logistics */}
+          {currentStep === 2 && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Route Information */}
+              <Paper elevation={2} sx={{ p: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Globe className="w-8 h-8 text-blue-600" />
+                  <Box>
+                    <Typography variant="h5">Route Information</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Specify origin and destination
+                    </Typography>
+                  </Box>
+                </Box>
 
-        {/* Step 3: Route & Logistics */}
-        {currentStep === 3 && (
-          <div className="space-y-6">
-            {/* Route Information */}
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl">Route Information</h2>
-                  <p className="text-sm text-gray-600">Specify origin and destination</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Origin Country */}
-                <div>
-                  <label htmlFor="originCountry" className="block text-sm mb-2">
-                    Origin Country <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="originCountry"
-                    value={originCountry}
-                    onChange={(e) => setOriginCountry(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    required
-                  >
-                    <option value="">Select Origin Country</option>
-                    <option value="india">India</option>
-                    <option value="usa">United States</option>
-                    <option value="uk">United Kingdom</option>
-                    <option value="uae">United Arab Emirates</option>
-                    <option value="china">China</option>
-                    <option value="singapore">Singapore</option>
-                    <option value="australia">Australia</option>
-                    <option value="japan">Japan</option>
-                    <option value="germany">Germany</option>
-                    <option value="netherlands">Netherlands</option>
-                    <option value="spain">Spain</option>
-                    <option value="canada">Canada</option>
-                  </select>
-                </div>
-
-                {/* Destination Country */}
-                <div>
-                  <label htmlFor="destinationCountry" className="block text-sm mb-2">
-                    Destination Country <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="destinationCountry"
-                    value={destinationCountry}
-                    onChange={(e) => setDestinationCountry(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                    required
-                  >
-                    <option value="">Select Destination Country</option>
-                    <option value="india">India</option>
-                    <option value="usa">United States</option>
-                    <option value="uk">United Kingdom</option>
-                    <option value="uae">United Arab Emirates</option>
-                    <option value="china">China</option>
-                    <option value="singapore">Singapore</option>
-                    <option value="australia">Australia</option>
-                    <option value="japan">Japan</option>
-                    <option value="germany">Germany</option>
-                    <option value="netherlands">Netherlands</option>
-                    <option value="spain">Spain</option>
-                    <option value="canada">Canada</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Transportation Mode */}
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Truck className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl">Transportation Mode</h2>
-                  <p className="text-sm text-gray-600">Select how the cargo will be transported</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <label
-                  className={`relative flex flex-col items-center p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                    mode === 'sea'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="sea"
-                    checked={mode === 'sea'}
-                    onChange={(e) => setMode(e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 ${
-                    mode === 'sea' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    <Ship className="w-8 h-8" />
-                  </div>
-                  <h3 className="mb-1">Sea Freight</h3>
-                  <p className="text-sm text-gray-600 text-center">Cost-effective for large volumes</p>
-                  {mode === 'sea' && (
-                    <CheckCircle className="w-6 h-6 text-blue-600 absolute top-4 right-4" />
-                  )}
-                </label>
-
-                <label
-                  className={`relative flex flex-col items-center p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                    mode === 'air'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="air"
-                    checked={mode === 'air'}
-                    onChange={(e) => setMode(e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 ${
-                    mode === 'air' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    <Plane className="w-8 h-8" />
-                  </div>
-                  <h3 className="mb-1">Air Freight</h3>
-                  <p className="text-sm text-gray-600 text-center">Fast delivery for urgent cargo</p>
-                  {mode === 'air' && (
-                    <CheckCircle className="w-6 h-6 text-blue-600 absolute top-4 right-4" />
-                  )}
-                </label>
-
-                <label
-                  className={`relative flex flex-col items-center p-6 border-2 rounded-lg cursor-pointer transition-all ${
-                    mode === 'road'
-                      ? 'border-blue-600 bg-blue-50'
-                      : 'border-gray-200 hover:border-blue-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="mode"
-                    value="road"
-                    checked={mode === 'road'}
-                    onChange={(e) => setMode(e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 ${
-                    mode === 'road' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    <Truck className="w-8 h-8" />
-                  </div>
-                  <h3 className="mb-1">Road Freight</h3>
-                  <p className="text-sm text-gray-600 text-center">Door-to-door land transport</p>
-                  {mode === 'road' && (
-                    <CheckCircle className="w-6 h-6 text-blue-600 absolute top-4 right-4" />
-                  )}
-                </label>
-              </div>
-            </div>
-
-            {/* Schedule */}
-            <div className="bg-white rounded-lg shadow-sm p-8">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-blue-600" />
-                </div>
-                <div>
-                  <h2 className="text-xl">Schedule</h2>
-                  <p className="text-sm text-gray-600">Set pickup and delivery dates</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Pickup Date */}
-                <div>
-                  <label htmlFor="pickupDate" className="block text-sm mb-2">
-                    Pickup Date <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      id="pickupDate"
-                      value={pickupDate}
-                      onChange={(e) => setPickupDate(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+                <Grid container spacing={3} sx={{ width: '100%' }}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <CountryDropdown
+                      label="Origin Country"
+                      value={originCountry}
+                      onChange={(country) => setOriginCountry(country)}
+                      placeholder="Select origin country"
                       required
                     />
-                    <Calendar 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" 
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">When will the cargo be picked up?</p>
-                </div>
-
-                {/* ETA */}
-                <div>
-                  <label htmlFor="eta" className="block text-sm mb-2">
-                    Estimated Time of Arrival <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="date"
-                      id="eta"
-                      value={eta}
-                      onChange={(e) => setEta(e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all cursor-pointer"
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <CountryDropdown
+                      label="Destination Country"
+                      value={destinationCountry}
+                      onChange={(country) => setDestinationCountry(country)}
+                      placeholder="Select destination country"
                       required
                     />
-                    <Calendar 
-                      className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" 
-                    />
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">Expected delivery date</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                  </Grid>
+                </Grid>
+              </Paper>
 
-        {/* Step 4: Partner Selection */}
-        {currentStep === 4 && (
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl">Select a Partner</h2>
-                <p className="text-sm text-gray-600">Choose a partner to handle your shipment</p>
-              </div>
-            </div>
+              {/* Transportation Mode */}
+              <Paper elevation={2} sx={{ p: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Truck className="w-8 h-8 text-blue-600" />
+                  <Box>
+                    <Typography variant="h5">Transportation Mode</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Select how the cargo will be transported
+                    </Typography>
+                  </Box>
+                </Box>
 
-            <div className="space-y-6">
-              {/* Partner Search Dropdown */}
-              <div>
-                <label htmlFor="partnerSelect" className="block text-sm mb-2">
-                  Select Partner <span className="text-red-500">*</span>
-                </label>
-                <div className="relative">
-                  <select
-                    id="partnerSelect"
-                    value={selectedPartner?.id || ''}
-                    onChange={(e) => {
-                      const partner = partners.find(p => p.id === e.target.value);
-                      setSelectedPartner(partner || null);
-                    }}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none"
-                  >
-                    <option value="">Search and select a partner...</option>
-                    {partners.map(partner => (
-                      <option key={partner.id} value={partner.id}>
-                        {partner.companyName} - {partner.country}
-                      </option>
-                    ))}
-                  </select>
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Selected Partner Details */}
-              {selectedPartner && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <h3 className="text-sm mb-3">Selected Partner Details</h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-gray-500">Company Name</p>
-                      <p>{selectedPartner.companyName}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Contact Person</p>
-                      <p>{selectedPartner.contactPerson}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Email</p>
-                      <p>{selectedPartner.email}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-500">Country</p>
-                      <p>{selectedPartner.country}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* OR Separator */}
-              <div className="flex items-center gap-4 my-6">
-                <div className="flex-1 border-t border-gray-300"></div>
-                <span className="text-gray-500 px-3">OR</span>
-                <div className="flex-1 border-t border-gray-300"></div>
-              </div>
-
-              {/* Create New Partner Button */}
-              <button
-                type="button"
-                onClick={() => setShowCreatePartner(true)}
-                className="w-full flex items-center justify-center gap-2 px-6 py-3 border-2 border-dashed border-gray-300 text-gray-700 rounded-lg hover:border-blue-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-              >
-                <Plus className="w-5 h-5" />
-                Create New Partner
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 5: Review & Submit */}
-        {currentStep === 5 && (
-          <div className="bg-white rounded-lg shadow-sm p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl">Review Your Shipment</h2>
-                <p className="text-sm text-gray-600">Please review all details before submitting</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              {/* Shipment Type */}
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-sm text-gray-600 mb-2">Shipment Type</h3>
-                <p className="capitalize">{shipmentType}</p>
-              </div>
-
-              {/* Cargo Details */}
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-sm text-gray-600 mb-3">Cargo Details</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Product Name</p>
-                    <p>{productName || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">HS Code</p>
-                    <p>{hsCode || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Quantity</p>
-                    <p>{quantity ? `${quantity} CBM` : '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Weight</p>
-                    <p>{weight ? `${weight} KG` : '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Compliance Critical</p>
-                    <p className="capitalize">{complianceCritical}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Route & Logistics */}
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-sm text-gray-600 mb-3">Route & Logistics</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Origin</p>
-                    <p className="capitalize">{originCountry || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Destination</p>
-                    <p className="capitalize">{destinationCountry || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Transportation Mode</p>
-                    <p className="capitalize">{mode || '-'}</p>
-                  </div>
-                </div>
-              </div>
+                <FormControl component="fieldset">
+                  <RadioGroup value={mode} onChange={(e) => setMode(e.target.value)}>
+                    <Grid container spacing={2}>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <SelectionCard
+                          icon={Ship}
+                          title="Sea Freight"
+                          description="Cost-effective for large volumes"
+                          value="sea"
+                          selected={mode === 'sea'}
+                          onClick={() => setMode('sea')}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <SelectionCard
+                          icon={Plane}
+                          title="Air Freight"
+                          description="Fast delivery for urgent cargo"
+                          value="air"
+                          selected={mode === 'air'}
+                          onClick={() => setMode('air')}
+                        />
+                      </Grid>
+                      <Grid size={{ xs: 12, md: 4 }}>
+                        <SelectionCard
+                          icon={Truck}
+                          title="Road Freight"
+                          description="Door-to-door land transport"
+                          value="road"
+                          selected={mode === 'road'}
+                          onClick={() => setMode('road')}
+                        />
+                      </Grid>
+                    </Grid>
+                  </RadioGroup>
+                </FormControl>
+              </Paper>
 
               {/* Schedule */}
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-sm text-gray-600 mb-3">Schedule</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-gray-500">Pickup Date</p>
-                    <p>{pickupDate || '-'}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500">Estimated Arrival</p>
-                    <p>{eta || '-'}</p>
-                  </div>
-                </div>
-              </div>
+              <Paper elevation={2} sx={{ p: 4 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                  <Package className="w-8 h-8 text-blue-600" />
+                  <Box>
+                    <Typography variant="h5">Schedule</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Set pickup and delivery dates
+                    </Typography>
+                  </Box>
+                </Box>
 
-              {/* Partner */}
-              <div className="border-b border-gray-200 pb-4">
-                <h3 className="text-sm text-gray-600 mb-3">Partner Details</h3>
-                {selectedPartner ? (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm text-gray-500">Company Name</p>
-                        <p>{selectedPartner.companyName}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Partner Type</p>
-                        <p className="capitalize">{selectedPartner.partnerType?.replace('_', ' ')}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Contact Person</p>
-                        <p>{selectedPartner.contactPerson}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Email</p>
-                        <p>{selectedPartner.email}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Phone</p>
-                        <p>{selectedPartner.phone}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-gray-500">Country</p>
-                        <p>{selectedPartner.country}</p>
-                      </div>
-                      {selectedPartner.city && (
-                        <div>
-                          <p className="text-sm text-gray-500">City</p>
-                          <p>{selectedPartner.city}</p>
-                        </div>
-                      )}
-                      {selectedPartner.address && (
-                        <div className="md:col-span-2">
-                          <p className="text-sm text-gray-500">Address</p>
-                          <p>{selectedPartner.address}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-gray-500">No partner selected</p>
+                <Grid container spacing={3}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <DatePicker
+                      label="Pickup Date *"
+                      value={pickupDate}
+                      onChange={(newValue) => setPickupDate(newValue)}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          helperText: 'When will the cargo be picked up?',
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <DatePicker
+                      label="Estimated Time of Arrival *"
+                      value={eta}
+                      onChange={(newValue) => setEta(newValue)}
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          helperText: 'Expected delivery date',
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Box>
+          )}
+
+          {/* Step 3: Partner Selection */}
+          {currentStep === 3 && (
+            <Paper elevation={2} sx={{ p: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <Users className="w-8 h-8 text-blue-600" />
+                <Box>
+                  <Typography variant="h5">Select Partners</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Choose one or more partners to handle your shipment
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Multi-Select Autocomplete for Partners */}
+                <Autocomplete
+                  multiple
+                  id="partners-autocomplete"
+                  options={partners}
+                  getOptionLabel={(option) => `${option.companyName} - ${option.country}`}
+                  value={selectedPartners}
+                  onChange={(event, newValue) => {
+                    setSelectedPartners(newValue);
+                  }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Select Partners"
+                      placeholder="Search and select partners"
+                      required
+                      helperText="Select one or more partners to work with on this shipment"
+                    />
+                  )}
+                  renderTags={(value, getTagProps) =>
+                    value.map((partner, index) => (
+                      <Chip
+                        {...getTagProps({ index })}
+                        key={partner.id}
+                        label={partner.companyName}
+                        color="primary"
+                        icon={<Users style={{ width: 16, height: 16 }} />}
+                      />
+                    ))
+                  }
+                  renderOption={(props, partner) => (
+                    <Box component="li" {...props}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, width: '100%' }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                          {partner.companyName}
+                        </Typography>
+                        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                          <Typography variant="caption" color="text.secondary">
+                            📍 {partner.country}
+                          </Typography>
+                          {partner.partnerType && (
+                            <Typography variant="caption" color="primary" sx={{ textTransform: 'capitalize' }}>
+                              {partner.partnerType.replace('_', ' ')}
+                            </Typography>
+                          )}
+                          <Typography variant="caption" color="text.secondary">
+                            ✉️ {partner.email}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  )}
+                />
+
+                {/* Selected Partners Display */}
+                {selectedPartners.length > 0 && (
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ mb: 1.5, fontWeight: 600 }}>
+                      Selected Partners ({selectedPartners.length})
+                    </Typography>
+                    <Grid container spacing={1.5}>
+                      {selectedPartners.map((partner) => (
+                        <Grid size={{ xs: 12, md: 6, lg: 4 }} key={partner.id}>
+                          <Card variant="outlined" sx={{ 
+                            borderColor: 'primary.main', 
+                            bgcolor: 'primary.50',
+                            transition: 'all 0.2s',
+                            '&:hover': {
+                              boxShadow: 2,
+                              transform: 'translateY(-2px)',
+                            }
+                          }}>
+                            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                              <Box sx={{ display: 'flex', alignItems: 'start', gap: 1.5 }}>
+                                <Box
+                                  sx={{
+                                    width: 32,
+                                    height: 32,
+                                    borderRadius: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    bgcolor: 'primary.main',
+                                    color: 'white',
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <Users style={{ width: 16, height: 16 }} />
+                                </Box>
+                                <Box sx={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5, lineHeight: 1.3 }}>
+                                    {partner.companyName}
+                                  </Typography>
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25 }}>
+                                    <Typography 
+                                      variant="caption" 
+                                      color="text.secondary" 
+                                      sx={{ fontSize: '0.7rem', lineHeight: 1.4 }}
+                                    >
+                                      Contact: {partner.contactPerson}
+                                    </Typography>
+                                    <Typography 
+                                      variant="caption" 
+                                      color="text.secondary" 
+                                      sx={{ 
+                                        fontSize: '0.7rem', 
+                                        lineHeight: 1.4,
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        whiteSpace: 'nowrap',
+                                      }}
+                                    >
+                                      Email: {partner.email}
+                                    </Typography>
+                                    <Typography 
+                                      variant="caption" 
+                                      color="text.secondary" 
+                                      sx={{ fontSize: '0.7rem', lineHeight: 1.4 }}
+                                    >
+                                      Country: {partner.country}
+                                    </Typography>
+                                  </Box>
+                                  {partner.partnerType && (
+                                    <Chip
+                                      label={partner.partnerType.replace('_', ' ')}
+                                      size="small"
+                                      color="primary"
+                                      sx={{ 
+                                        textTransform: 'capitalize', 
+                                        height: 20,
+                                        fontSize: '0.65rem',
+                                        mt: 0.5,
+                                        '& .MuiChip-label': {
+                                          px: 1,
+                                        }
+                                      }}
+                                    />
+                                  )}
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  </Box>
                 )}
-              </div>
-            </div>
 
-            {/* Messages */}
-            {error && (
-              <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600" />
-                <p className="text-red-700">{error}</p>
-              </div>
+                <Divider>
+                  <Typography variant="body2" color="text.secondary">
+                    OR
+                  </Typography>
+                </Divider>
+
+                <Button
+                  variant="outlined"
+                  size="large"
+                  startIcon={<Plus />}
+                  onClick={() => setShowCreatePartner(true)}
+                  fullWidth
+                  sx={{ borderStyle: 'dashed' }}
+                >
+                  Create New Partner
+                </Button>
+              </Box>
+            </Paper>
+          )}
+
+          {/* Step 4: Documents */}
+          {currentStep === 4 && (
+            <Paper elevation={2} sx={{ p: 4 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <FileText className="w-8 h-8 text-blue-600" />
+                <Box>
+                  <Typography variant="h5">Upload Documents</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Upload any relevant documents for your shipment (optional)
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+                {/* Document Type Selector */}
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 12, md: 6 }}>
+                    <FormControl fullWidth>
+                      <InputLabel>Document Type</InputLabel>
+                      <Select
+                        value={selectedDocumentType}
+                        onChange={(e) => setSelectedDocumentType(e.target.value)}
+                        label="Document Type"
+                      >
+                        <MenuItem value="commercial_invoice">Commercial Invoice</MenuItem>
+                        <MenuItem value="packing_list">Packing List</MenuItem>
+                        <MenuItem value="bill_of_lading">Bill of Lading</MenuItem>
+                        <MenuItem value="certificate_of_origin">Certificate of Origin</MenuItem>
+                        <MenuItem value="customs_declaration">Customs Declaration</MenuItem>
+                        <MenuItem value="insurance_certificate">Insurance Certificate</MenuItem>
+                        <MenuItem value="delivery_note">Delivery Note</MenuItem>
+                        <MenuItem value="other">Other</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+
+                {/* Drag and Drop Upload Area */}
+                <Card
+                  variant="outlined"
+                  sx={{
+                    p: 2.5,
+                    border: dragActive ? '2px dashed' : '2px dashed',
+                    borderColor: dragActive ? 'primary.main' : 'divider',
+                    bgcolor: dragActive ? 'primary.50' : 'background.paper',
+                    transition: 'all 0.2s',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      borderColor: 'primary.main',
+                      bgcolor: 'primary.50',
+                    },
+                  }}
+                  onDragEnter={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDragActive(true);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDragActive(true);
+                  }}
+                  onDragLeave={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDragActive(false);
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setDragActive(false);
+                    const files = e.dataTransfer.files;
+                    if (files && files.length > 0) {
+                      const event = { target: { files } } as any;
+                      handleFileUpload(event);
+                    }
+                  }}
+                >
+                  <Box sx={{ textAlign: 'center' }}>
+                    <Upload className="w-10 h-10 text-blue-500 mx-auto mb-2" />
+                    <Typography variant="body1" sx={{ mb: 0.5, fontWeight: 500 }}>
+                      Drag and drop files here
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1.5, display: 'block' }}>
+                      or
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      component="label"
+                      startIcon={<Upload className="w-4 h-4" />}
+                      size="small"
+                    >
+                      Browse Files
+                      <input
+                        type="file"
+                        hidden
+                        multiple
+                        onChange={handleFileUpload}
+                      />
+                    </Button>
+                    <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 1.5 }}>
+                      Supported formats: PDF, DOC, DOCX, JPG, PNG (Max 10MB each)
+                    </Typography>
+                  </Box>
+                </Card>
+
+                {/* Uploaded Documents Table */}
+                {uploadedDocuments.length > 0 && (
+                  <Box>
+                    <Typography variant="h6" sx={{ mb: 2 }}>
+                      Uploaded Documents ({uploadedDocuments.length})
+                    </Typography>
+                    <TableContainer component={Paper} variant="outlined">
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell sx={{ fontWeight: 600 }}>Document Name</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Document Type</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>File Size</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Upload Date</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                            <TableCell sx={{ fontWeight: 600 }} align="center">Actions</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {uploadedDocuments.map((doc) => (
+                            <TableRow key={doc.id} hover>
+                              <TableCell>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                  <File className="w-5 h-5 text-blue-600" />
+                                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                    {doc.name}
+                                  </Typography>
+                                </Box>
+                              </TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={doc.documentType.replace('_', ' ')}
+                                  size="small"
+                                  color="primary"
+                                  sx={{ textTransform: 'capitalize' }}
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="body2">
+                                  {(doc.size / 1024).toFixed(2)} KB
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Typography variant="body2">
+                                  {doc.uploadDate.toLocaleDateString('en-US', {
+                                    month: 'short',
+                                    day: 'numeric',
+                                    year: 'numeric',
+                                  })}
+                                </Typography>
+                              </TableCell>
+                              <TableCell>
+                                <Chip
+                                  label={doc.status}
+                                  size="small"
+                                  color={
+                                    doc.status === 'ready' ? 'success' :
+                                    doc.status === 'processing' ? 'warning' :
+                                    doc.status === 'uploaded' ? 'info' :
+                                    doc.status === 'failed' ? 'error' : 'default'
+                                  }
+                                  sx={{ textTransform: 'capitalize' }}
+                                />
+                              </TableCell>
+                              <TableCell align="center">
+                                <IconButton
+                                  size="small"
+                                  color="error"
+                                  onClick={() => handleRemoveDocument(doc.id)}
+                                  sx={{ '&:hover': { bgcolor: 'error.lighter' } }}
+                                >
+                                  <X className="w-4 h-4" />
+                                </IconButton>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </Box>
+                )}
+              </Box>
+            </Paper>
+          )}
+
+          {/* Step 5: Review & Submit */}
+          {currentStep === 5 && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Header */}
+              <Paper elevation={2} sx={{ p: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                  <Box sx={{ p: 1, bgcolor: 'success.lighter', borderRadius: 1.5 }}>
+                    <CheckCircle style={{ width: 20, height: 20, color: '#16a34a' }} />
+                  </Box>
+                  <Box>
+                    <Typography variant="h6" sx={{ fontWeight: 600 }}>Review Your Shipment</Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      Please verify all information before submitting
+                    </Typography>
+                  </Box>
+                </Box>
+              </Paper>
+
+              {/* Shipment Type & Cargo Details Combined */}
+              <Card>
+                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' }, gap: 2 }}>
+                    {/* Shipment Type */}
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Box sx={{ p: 0.75, bgcolor: 'primary.lighter', borderRadius: 1 }}>
+                          <Package style={{ width: 16, height: 16, color: '#2563eb' }} />
+                        </Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Shipment Type</Typography>
+                      </Box>
+                      <Typography variant="body2" sx={{ textTransform: 'capitalize', fontWeight: 500, ml: 4 }}>
+                        {shipmentType}
+                      </Typography>
+                    </Box>
+
+                    {/* Cargo Details */}
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Box sx={{ p: 0.75, bgcolor: 'secondary.lighter', borderRadius: 1 }}>
+                          <BoxIcon style={{ width: 16, height: 16, color: '#7c3aed' }} />
+                        </Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Cargo Details</Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 1.5, ml: 4 }}>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Product Name</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{productName || '-'}</Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">HS Code</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{hsCode || '-'}</Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Quantity</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{quantity ? `${quantity} CBM` : '-'}</Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Weight</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>{weight ? `${weight} KG` : '-'}</Typography>
+                        </Box>
+                        <Box>
+                          <Chip 
+                            label={complianceCritical === 'yes' ? 'Special Compliance' : 'Standard Cargo'}
+                            size="small"
+                            color={complianceCritical === 'yes' ? 'warning' : 'success'}
+                            sx={{ height: 20, fontSize: '0.65rem' }}
+                          />
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Route & Schedule Combined */}
+              <Card>
+                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                  <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+                    {/* Route & Logistics */}
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Box sx={{ p: 0.75, bgcolor: 'info.lighter', borderRadius: 1 }}>
+                          <Globe style={{ width: 16, height: 16, color: '#0284c7' }} />
+                        </Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Route & Logistics</Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, ml: 4 }}>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Origin → Destination</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {originCountry?.name || '-'} → {destinationCountry?.name || '-'}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Transportation Mode</Typography>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                            {mode === 'sea' && <Ship style={{ width: 16, height: 16, color: '#2563eb' }} />}
+                            {mode === 'air' && <Plane style={{ width: 16, height: 16, color: '#2563eb' }} />}
+                            {mode === 'road' && <Truck style={{ width: 16, height: 16, color: '#2563eb' }} />}
+                            <Typography variant="body2" sx={{ fontWeight: 500, textTransform: 'capitalize' }}>
+                              {mode ? `${mode} Freight` : '-'}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Box>
+                    </Box>
+
+                    {/* Schedule */}
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <Box sx={{ p: 0.75, bgcolor: 'warning.lighter', borderRadius: 1 }}>
+                          <Package style={{ width: 16, height: 16, color: '#ea580c' }} />
+                        </Box>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Schedule</Typography>
+                      </Box>
+                      
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, ml: 4 }}>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Pickup Date</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {pickupDate ? pickupDate.toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            }) : '-'}
+                          </Typography>
+                        </Box>
+                        <Box>
+                          <Typography variant="caption" color="text.secondary">Estimated Arrival</Typography>
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {eta ? eta.toLocaleDateString('en-US', { 
+                              month: 'short', 
+                              day: 'numeric',
+                              year: 'numeric'
+                            }) : '-'}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Partners Card */}
+              <Card>
+                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                    <Box sx={{ p: 0.75, bgcolor: 'success.lighter', borderRadius: 1 }}>
+                      <Users style={{ width: 16, height: 16, color: '#16a34a' }} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Selected Partners</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                        {selectedPartners.length} {selectedPartners.length === 1 ? 'partner' : 'partners'} selected
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {selectedPartners.length > 0 ? (
+                    <Grid container spacing={1.5}>
+                      {selectedPartners.map((partner, index) => (
+                        <Grid size={{ xs: 12, md: 6, lg: 4 }} key={partner.id}>
+                          <Card 
+                            variant="outlined" 
+                            sx={{ 
+                              borderColor: 'success.main',
+                              bgcolor: 'success.50',
+                            }}
+                          >
+                            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                              <Box sx={{ display: 'flex', alignItems: 'start', gap: 1.5 }}>
+                                <Box
+                                  sx={{
+                                    width: 32,
+                                    height: 32,
+                                    borderRadius: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    bgcolor: 'success.main',
+                                    color: 'white',
+                                    flexShrink: 0,
+                                    fontWeight: 700,
+                                    fontSize: '0.875rem',
+                                  }}
+                                >
+                                  {index + 1}
+                                </Box>
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                  <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.75, lineHeight: 1.3 }}>
+                                    {partner.companyName}
+                                  </Typography>
+
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                    <Box>
+                                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                                        Contact: {partner.contactPerson}
+                                      </Typography>
+                                    </Box>
+
+                                    <Box>
+                                      <Typography 
+                                        variant="caption" 
+                                        color="text.secondary" 
+                                        sx={{ 
+                                          fontSize: '0.7rem',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          whiteSpace: 'nowrap',
+                                          display: 'block'
+                                        }}
+                                      >
+                                        {partner.email}
+                                      </Typography>
+                                    </Box>
+
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                                        {partner.country}
+                                      </Typography>
+                                      {partner.partnerType && (
+                                        <Chip
+                                          label={partner.partnerType.replace('_', ' ')}
+                                          size="small"
+                                          color="success"
+                                          sx={{ 
+                                            textTransform: 'capitalize',
+                                            height: 18,
+                                            fontSize: '0.6rem',
+                                            '& .MuiChip-label': { px: 0.75 }
+                                          }}
+                                        />
+                                      )}
+                                    </Box>
+                                  </Box>
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  ) : (
+                    <Alert severity="warning" sx={{ py: 0.5 }}>
+                      No partners selected for this shipment
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Documents Card */}
+              <Card>
+                <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1.5 }}>
+                    <Box sx={{ p: 0.75, bgcolor: 'info.lighter', borderRadius: 1 }}>
+                      <FileText style={{ width: 16, height: 16, color: '#0284c7' }} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Uploaded Documents</Typography>
+                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                        {uploadedDocuments.length} {uploadedDocuments.length === 1 ? 'document' : 'documents'} attached
+                      </Typography>
+                    </Box>
+                  </Box>
+
+                  {uploadedDocuments.length > 0 ? (
+                    <Grid container spacing={1.5}>
+                      {uploadedDocuments.map((doc) => (
+                        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={doc.id}>
+                          <Card 
+                            variant="outlined" 
+                            sx={{ 
+                              borderColor: 'divider',
+                              bgcolor: 'grey.50',
+                            }}
+                          >
+                            <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                              <Box sx={{ display: 'flex', alignItems: 'start', gap: 1.5 }}>
+                                <Box
+                                  sx={{
+                                    width: 32,
+                                    height: 32,
+                                    borderRadius: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    bgcolor: 'info.main',
+                                    flexShrink: 0,
+                                  }}
+                                >
+                                  <File style={{ width: 16, height: 16, color: 'white' }} />
+                                </Box>
+                                <Box sx={{ flex: 1, minWidth: 0 }}>
+                                  <Typography 
+                                    variant="subtitle2" 
+                                    sx={{ 
+                                      fontWeight: 600, 
+                                      mb: 0.5, 
+                                      lineHeight: 1.3,
+                                      overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      whiteSpace: 'nowrap'
+                                    }}
+                                  >
+                                    {doc.fileName}
+                                  </Typography>
+
+                                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                                      Type: {doc.documentType.replace('_', ' ').split(' ').map(word => 
+                                        word.charAt(0).toUpperCase() + word.slice(1)
+                                      ).join(' ')}
+                                    </Typography>
+
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                      <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+                                        {doc.fileSize}
+                                      </Typography>
+                                      <Chip
+                                        label={doc.status}
+                                        size="small"
+                                        color={
+                                          doc.status === 'Uploaded' ? 'success' :
+                                          doc.status === 'Processing' ? 'warning' : 'default'
+                                        }
+                                        sx={{ 
+                                          height: 18,
+                                          fontSize: '0.6rem',
+                                          '& .MuiChip-label': { px: 0.75 }
+                                        }}
+                                      />
+                                    </Box>
+                                  </Box>
+                                </Box>
+                              </Box>
+                            </CardContent>
+                          </Card>
+                        </Grid>
+                      ))}
+                    </Grid>
+                  ) : (
+                    <Alert severity="info" sx={{ py: 0.5 }}>
+                      No documents uploaded for this shipment
+                    </Alert>
+                  )}
+                </CardContent>
+              </Card>
+
+              {error && (
+                <Alert severity="error" icon={<AlertCircle />}>
+                  {error}
+                </Alert>
+              )}
+            </Box>
+          )}
+
+          {/* Navigation Buttons */}
+          <Box sx={{ display: 'flex', gap: 2, mt: 4 }}>
+            <Button
+              variant="outlined"
+              onClick={currentStep === 0 ? onBack : handleBack}
+              size="large"
+            >
+              {currentStep === 0 ? 'Cancel' : 'Previous'}
+            </Button>
+            <Box sx={{ flex: 1 }} />
+            {currentStep < 5 ? (
+              <Button
+                variant="contained"
+                onClick={handleNext}
+                disabled={!canProceed}
+                size="large"
+              >
+                Next Step
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleSubmit}
+                disabled={loading}
+                startIcon={<CheckCircle />}
+                size="large"
+              >
+                Submit Shipment
+              </Button>
             )}
-          </div>
-        )}
-
-        {/* Navigation Buttons */}
-        <div className="flex gap-4 mt-8">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              onClick={() => setCurrentStep(currentStep - 1)}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Previous
-            </button>
-          )}
-          
-          {currentStep < 5 ? (
-            <button
-              type="button"
-              onClick={() => setCurrentStep(currentStep + 1)}
-              disabled={!canProceed}
-              className={`px-6 py-3 rounded-lg transition-colors ml-auto ${
-                canProceed
-                  ? 'bg-blue-600 text-white hover:bg-blue-700'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Next Step
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors ml-auto disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <CheckCircle className="w-5 h-5" />
-              Submit Shipment
-            </button>
-          )}
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </LocalizationProvider>
     </div>
   );
 }

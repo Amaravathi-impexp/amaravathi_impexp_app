@@ -1,3 +1,5 @@
+import { Box, Container, Typography } from '@mui/material';
+
 const stats = [
   { value: '700+', label: 'Vessels' },
   { value: '300+', label: 'Ports Worldwide' },
@@ -7,17 +9,48 @@ const stats = [
 
 export function Stats() {
   return (
-    <section className="py-20 bg-blue-600 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+    <Box
+      component="section"
+      sx={{
+        py: 10,
+        bgcolor: 'primary.main',
+        color: 'white',
+      }}
+    >
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: 'repeat(2, 1fr)',
+              md: 'repeat(4, 1fr)',
+            },
+            gap: 4,
+          }}
+        >
           {stats.map((stat, index) => (
-            <div key={index} className="text-center">
-              <div className="text-4xl md:text-5xl mb-2">{stat.value}</div>
-              <div className="text-blue-100">{stat.label}</div>
-            </div>
+            <Box key={index} sx={{ textAlign: 'center' }}>
+              <Typography
+                variant="h2"
+                sx={{
+                  fontSize: { xs: '2.25rem', md: '3rem' },
+                  mb: 1,
+                }}
+              >
+                {stat.value}
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: '#bfdbfe',
+                }}
+              >
+                {stat.label}
+              </Typography>
+            </Box>
           ))}
-        </div>
-      </div>
-    </section>
+        </Box>
+      </Container>
+    </Box>
   );
 }

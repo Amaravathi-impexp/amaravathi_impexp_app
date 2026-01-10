@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Menu, X, Search, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
+import { AppBar, Toolbar, Container, Box, Button, IconButton, Drawer, List, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import { Logo } from './Logo';
 import { TopRibbon } from './TopRibbon';
 
@@ -15,104 +16,152 @@ interface NavigationProps {
 export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareersClick, onContactClick, currentView = 'home' }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const navItems = [
+    { label: 'Home', onClick: onHomeClick, view: 'home' },
+    { label: 'About', onClick: onAboutClick, view: 'about' },
+    { label: 'Careers', onClick: onCareersClick, view: 'careers' },
+    { label: 'Contact', onClick: onContactClick, view: 'contact' },
+  ];
+
   return (
     <>
       <TopRibbon />
-      <nav className="bg-white border-b border-gray-200 sticky top-10 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+      <AppBar 
+        position="sticky" 
+        sx={{ 
+          top: '40px', 
+          bgcolor: 'white', 
+          color: 'text.primary',
+          boxShadow: 'none',
+          borderBottom: '1px solid',
+          borderColor: 'grey.200',
+          zIndex: 40,
+        }}
+      >
+        <Container maxWidth="lg">
+          <Toolbar sx={{ height: 96, px: { xs: 2, sm: 3, lg: 4 } }} disableGutters>
             {/* Logo */}
-            <div className="flex items-center">
-              <button onClick={onHomeClick} className="hover:opacity-80 transition-opacity">
-                <Logo className="h-14" />
-              </button>
-            </div>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: { xs: 1, md: 0 } }}>
+              <IconButton 
+                onClick={onHomeClick} 
+                sx={{ 
+                  p: 0,
+                  '&:hover': { opacity: 0.8 },
+                  transition: 'opacity 0.2s',
+                }}
+              >
+                <Logo className="h-[86px]" />
+              </IconButton>
+            </Box>
 
             {/* Desktop Navigation - aligned right */}
-            <div className="hidden md:flex items-center space-x-6">
-              <button 
-                onClick={onHomeClick} 
-                className={`hover:text-blue-600 transition-colors ${currentView === 'home' ? 'text-blue-600 font-medium' : ''}`}
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3, ml: 'auto' }}>
+              {navItems.map((item) => (
+                <Button
+                  key={item.view}
+                  onClick={item.onClick}
+                  sx={{
+                    color: currentView === item.view ? 'primary.main' : 'text.primary',
+                    fontWeight: currentView === item.view ? 600 : 400,
+                    fontSize: '1.125rem',
+                    '&:hover': {
+                      color: 'primary.main',
+                      bgcolor: 'transparent',
+                    },
+                    transition: 'color 0.2s',
+                  }}
+                >
+                  {item.label}
+                </Button>
+              ))}
+              <IconButton
+                sx={{
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
               >
-                Home
-              </button>
-              <button 
-                onClick={onAboutClick} 
-                className={`hover:text-blue-600 transition-colors ${currentView === 'about' ? 'text-blue-600 font-medium' : ''}`}
-              >
-                About
-              </button>
-              <button 
-                onClick={onCareersClick} 
-                className={`hover:text-blue-600 transition-colors ${currentView === 'careers' ? 'text-blue-600 font-medium' : ''}`}
-              >
-                Careers
-              </button>
-              <button 
-                onClick={onContactClick} 
-                className={`hover:text-blue-600 transition-colors ${currentView === 'contact' ? 'text-blue-600 font-medium' : ''}`}
-              >
-                Contact
-              </button>
-              <button className="p-2 hover:bg-gray-100 rounded-full">
-                <Search className="w-5 h-5" />
-              </button>
-              <button
+                <ChevronDown className="w-5 h-5" />
+              </IconButton>
+              <Button
                 onClick={onSignInClick}
-                className="px-4 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50"
+                variant="contained"
+                sx={{
+                  px: 3,
+                  py: 1.25,
+                  fontSize: '1.125rem',
+                  boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+                  whiteSpace: 'nowrap',
+                }}
               >
-                Sign In
-              </button>
-            </div>
+                Sign In / Sign Up
+              </Button>
+            </Box>
 
             {/* Mobile menu button */}
-            <button
-              className="md:hidden p-2"
+            <IconButton
               onClick={() => setIsMenuOpen(!isMenuOpen)}
+              sx={{ 
+                display: { xs: 'flex', md: 'none' },
+                ml: 'auto',
+              }}
             >
               {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
+            </IconButton>
+          </Toolbar>
+        </Container>
+      </AppBar>
 
-          {/* Mobile menu */}
-          {isMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-200">
-              <div className="flex flex-col space-y-4">
-                <button 
-                  onClick={onHomeClick} 
-                  className={`text-left ${currentView === 'home' ? 'text-blue-600 font-medium' : ''}`}
-                >
-                  Home
-                </button>
-                <button 
-                  onClick={onAboutClick} 
-                  className={`text-left ${currentView === 'about' ? 'text-blue-600 font-medium' : ''}`}
-                >
-                  About
-                </button>
-                <button 
-                  onClick={onCareersClick} 
-                  className={`text-left ${currentView === 'careers' ? 'text-blue-600 font-medium' : ''}`}
-                >
-                  Careers
-                </button>
-                <button 
-                  onClick={onContactClick} 
-                  className={`text-left ${currentView === 'contact' ? 'text-blue-600 font-medium' : ''}`}
-                >
-                  Contact
-                </button>
-                <button
-                  onClick={onSignInClick}
-                  className="px-4 py-2 text-blue-600 border border-blue-600 rounded hover:bg-blue-50"
-                >
-                  Sign In
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
+      {/* Mobile Drawer */}
+      <Drawer
+        anchor="top"
+        open={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            top: '136px', // 40px TopRibbon + 96px Toolbar
+            borderTop: '1px solid',
+            borderColor: 'grey.200',
+          },
+        }}
+      >
+        <List sx={{ py: 2 }}>
+          {navItems.map((item) => (
+            <ListItem key={item.view} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  item.onClick?.();
+                  setIsMenuOpen(false);
+                }}
+              >
+                <ListItemText
+                  primary={item.label}
+                  sx={{
+                    '& .MuiTypography-root': {
+                      color: currentView === item.view ? 'primary.main' : 'text.primary',
+                      fontWeight: currentView === item.view ? 600 : 400,
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))}
+          <ListItem>
+            <Button
+              onClick={onSignInClick}
+              variant="contained"
+              fullWidth
+              sx={{
+                py: 1.25,
+                boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+              }}
+            >
+              Sign In / Sign Up
+            </Button>
+          </ListItem>
+        </List>
+      </Drawer>
     </>
   );
 }

@@ -1,3 +1,17 @@
+import {
+  Box,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Chip,
+  Typography,
+} from '@mui/material';
+import { Breadcrumb } from './Breadcrumb';
+
 const invoices = [
   {
     id: 1,
@@ -73,88 +87,95 @@ const invoices = [
   },
 ];
 
-import { Breadcrumb } from './Breadcrumb';
-
 export function PaymentsInvoicing() {
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'success' | 'warning' | 'error' | 'default' => {
     switch (status) {
       case 'Paid':
-        return 'bg-green-100 text-green-800';
+        return 'success';
       case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'warning';
       case 'Overdue':
-        return 'bg-red-100 text-red-800';
+        return 'error';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'default';
     }
   };
 
   return (
-    <div>
+    <Box>
       {/* Breadcrumb */}
-      <Breadcrumb
-        items={[
-          { label: 'Payments & Invoicing' },
-        ]}
-      />
+      <Breadcrumb items={[{ label: 'Payments & Invoicing' }]} />
 
       {/* Invoices Table */}
-      <div className="bg-white rounded-lg shadow-sm mt-6">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
+      <TableContainer component={Paper} sx={{ mt: 3 }}>
+        <Table>
+          <TableHead>
+            <TableRow sx={{ bgcolor: 'grey.50' }}>
+              <TableCell>
+                <Typography variant="caption" sx={{ textTransform: 'uppercase', fontWeight: 600 }}>
                   Invoice No
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="caption" sx={{ textTransform: 'uppercase', fontWeight: 600 }}>
                   Party
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="caption" sx={{ textTransform: 'uppercase', fontWeight: 600 }}>
                   Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="caption" sx={{ textTransform: 'uppercase', fontWeight: 600 }}>
                   Currency
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="caption" sx={{ textTransform: 'uppercase', fontWeight: 600 }}>
                   Due Date
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant="caption" sx={{ textTransform: 'uppercase', fontWeight: 600 }}>
                   Status
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {invoices.map((invoice) => (
-                <tr key={invoice.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">{invoice.invoiceNo}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">{invoice.party}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">{invoice.amount}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">{invoice.currency}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-900">{invoice.dueDate}</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 inline-flex text-xs leading-5 rounded-full ${getStatusColor(invoice.status)}`}
-                    >
-                      {invoice.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                </Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {invoices.map((invoice) => (
+              <TableRow
+                key={invoice.id}
+                sx={{
+                  '&:hover': {
+                    bgcolor: 'grey.50',
+                  },
+                }}
+              >
+                <TableCell>
+                  <Typography variant="body2">{invoice.invoiceNo}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2">{invoice.party}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2">{invoice.amount}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2">{invoice.currency}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2">{invoice.dueDate}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Chip label={invoice.status} color={getStatusColor(invoice.status)} size="small" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 }

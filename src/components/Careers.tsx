@@ -1,3 +1,4 @@
+import { Box, Container, Typography, Button, Paper } from '@mui/material';
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { Construction, Hammer, HardHat, Wrench, Cog, Sparkles } from 'lucide-react';
@@ -14,8 +15,8 @@ interface CareersProps {
 
 export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, onContactClick, onSignInClick, currentView }: CareersProps) {
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Navigation 
+    <Box sx={{ minHeight: '100vh', bgcolor: 'white', display: 'flex', flexDirection: 'column' }}>
+      <Navigation
         onSignInClick={onSignInClick}
         onHomeClick={onHomeClick}
         onAboutClick={onAboutClick}
@@ -24,168 +25,312 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
         currentView={currentView}
       />
 
-      <main className="flex-1 flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-orange-50">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+      <Box
+        component="main"
+        sx={{
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #fff7ed 100%)',
+        }}
+      >
+        <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 10, textAlign: 'center' }}>
           {/* Animated Construction Icons */}
-          <div className="relative mb-12">
-            <div className="flex items-center justify-center gap-6 mb-8">
-              <div className="animate-bounce delay-0">
+          <Box sx={{ position: 'relative', mb: 6 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, mb: 4 }}>
+              <Box className="animate-bounce">
                 <HardHat className="w-16 h-16 text-orange-500" />
-              </div>
-              <div className="animate-bounce delay-100">
+              </Box>
+              <Box className="animate-bounce">
                 <Construction className="w-20 h-20 text-blue-600" />
-              </div>
-              <div className="animate-bounce delay-200">
+              </Box>
+              <Box className="animate-bounce">
                 <Wrench className="w-16 h-16 text-orange-500" />
-              </div>
-            </div>
-            
+              </Box>
+            </Box>
+
             {/* Rotating Gears */}
-            <div className="absolute top-0 left-1/4 animate-spin-slow opacity-20">
+            <Box
+              className="animate-spin-slow"
+              sx={{
+                position: 'absolute',
+                top: 0,
+                left: '25%',
+                opacity: 0.2,
+              }}
+            >
               <Cog className="w-12 h-12 text-gray-400" />
-            </div>
-            <div className="absolute bottom-0 right-1/4 animate-spin-slow-reverse opacity-20">
+            </Box>
+            <Box
+              className="animate-spin-slow"
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: '25%',
+                opacity: 0.2,
+              }}
+            >
               <Cog className="w-16 h-16 text-gray-400" />
-            </div>
-          </div>
+            </Box>
+          </Box>
 
           {/* Main Content */}
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 text-orange-800 rounded-full text-sm mb-4">
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Box
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                px: 2,
+                py: 1,
+                bgcolor: '#fff7ed',
+                color: '#c2410c',
+                borderRadius: '9999px',
+                fontSize: '0.875rem',
+                mx: 'auto',
+                mb: 2,
+              }}
+            >
               <Sparkles className="w-4 h-4" />
               <span>Coming Soon</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-6xl mb-6 bg-gradient-to-r from-blue-600 to-orange-500 bg-clip-text text-transparent">
+            </Box>
+
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '3rem', md: '3.75rem' },
+                mb: 3,
+                background: 'linear-gradient(90deg, #2563eb 0%, #f97316 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               Under Construction
-            </h1>
-            
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-              We're building something amazing! Our Careers page is currently under development. 
+            </Typography>
+
+            <Typography
+              variant="h6"
+              sx={{
+                color: 'text.secondary',
+                maxWidth: 672,
+                mx: 'auto',
+                mb: 4,
+                fontSize: { xs: '1.125rem', sm: '1.25rem' },
+              }}
+            >
+              We're building something amazing! Our Careers page is currently under development.
               We're crafting the perfect space to showcase exciting opportunities at Amaravathi.
-            </p>
+            </Typography>
 
             {/* Construction Progress Bar */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="bg-gray-200 rounded-full h-4 overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-600 to-orange-500 h-full rounded-full animate-progress" style={{ width: '65%' }}>
-                  <div className="h-full w-full bg-white/20 animate-shimmer"></div>
-                </div>
-              </div>
-              <p className="text-sm text-gray-500 mt-2">65% Complete</p>
-            </div>
+            <Box sx={{ maxWidth: 448, mx: 'auto', mb: 4 }}>
+              <Box
+                sx={{
+                  bgcolor: 'grey.200',
+                  borderRadius: '9999px',
+                  height: 16,
+                  overflow: 'hidden',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: '65%',
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #2563eb 0%, #f97316 100%)',
+                    borderRadius: '9999px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '100%',
+                      background: 'rgba(255, 255, 255, 0.2)',
+                    },
+                  }}
+                />
+              </Box>
+              <Typography variant="body2" sx={{ color: 'grey.500', mt: 1 }}>
+                65% Complete
+              </Typography>
+            </Box>
 
             {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12">
-              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-blue-100">
-                <div className="text-3xl text-blue-600 mb-2">50+</div>
-                <div className="text-sm text-gray-600">Positions Planned</div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-orange-100">
-                <div className="text-3xl text-orange-500 mb-2">15+</div>
-                <div className="text-sm text-gray-600">Global Locations</div>
-              </div>
-              <div className="bg-white p-6 rounded-lg shadow-md border-2 border-blue-100">
-                <div className="text-3xl text-blue-600 mb-2">100%</div>
-                <div className="text-sm text-gray-600">Worth the Wait</div>
-              </div>
-            </div>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(3, 1fr)',
+                gap: 3,
+                maxWidth: 672,
+                mx: 'auto',
+                mt: 6,
+              }}
+            >
+              <Paper
+                elevation={2}
+                sx={{
+                  p: 3,
+                  bgcolor: 'white',
+                  border: '2px solid',
+                  borderColor: '#dbeafe',
+                }}
+              >
+                <Typography variant="h4" sx={{ color: 'primary.main', mb: 1 }}>
+                  50+
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Positions Planned
+                </Typography>
+              </Paper>
+              <Paper
+                elevation={2}
+                sx={{
+                  p: 3,
+                  bgcolor: 'white',
+                  border: '2px solid',
+                  borderColor: '#ffedd5',
+                }}
+              >
+                <Typography variant="h4" sx={{ color: '#f97316', mb: 1 }}>
+                  15+
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Global Locations
+                </Typography>
+              </Paper>
+              <Paper
+                elevation={2}
+                sx={{
+                  p: 3,
+                  bgcolor: 'white',
+                  border: '2px solid',
+                  borderColor: '#dbeafe',
+                }}
+              >
+                <Typography variant="h4" sx={{ color: 'primary.main', mb: 1 }}>
+                  100%
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  Worth the Wait
+                </Typography>
+              </Paper>
+            </Box>
 
             {/* Call to Action */}
-            <div className="mt-12 p-8 bg-blue-50 rounded-2xl border-2 border-blue-200 max-w-2xl mx-auto">
-              <h3 className="text-2xl mb-3">Interested in joining us?</h3>
-              <p className="text-gray-600 mb-6">
+            <Paper
+              elevation={0}
+              sx={{
+                mt: 6,
+                p: 4,
+                bgcolor: '#eff6ff',
+                border: '2px solid',
+                borderColor: '#bfdbfe',
+                borderRadius: 4,
+                maxWidth: 672,
+                mx: 'auto',
+              }}
+            >
+              <Typography variant="h5" sx={{ mb: 1.5, fontSize: { xs: '1.5rem', sm: '1.875rem' } }}>
+                Interested in joining us?
+              </Typography>
+              <Typography variant="body1" sx={{ color: 'text.secondary', mb: 3 }}>
                 In the meantime, feel free to reach out to our HR team directly.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
+              </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  gap: 2,
+                  justifyContent: 'center',
+                }}
+              >
+                <Button
                   onClick={onContactClick}
-                  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  variant="contained"
+                  size="large"
+                  sx={{
+                    px: 3,
+                    py: 1.5,
+                  }}
                 >
                   Contact Us
-                </button>
-                <a 
+                </Button>
+                <Button
+                  component="a"
                   href="mailto:careers@amaravathi.com"
-                  className="px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors"
+                  variant="outlined"
+                  size="large"
+                  sx={{
+                    px: 3,
+                    py: 1.5,
+                    borderWidth: 2,
+                    '&:hover': {
+                      borderWidth: 2,
+                      bgcolor: '#eff6ff',
+                    },
+                  }}
                 >
                   Email: careers@amaravathi.com
-                </a>
-              </div>
-            </div>
-          </div>
+                </Button>
+              </Box>
+            </Paper>
+          </Box>
 
           {/* Decorative Elements */}
-          <div className="mt-16 flex items-center justify-center gap-3 text-gray-400">
+          <Box
+            sx={{
+              mt: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1.5,
+              color: 'grey.400',
+            }}
+          >
             <Hammer className="w-5 h-5 animate-pulse" />
-            <span className="text-sm">Building with care...</span>
+            <Typography variant="body2">Building with care...</Typography>
             <Hammer className="w-5 h-5 animate-pulse" />
-          </div>
-        </div>
-      </main>
+          </Box>
+        </Container>
+      </Box>
 
       <Footer />
 
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes progress {
-          0% {
-            width: 0%;
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes bounce {
+          0%, 100% {
+            transform: translateY(-25%);
+            animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
           }
-          100% {
-            width: 65%;
-          }
-        }
-
-        @keyframes shimmer {
-          0% {
-            transform: translateX(-100%);
-          }
-          100% {
-            transform: translateX(100%);
+          50% {
+            transform: translateY(0);
+            animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
           }
         }
 
-        @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
+        .animate-bounce {
+          animation: bounce 1s infinite;
         }
 
-        @keyframes spin-slow-reverse {
-          from {
-            transform: rotate(360deg);
+        @keyframes pulse {
+          0%, 100% {
+            opacity: 1;
           }
-          to {
-            transform: rotate(0deg);
+          50% {
+            opacity: 0.5;
           }
         }
 
-        .animate-progress {
-          animation: progress 2s ease-out;
+        .animate-pulse {
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-
-        .animate-shimmer {
-          animation: shimmer 2s infinite;
-        }
-
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-
-        .animate-spin-slow-reverse {
-          animation: spin-slow-reverse 8s linear infinite;
-        }
-
-        .delay-100 {
-          animation-delay: 0.1s;
-        }
-
-        .delay-200 {
-          animation-delay: 0.2s;
-        }
-      `}} />
-    </div>
+      `
+      }} />
+    </Box>
   );
 }

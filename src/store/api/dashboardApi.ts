@@ -87,6 +87,7 @@ export const dashboardApi = baseApi.injectEndpoints({
       providesTags: ['Dashboard'],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {

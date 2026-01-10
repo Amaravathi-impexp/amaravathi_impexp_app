@@ -140,7 +140,34 @@ export interface TrackingEvent {
 }
 
 // Partner types
+export interface PartnerType {
+  id: number;
+  code: string;
+  name: string;
+}
+
 export interface Partner {
+  id: number;
+  partnerTypes: PartnerType[];
+  name: string;
+  email: string;
+  phone: string;
+  website?: string;
+  countryId: number;
+  addressLine1: string;
+  addressLine2?: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  rating: number | null;
+  verified: boolean;
+  status: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Legacy Partner type for mock API (deprecated - use Partner instead)
+export interface LegacyPartner {
   id: string;
   companyName: string;
   contactPerson: string;
@@ -154,18 +181,42 @@ export interface Partner {
 }
 
 export interface CreatePartnerRequest {
-  companyName: string;
-  contactPerson: string;
+  partnerTypeIds: number[];
+  name: string;
   email: string;
   phone: string;
-  address: string;
+  website?: string;
+  countryId: number;
+  addressLine1: string;
+  addressLine2?: string;
   city: string;
   state: string;
-  country: string;
   postalCode: string;
-  partnerType: string;
-  servicesOffered: string[];
-  notes?: string;
+}
+
+export interface UpdatePartnerRequest {
+  partnerTypeIds?: number[];
+  name?: string;
+  email?: string;
+  phone?: string;
+  website?: string;
+  countryId?: number;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  rating?: number | null;
+  verified?: boolean;
+  status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+}
+
+export interface PartnerQueryParams {
+  partnerTypeId?: number;
+  countryId?: number;
+  status?: 'ACTIVE' | 'INACTIVE' | 'PENDING';
+  verified?: boolean;
+  search?: string;
 }
 
 // Invoice types

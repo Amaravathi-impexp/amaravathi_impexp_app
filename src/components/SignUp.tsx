@@ -1,17 +1,38 @@
-import { Mail, Lock, Eye, EyeOff, User, Phone } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { useState } from 'react';
+import {
+  TextField,
+  Button,
+  Alert,
+  IconButton,
+  InputAdornment,
+  FormControlLabel,
+  Checkbox,
+  Box,
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Logo } from './Logo';
 import { SimpleFooter } from './SimpleFooter';
-import { mockApi } from '../services/mock-api';
 import { TopRibbon } from './TopRibbon';
+import { useSignUpMutation } from '../store/api/authApi';
+import { useAppDispatch } from '../store/hooks';
+import { setCredentials } from '../store/slices/authSlice';
 
 interface SignUpProps {
   onClose: () => void;
   onSwitchToSignIn: () => void;
-  onSignUpSuccess: (email: string) => void;
+  onSignUpSuccess: () => void;
 }
 
 export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpProps) {
+  const dispatch = useAppDispatch();
+  const [signUp, { isLoading }] = useSignUpMutation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,11 +44,31 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
     agreeToTerms: false,
   });
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [hasPasswordBeenFocused, setHasPasswordBeenFocused] = useState(false);
+  
+  // Password validation states
+  const [passwordValidation, setPasswordValidation] = useState({
+    minLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+  });
+  
+  // Check if all password requirements are met
+  const allPasswordRequirementsMet = 
+    passwordValidation.minLength &&
+    passwordValidation.hasUppercase &&
+    passwordValidation.hasLowercase &&
+    passwordValidation.hasNumber &&
+    passwordValidation.hasSpecialChar;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMessage('');
     
     // Validation
     if (formData.password !== formData.confirmPassword) {
@@ -40,23 +81,26 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
       return;
     }
     
-    setLoading(true);
-    
     try {
-      // Call the register API
-      await mockApi.auth.register({
-        name: formData.fullName,
+      // Call real API - no fallback
+      const response = await signUp({
+        fullName: formData.fullName,
         email: formData.email,
+        phone: formData.phone,
         password: formData.password,
-        company: '',
-      });
+      }).unwrap();
       
-      // Navigate to verification screen immediately
-      onSignUpSuccess(formData.email);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed');
-    } finally {
-      setLoading(false);
+      // Show success message
+      setSuccessMessage('Account created successfully! Please check your email for verification.');
+      
+      // Optionally redirect to sign in after a delay
+      setTimeout(() => {
+        onSwitchToSignIn();
+      }, 2000);
+    } catch (err: any) {
+      // Handle API errors - no console.log of error details
+      const errorMessage = err?.data?.message || err?.message || 'Sign-up failed. Please try again.';
+      setError(errorMessage);
     }
   };
 
@@ -64,14 +108,30 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const validatePassword = (password: string) => {
+    const minLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%&*_\-.]/.test(password);
+    
+    setPasswordValidation({
+      minLength,
+      hasUppercase,
+      hasLowercase,
+      hasNumber,
+      hasSpecialChar,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <TopRibbon />
       <header className="bg-white shadow-sm sticky top-10 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-20">
+          <div className="flex items-center h-24">
             <button onClick={onClose} className="hover:opacity-80 transition-opacity">
-              <Logo className="h-14" />
+              <Logo className="h-[86px]" />
             </button>
           </div>
         </div>
@@ -79,206 +139,275 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
 
       <div className="flex-1 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow-lg sm:rounded-lg sm:px-10">
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label htmlFor="fullName" className="block text-sm mb-2">
-                  Full Name *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="fullName"
-                    name="fullName"
-                    type="text"
-                    required
-                    value={formData.fullName}
-                    onChange={(e) => handleChange('fullName', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="John Doe"
-                  />
-                </div>
-              </div>
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              {/* Full Name */}
+              <TextField
+                id="fullName"
+                name="fullName"
+                type="text"
+                label="Full Name"
+                placeholder="John Doe"
+                required
+                fullWidth
+                value={formData.fullName}
+                onChange={(e) => handleChange('fullName', e.target.value)}
+                variant="outlined"
+              />
 
-              <div>
-                <label htmlFor="email" className="block text-sm mb-2">
-                  Email Address *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={formData.email}
-                    onChange={(e) => handleChange('email', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="you@example.com"
-                  />
-                </div>
-              </div>
+              {/* Email */}
+              <TextField
+                id="email"
+                name="email"
+                type="email"
+                label="Email Address"
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+                fullWidth
+                value={formData.email}
+                onChange={(e) => handleChange('email', e.target.value)}
+                variant="outlined"
+              />
 
-              <div>
-                <label htmlFor="phone" className="block text-sm mb-2">
-                  Phone Number *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    required
-                    value={formData.phone}
-                    onChange={(e) => handleChange('phone', e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="+1 (555) 000-0000"
-                  />
-                </div>
-              </div>
+              {/* Phone */}
+              <TextField
+                id="phone"
+                name="phone"
+                type="tel"
+                label="Phone Number"
+                placeholder="+1 (555) 000-0000"
+                required
+                fullWidth
+                value={formData.phone}
+                onChange={(e) => handleChange('phone', e.target.value)}
+                variant="outlined"
+              />
 
-              <div>
-                <label htmlFor="password" className="block text-sm mb-2">
-                  Password *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    required
-                    value={formData.password}
-                    onChange={(e) => handleChange('password', e.target.value)}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                </div>
-                <p className="mt-1 text-xs text-gray-500">
-                  Must be at least 8 characters
-                </p>
-              </div>
+              {/* Password */}
+              <Box>
+                <TextField
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  label="Password"
+                  placeholder="••••••••"
+                  autoComplete="new-password"
+                  required
+                  fullWidth
+                  value={formData.password}
+                  onChange={(e) => {
+                    handleChange('password', e.target.value);
+                    validatePassword(e.target.value);
+                  }}
+                  onFocus={() => {
+                    setPasswordFocused(true);
+                    setHasPasswordBeenFocused(true);
+                  }}
+                  onBlur={() => setPasswordFocused(false)}
+                  variant="outlined"
+                  helperText="Must be at least 8 characters"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                
+                {/* Password Requirements */}
+                {hasPasswordBeenFocused && (
+                  <Paper variant="outlined" sx={{ mt: 2, p: 2, bgcolor: 'grey.50' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                      Password must contain:
+                    </Typography>
+                    <List dense disablePadding>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.minLength ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="Minimum 8 characters"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.minLength ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasUppercase ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 uppercase letter"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasUppercase ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasLowercase ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 lowercase letter"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasLowercase ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasNumber ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 number"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasNumber ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasSpecialChar ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 special character (! @ # $ % & * _ - .)"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasSpecialChar ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                    </List>
+                  </Paper>
+                )}
+              </Box>
 
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm mb-2">
-                  Confirm Password *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    autoComplete="new-password"
-                    required
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="••••••••"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                </div>
-              </div>
+              {/* Confirm Password */}
+              <TextField
+                id="confirmPassword"
+                name="confirmPassword"
+                type={showConfirmPassword ? 'text' : 'password'}
+                label="Confirm Password"
+                placeholder="••••••••"
+                autoComplete="new-password"
+                required
+                fullWidth
+                value={formData.confirmPassword}
+                onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                variant="outlined"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
-              <div className="flex items-start">
-                <div className="flex items-center h-5">
-                  <input
+              {/* Terms Checkbox */}
+              <FormControlLabel
+                control={
+                  <Checkbox
                     id="agreeToTerms"
                     name="agreeToTerms"
-                    type="checkbox"
                     required
                     checked={formData.agreeToTerms}
                     onChange={(e) => handleChange('agreeToTerms', e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                </div>
-                <div className="ml-3 text-sm">
-                  <label htmlFor="agreeToTerms" className="text-gray-700">
+                }
+                label={
+                  <Typography variant="body2" color="text.secondary">
                     I agree to the{' '}
-                    <button type="button" className="text-blue-600 hover:text-blue-500">
+                    <Button variant="text" size="small" sx={{ p: 0, minWidth: 0, textTransform: 'none' }}>
                       Terms of Service
-                    </button>{' '}
+                    </Button>{' '}
                     and{' '}
-                    <button type="button" className="text-blue-600 hover:text-blue-500">
+                    <Button variant="text" size="small" sx={{ p: 0, minWidth: 0, textTransform: 'none' }}>
                       Privacy Policy
-                    </button>
-                  </label>
-                </div>
-              </div>
+                    </Button>
+                  </Typography>
+                }
+              />
 
               {/* Error Message */}
               {error && (
-                <div className="rounded-md bg-red-50 border border-red-200 p-4">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm text-red-800">{error}</p>
-                    </div>
-                  </div>
-                </div>
+                <Alert severity="error" onClose={() => setError('')}>
+                  {error}
+                </Alert>
               )}
 
-              <div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Creating Account...' : 'Create Account'}
-                </button>
-              </div>
-            </form>
+              {/* Success Message */}
+              {successMessage && (
+                <Alert severity="success" onClose={() => setSuccessMessage('')}>
+                  {successMessage}
+                </Alert>
+              )}
 
-            <p className="mt-6 text-center text-sm text-gray-600">
-              Already have an account?{' '}
-              <button
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                variant="contained"
+                fullWidth
+                size="large"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
+              </Button>
+            </Box>
+
+            {/* Sign In Link */}
+            <Box sx={{ mt: 3, textAlign: 'center' }}>
+              <span className="text-sm text-gray-600">
+                Already have an account?{' '}
+              </span>
+              <Button
                 type="button"
+                variant="text"
                 onClick={onSwitchToSignIn}
-                className="text-blue-600 hover:text-blue-500"
+                sx={{ textTransform: 'none', p: 0, minWidth: 0 }}
               >
                 Sign in
-              </button>
-            </p>
-          </div>
+              </Button>
+            </Box>
+          </Paper>
 
+          {/* Back to Home Link */}
           <div className="mt-4 text-center">
             <button
               onClick={onClose}

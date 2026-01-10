@@ -1,3 +1,4 @@
+import { Box, Container, Typography, Paper, Button } from '@mui/material';
 import { Ship, Truck, Warehouse, Globe } from 'lucide-react';
 
 const services = [
@@ -25,34 +26,96 @@ const services = [
 
 export function Services() {
   return (
-    <section className="py-20 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="mb-4">Our Services</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+    <Box
+      component="section"
+      sx={{
+        py: 10,
+        bgcolor: 'grey.50',
+      }}
+    >
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+        <Box sx={{ textAlign: 'center', mb: 8 }}>
+          <Typography variant="h2" sx={{ mb: 2 }}>
+            Our Services
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'text.secondary',
+              maxWidth: 768,
+              mx: 'auto',
+              fontSize: { xs: '1.125rem', sm: '1.25rem' },
+            }}
+          >
             Comprehensive logistics solutions tailored to your business needs
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              lg: 'repeat(4, 1fr)',
+            },
+            gap: 4,
+          }}
+        >
           {services.map((service, index) => {
             const Icon = service.icon;
             return (
-              <div
+              <Paper
                 key={index}
-                className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                elevation={1}
+                sx={{
+                  p: 3,
+                  bgcolor: 'white',
+                  transition: 'box-shadow 0.2s',
+                  '&:hover': {
+                    boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+                  },
+                }}
               >
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                <Box
+                  sx={{
+                    width: 48,
+                    height: 48,
+                    bgcolor: 'primary.lighter',
+                    borderRadius: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    mb: 2,
+                  }}
+                >
                   <Icon className="w-6 h-6 text-blue-600" />
-                </div>
-                <h3 className="mb-3">{service.title}</h3>
-                <p className="text-gray-600">{service.description}</p>
-                <button className="mt-4 text-blue-600 hover:underline">Learn more →</button>
-              </div>
+                </Box>
+                <Typography variant="h6" sx={{ mb: 1.5 }}>
+                  {service.title}
+                </Typography>
+                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                  {service.description}
+                </Typography>
+                <Button
+                  sx={{
+                    mt: 2,
+                    color: 'primary.main',
+                    p: 0,
+                    minWidth: 'auto',
+                    '&:hover': {
+                      bgcolor: 'transparent',
+                      textDecoration: 'underline',
+                    },
+                  }}
+                >
+                  Learn more →
+                </Button>
+              </Paper>
             );
           })}
-        </div>
-      </div>
-    </section>
+        </Box>
+      </Container>
+    </Box>
   );
 }

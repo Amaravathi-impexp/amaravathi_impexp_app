@@ -9,7 +9,7 @@ import {
   User, 
   Building2, 
   Weight, 
-  Box, 
+  Box as BoxIcon, 
   AlertCircle, 
   Upload,
   Save,
@@ -21,6 +21,21 @@ import {
   Trash2,
   Plus
 } from 'lucide-react';
+import {
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  Alert,
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  IconButton,
+  Chip,
+} from '@mui/material';
 import { Breadcrumb } from './Breadcrumb';
 import type { Shipment } from '../types';
 import { useState } from 'react';
@@ -110,7 +125,8 @@ export function ModifyShipment({ shipment, onBack, onShipmentModified }: ModifyS
   };
 
   const handleSave = () => {
-    console.log('Saving shipment:', formData);
+    // Save shipment modifications
+    // TODO: Implement API call to update shipment
     onShipmentModified();
   };
 
@@ -160,33 +176,34 @@ export function ModifyShipment({ shipment, onBack, onShipmentModified }: ModifyS
     setUploadedDocuments(uploadedDocuments.filter(doc => doc.id !== id));
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
     switch (status) {
       case 'Booked':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'info';
       case 'In Transit':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'primary';
       case 'Cleared':
-        return 'bg-green-100 text-green-800 border-green-200';
       case 'Delivered':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'success';
       case 'Delayed':
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'error';
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'default';
     }
   };
 
   const getDocumentStatusBadge = (status: string) => {
-    const styles: Record<string, string> = {
-      approved: 'bg-green-100 text-green-700 border-green-200',
-      pending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      rejected: 'bg-red-100 text-red-700 border-red-200',
+    const colorMap: Record<string, 'success' | 'warning' | 'error' | 'default'> = {
+      approved: 'success',
+      pending: 'warning',
+      rejected: 'error',
     };
     return (
-      <span className={`px-3 py-1 rounded-full text-xs border ${styles[status] || 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </span>
+      <Chip 
+        label={status.charAt(0).toUpperCase() + status.slice(1)} 
+        color={colorMap[status] || 'default'}
+        size="small"
+      />
     );
   };
 
@@ -208,603 +225,594 @@ export function ModifyShipment({ shipment, onBack, onShipmentModified }: ModifyS
       />
 
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 mt-6">
-        <div className="flex items-center gap-4">
-          <button
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, mt: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Button
+            variant="outlined"
             onClick={onBack}
-            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            startIcon={<span>←</span>}
           >
-            ← Back
-          </button>
-          <div>
-            <h1 className="text-2xl">Modify Shipment</h1>
-            <p className="text-sm text-gray-600 mt-1">Shipment ID: {shipment.id}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Save className="w-5 h-5" />
-            Save Changes
-          </button>
-        </div>
-      </div>
+            Back
+          </Button>
+          <Box>
+            <Typography variant="h4">Modify Shipment</Typography>
+            <Typography variant="body2" color="text.secondary">
+              Shipment ID: {shipment.id}
+            </Typography>
+          </Box>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<Save className="w-5 h-5" />}
+          onClick={handleSave}
+        >
+          Save Changes
+        </Button>
+      </Box>
 
       {/* Alert Banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <div className="flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 text-blue-600 mt-0.5" />
-          <div>
-            <p className="text-sm text-blue-700">Some fields may be locked based on the current shipment status: <span className={`ml-2 px-2 py-1 rounded text-xs border ${getStatusColor(formData.status)}`}>{formData.status}</span></p>
-            <p className="text-xs text-blue-600 mt-1">Contact support if you need to modify locked fields.</p>
-          </div>
-        </div>
-      </div>
+      <Alert severity="info" icon={<AlertCircle className="w-5 h-5" />} sx={{ mb: 3 }}>
+        <Typography variant="body2">
+          Some fields may be locked based on the current shipment status:{' '}
+          <Chip 
+            label={formData.status} 
+            color={getStatusColor(formData.status)} 
+            size="small" 
+            sx={{ ml: 1 }}
+          />
+        </Typography>
+        <Typography variant="caption" display="block" sx={{ mt: 0.5 }}>
+          Contact support if you need to modify locked fields.
+        </Typography>
+      </Alert>
 
       {/* Shipment Details Section */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-        <h2 className="mb-6 flex items-center gap-2">
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
           <Ship className="w-5 h-5 text-blue-600" />
-          Shipment Details
-        </h2>
+          <Typography variant="h5">Shipment Details</Typography>
+        </Box>
 
         {/* Three Column Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Grid container spacing={3}>
           {/* Column 1: Basic Information */}
-          <div className="space-y-4">
-            <h3 className="text-sm pb-2 border-b">Basic Information</h3>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+              Basic Information
+            </Typography>
             
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Shipment Type</label>
-              <select
-                value={formData.shipmentType}
-                onChange={(e) => handleInputChange('shipmentType', e.target.value)}
-                disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="Export">Export</option>
-                <option value="Import">Import</option>
-              </select>
-            </div>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <FormControl fullWidth disabled={!canEditBasicInfo}>
+                <InputLabel>Shipment Type</InputLabel>
+                <Select
+                  value={formData.shipmentType}
+                  label="Shipment Type"
+                  onChange={(e) => handleInputChange('shipmentType', e.target.value)}
+                >
+                  <MenuItem value="Export">Export</MenuItem>
+                  <MenuItem value="Import">Import</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Mode</label>
-              <select
-                value={formData.mode}
-                onChange={(e) => handleInputChange('mode', e.target.value)}
-                disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="Sea Freight">Sea Freight</option>
-                <option value="Air Freight">Air Freight</option>
-                <option value="Road Freight">Road Freight</option>
-                <option value="Rail Freight">Rail Freight</option>
-              </select>
-            </div>
+              <FormControl fullWidth disabled={!canEditBasicInfo}>
+                <InputLabel>Mode</InputLabel>
+                <Select
+                  value={formData.mode}
+                  label="Mode"
+                  onChange={(e) => handleInputChange('mode', e.target.value)}
+                >
+                  <MenuItem value="Sea Freight">Sea Freight</MenuItem>
+                  <MenuItem value="Air Freight">Air Freight</MenuItem>
+                  <MenuItem value="Road Freight">Road Freight</MenuItem>
+                  <MenuItem value="Rail Freight">Rail Freight</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Incoterms</label>
-              <select
-                value={formData.incoterms}
-                onChange={(e) => handleInputChange('incoterms', e.target.value)}
-                disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="FOB">FOB (Free On Board)</option>
-                <option value="CIF">CIF (Cost, Insurance & Freight)</option>
-                <option value="EXW">EXW (Ex Works)</option>
-                <option value="DDP">DDP (Delivered Duty Paid)</option>
-                <option value="FCA">FCA (Free Carrier)</option>
-              </select>
-            </div>
+              <FormControl fullWidth disabled={!canEditBasicInfo}>
+                <InputLabel>Incoterms</InputLabel>
+                <Select
+                  value={formData.incoterms}
+                  label="Incoterms"
+                  onChange={(e) => handleInputChange('incoterms', e.target.value)}
+                >
+                  <MenuItem value="FOB">FOB (Free On Board)</MenuItem>
+                  <MenuItem value="CIF">CIF (Cost, Insurance & Freight)</MenuItem>
+                  <MenuItem value="EXW">EXW (Ex Works)</MenuItem>
+                  <MenuItem value="DDP">DDP (Delivered Duty Paid)</MenuItem>
+                  <MenuItem value="FCA">FCA (Free Carrier)</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Current Location</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Current Location"
                 value={formData.currentLocation}
                 onChange={(e) => handleInputChange('currentLocation', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Status</label>
-              <select
-                value={formData.status}
-                onChange={(e) => handleInputChange('status', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="Booked">Booked</option>
-                <option value="In Transit">In Transit</option>
-                <option value="Cleared">Cleared</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Delayed">Delayed</option>
-              </select>
-            </div>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={formData.status}
+                  label="Status"
+                  onChange={(e) => handleInputChange('status', e.target.value)}
+                >
+                  <MenuItem value="Booked">Booked</MenuItem>
+                  <MenuItem value="In Transit">In Transit</MenuItem>
+                  <MenuItem value="Cleared">Cleared</MenuItem>
+                  <MenuItem value="Delivered">Delivered</MenuItem>
+                  <MenuItem value="Delayed">Delayed</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Alert Status</label>
-              <select
-                value={formData.alert}
-                onChange={(e) => handleInputChange('alert', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">No Alert</option>
-                <option value="Delay">Delay</option>
-                <option value="Inspection">Inspection</option>
-                <option value="Hold">Hold</option>
-              </select>
-            </div>
+              <FormControl fullWidth>
+                <InputLabel>Alert Status</InputLabel>
+                <Select
+                  value={formData.alert}
+                  label="Alert Status"
+                  onChange={(e) => handleInputChange('alert', e.target.value)}
+                >
+                  <MenuItem value="">No Alert</MenuItem>
+                  <MenuItem value="Delay">Delay</MenuItem>
+                  <MenuItem value="Inspection">Inspection</MenuItem>
+                  <MenuItem value="Hold">Hold</MenuItem>
+                </Select>
+              </FormControl>
 
-            <h3 className="text-sm pb-2 border-b mt-6">Route Information</h3>
+              <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }}>
+                Route Information
+              </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Origin</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Origin"
                 value={formData.origin}
                 onChange={(e) => handleInputChange('origin', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Origin Port</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Origin Port"
                 value={formData.originPort}
                 onChange={(e) => handleInputChange('originPort', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Destination</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Destination"
                 value={formData.destination}
                 onChange={(e) => handleInputChange('destination', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Destination Port</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Destination Port"
                 value={formData.destinationPort}
                 onChange={(e) => handleInputChange('destinationPort', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
-          </div>
+            </Box>
+          </Grid>
 
           {/* Column 2: Container & Cargo */}
-          <div className="space-y-4">
-            <h3 className="text-sm pb-2 border-b">Container Details</h3>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+              Container Details
+            </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Container Number</label>
-              <input
-                type="text"
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Container Number"
                 value={formData.containerNumber}
                 onChange={(e) => handleInputChange('containerNumber', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Container Type</label>
-              <select
-                value={formData.containerType}
-                onChange={(e) => handleInputChange('containerType', e.target.value)}
-                disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="20ft Standard">20ft Standard</option>
-                <option value="40ft Standard">40ft Standard</option>
-                <option value="40ft High Cube">40ft High Cube</option>
-                <option value="20ft Reefer">20ft Reefer</option>
-                <option value="40ft Reefer">40ft Reefer</option>
-              </select>
-            </div>
+              <FormControl fullWidth disabled={!canEditBasicInfo}>
+                <InputLabel>Container Type</InputLabel>
+                <Select
+                  value={formData.containerType}
+                  label="Container Type"
+                  onChange={(e) => handleInputChange('containerType', e.target.value)}
+                >
+                  <MenuItem value="20ft Standard">20ft Standard</MenuItem>
+                  <MenuItem value="40ft Standard">40ft Standard</MenuItem>
+                  <MenuItem value="40ft High Cube">40ft High Cube</MenuItem>
+                  <MenuItem value="20ft Reefer">20ft Reefer</MenuItem>
+                  <MenuItem value="40ft Reefer">40ft Reefer</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Seal Number</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Seal Number"
                 value={formData.sealNumber}
                 onChange={(e) => handleInputChange('sealNumber', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <h3 className="text-sm pb-2 border-b mt-6">Cargo Information</h3>
+              <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }}>
+                Cargo Information
+              </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Cargo Description</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Cargo Description"
                 value={formData.cargoDescription}
                 onChange={(e) => handleInputChange('cargoDescription', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm text-gray-600 mb-2">Weight (kg)</label>
-                <input
-                  type="number"
-                  value={formData.weight}
-                  onChange={(e) => handleInputChange('weight', Number(e.target.value))}
-                  disabled={!canEditBasicInfo}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
-              </div>
-              <div>
-                <label className="block text-sm text-gray-600 mb-2">Volume (m³)</label>
-                <input
-                  type="number"
-                  value={formData.volume}
-                  onChange={(e) => handleInputChange('volume', Number(e.target.value))}
-                  disabled={!canEditBasicInfo}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                />
-              </div>
-            </div>
+              <Grid container spacing={2}>
+                <Grid size={6}>
+                  <TextField
+                    fullWidth
+                    label="Weight (kg)"
+                    type="number"
+                    value={formData.weight}
+                    onChange={(e) => handleInputChange('weight', Number(e.target.value))}
+                    disabled={!canEditBasicInfo}
+                  />
+                </Grid>
+                <Grid size={6}>
+                  <TextField
+                    fullWidth
+                    label="Volume (m³)"
+                    type="number"
+                    value={formData.volume}
+                    onChange={(e) => handleInputChange('volume', Number(e.target.value))}
+                    disabled={!canEditBasicInfo}
+                  />
+                </Grid>
+              </Grid>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Number of Packages</label>
-              <input
+              <TextField
+                fullWidth
+                label="Number of Packages"
                 type="number"
                 value={formData.numberOfPackages}
                 onChange={(e) => handleInputChange('numberOfPackages', Number(e.target.value))}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">HS Code</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="HS Code"
                 value={formData.hsCode}
                 onChange={(e) => handleInputChange('hsCode', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <h3 className="text-sm pb-2 border-b mt-6">Dates & Schedule</h3>
+              <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }}>
+                Dates & Schedule
+              </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Departure Date</label>
-              <input
+              <TextField
+                fullWidth
+                label="Departure Date"
                 type="date"
                 value={formData.departureDate}
                 onChange={(e) => handleInputChange('departureDate', e.target.value)}
                 disabled={!canEditDates}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                InputLabelProps={{ shrink: true }}
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Estimated Arrival</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Estimated Arrival"
                 value={formData.estimatedArrival}
                 onChange={(e) => handleInputChange('estimatedArrival', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-          </div>
+            </Box>
+          </Grid>
 
           {/* Column 3: Parties & Commercial */}
-          <div className="space-y-4">
-            <h3 className="text-sm pb-2 border-b">Parties Involved</h3>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mb: 2 }}>
+              Parties Involved
+            </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Shipper</label>
-              <input
-                type="text"
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Shipper"
                 value={formData.shipper}
                 onChange={(e) => handleInputChange('shipper', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Shipper Address</label>
-              <textarea
+              <TextField
+                fullWidth
+                label="Shipper Address"
+                multiline
+                rows={2}
                 value={formData.shipperAddress}
                 onChange={(e) => handleInputChange('shipperAddress', e.target.value)}
                 disabled={!canEditBasicInfo}
-                rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Consignee</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Consignee"
                 value={formData.consignee}
                 onChange={(e) => handleInputChange('consignee', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Consignee Address</label>
-              <textarea
+              <TextField
+                fullWidth
+                label="Consignee Address"
+                multiline
+                rows={2}
                 value={formData.consigneeAddress}
                 onChange={(e) => handleInputChange('consigneeAddress', e.target.value)}
                 disabled={!canEditBasicInfo}
-                rows={2}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <h3 className="text-sm pb-2 border-b mt-6">Service Providers</h3>
+              <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }}>
+                Service Providers
+              </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Freight Forwarder</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Freight Forwarder"
                 value={formData.freightForwarder}
                 onChange={(e) => handleInputChange('freightForwarder', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Customs House Agent</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Customs House Agent"
                 value={formData.cha}
                 onChange={(e) => handleInputChange('cha', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Shipping Line</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Shipping Line"
                 value={formData.shippingLine}
                 onChange={(e) => handleInputChange('shippingLine', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Vessel Name</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Vessel Name"
                 value={formData.vesselName}
                 onChange={(e) => handleInputChange('vesselName', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Voyage Number</label>
-              <input
-                type="text"
+              <TextField
+                fullWidth
+                label="Voyage Number"
                 value={formData.voyageNumber}
                 onChange={(e) => handleInputChange('voyageNumber', e.target.value)}
                 disabled={!canEditBasicInfo}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <h3 className="text-sm pb-2 border-b mt-6">Commercial Details</h3>
+              <Typography variant="subtitle2" sx={{ pb: 1, borderBottom: 1, borderColor: 'divider', mt: 2, mb: 1 }}>
+                Commercial Details
+              </Typography>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Currency</label>
-              <select
-                value={formData.currency}
-                onChange={(e) => handleInputChange('currency', e.target.value)}
-                disabled={!canEditCommercial}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-              >
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="INR">INR</option>
-              </select>
-            </div>
+              <FormControl fullWidth disabled={!canEditCommercial}>
+                <InputLabel>Currency</InputLabel>
+                <Select
+                  value={formData.currency}
+                  label="Currency"
+                  onChange={(e) => handleInputChange('currency', e.target.value)}
+                >
+                  <MenuItem value="USD">USD</MenuItem>
+                  <MenuItem value="EUR">EUR</MenuItem>
+                  <MenuItem value="GBP">GBP</MenuItem>
+                  <MenuItem value="INR">INR</MenuItem>
+                </Select>
+              </FormControl>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Cargo Value</label>
-              <input
+              <TextField
+                fullWidth
+                label="Cargo Value"
                 type="number"
                 value={formData.cargoValue}
                 onChange={(e) => handleInputChange('cargoValue', Number(e.target.value))}
                 disabled={!canEditCommercial}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Freight Charges</label>
-              <input
+              <TextField
+                fullWidth
+                label="Freight Charges"
                 type="number"
                 value={formData.freightCharges}
                 onChange={(e) => handleInputChange('freightCharges', Number(e.target.value))}
                 disabled={!canEditCommercial}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Insurance Value</label>
-              <input
+              <TextField
+                fullWidth
+                label="Insurance Value"
                 type="number"
                 value={formData.insuranceValue}
                 onChange={(e) => handleInputChange('insuranceValue', Number(e.target.value))}
                 disabled={!canEditCommercial}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
               />
-            </div>
 
-            <div>
-              <label className="block text-sm text-gray-600 mb-2">Special Instructions</label>
-              <textarea
+              <TextField
+                fullWidth
+                label="Special Instructions"
+                multiline
+                rows={3}
                 value={formData.specialInstructions}
                 onChange={(e) => handleInputChange('specialInstructions', e.target.value)}
-                rows={3}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </div>
-          </div>
-        </div>
-      </div>
+            </Box>
+          </Grid>
+        </Grid>
+      </Paper>
 
       {/* Document Upload Section */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h2 className="mb-6 flex items-center gap-2">
+      <Paper elevation={2} sx={{ p: 3 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
           <FileText className="w-5 h-5 text-blue-600" />
-          Document Management
-        </h2>
+          <Typography variant="h5">Document Management</Typography>
+        </Box>
 
         {/* Upload Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <Grid container spacing={3} sx={{ mb: 3 }}>
           {/* Left: Upload Form */}
-          <div>
-            <h3 className="text-sm mb-4">Upload New Document</h3>
+          <Grid size={{ xs: 12, lg: 6 }}>
+            <Typography variant="subtitle2" sx={{ mb: 2 }}>Upload New Document</Typography>
             
             {/* Drag & Drop Zone */}
-            <div
+            <Box
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-6 mb-4 text-center transition-colors ${
-                isDragging ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'
-              }`}
+              sx={{
+                border: 2,
+                borderStyle: 'dashed',
+                borderColor: isDragging ? 'primary.main' : 'divider',
+                borderRadius: 1,
+                p: 3,
+                mb: 2,
+                textAlign: 'center',
+                bgcolor: isDragging ? 'primary.50' : 'background.paper',
+                transition: 'all 0.3s',
+                '&:hover': {
+                  borderColor: 'text.secondary',
+                },
+              }}
             >
               <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-              <p className="text-sm mb-2">Drop files here or <label className="text-blue-600 cursor-pointer hover:underline">
-                Browse
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileSelect}
-                  accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
-                />
-              </label></p>
-              <p className="text-xs text-gray-500">PDF, DOC, DOCX, JPG, PNG (max 10MB)</p>
+              <Typography variant="body2" sx={{ mb: 1 }}>
+                Drop files here or{' '}
+                <label style={{ color: '#1976d2', cursor: 'pointer', textDecoration: 'underline' }}>
+                  Browse
+                  <input
+                    type="file"
+                    style={{ display: 'none' }}
+                    onChange={handleFileSelect}
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                  />
+                </label>
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                PDF, DOC, DOCX, JPG, PNG (max 10MB)
+              </Typography>
               {selectedFile && (
-                <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded inline-block">
-                  <p className="text-xs text-green-700">✓ {selectedFile.name}</p>
-                </div>
+                <Alert severity="success" sx={{ mt: 2, display: 'inline-flex' }}>
+                  <Typography variant="caption">✓ {selectedFile.name}</Typography>
+                </Alert>
               )}
-            </div>
+            </Box>
 
-            <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Document Type</label>
-              <select
+            <FormControl fullWidth sx={{ mb: 2 }}>
+              <InputLabel>Document Type</InputLabel>
+              <Select
                 value={documentType}
+                label="Document Type"
                 onChange={(e) => setDocumentType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="">Select type...</option>
-                <option value="Commercial Invoice">Commercial Invoice</option>
-                <option value="Packing List">Packing List</option>
-                <option value="Bill of Lading">Bill of Lading</option>
-                <option value="Certificate of Origin">Certificate of Origin</option>
-                <option value="Customs Declaration">Customs Declaration</option>
-                <option value="Insurance Certificate">Insurance Certificate</option>
-                <option value="Shipping Bill">Shipping Bill</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
+                <MenuItem value="">Select type...</MenuItem>
+                <MenuItem value="Commercial Invoice">Commercial Invoice</MenuItem>
+                <MenuItem value="Packing List">Packing List</MenuItem>
+                <MenuItem value="Bill of Lading">Bill of Lading</MenuItem>
+                <MenuItem value="Certificate of Origin">Certificate of Origin</MenuItem>
+                <MenuItem value="Customs Declaration">Customs Declaration</MenuItem>
+                <MenuItem value="Insurance Certificate">Insurance Certificate</MenuItem>
+                <MenuItem value="Shipping Bill">Shipping Bill</MenuItem>
+                <MenuItem value="Other">Other</MenuItem>
+              </Select>
+            </FormControl>
 
-            <button
+            <Button
+              fullWidth
+              variant="contained"
+              startIcon={<Plus className="w-5 h-5" />}
               onClick={handleDocumentUpload}
               disabled={!selectedFile || !documentType}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
             >
-              <Plus className="w-5 h-5" />
               Add Document
-            </button>
-          </div>
+            </Button>
+          </Grid>
 
           {/* Right: Uploaded Documents List */}
-          <div>
-            <h3 className="text-sm mb-4">Uploaded Documents ({uploadedDocuments.length})</h3>
-            <div className="space-y-3 max-h-96 overflow-y-auto">
+          <Grid size={{ xs: 12, lg: 6 }}>
+            <Typography variant="subtitle2" sx={{ mb: 2 }}>
+              Uploaded Documents ({uploadedDocuments.length})
+            </Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, maxHeight: 400, overflowY: 'auto' }}>
               {uploadedDocuments.map((doc) => (
-                <div key={doc.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:bg-gray-50">
-                  <div className="flex items-center gap-3 flex-1">
+                <Paper
+                  key={doc.id}
+                  variant="outlined"
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    '&:hover': { bgcolor: 'action.hover' },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
                     <FileText className="w-5 h-5 text-blue-600" />
-                    <div className="flex-1">
-                      <p className="text-sm">{doc.name}</p>
-                      <p className="text-xs text-gray-500">{doc.file} • {doc.size} • {doc.uploadedDate}</p>
-                    </div>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body2">{doc.name}</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {doc.file} • {doc.size} • {doc.uploadedDate}
+                      </Typography>
+                    </Box>
                     {getDocumentStatusBadge(doc.status)}
-                  </div>
-                  <div className="flex items-center gap-2 ml-3">
-                    <button className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors" title="View">
+                  </Box>
+                  <Box sx={{ display: 'flex', gap: 1, ml: 2 }}>
+                    <IconButton size="small" color="primary" title="View">
                       <Eye className="w-4 h-4" />
-                    </button>
-                    <button className="p-1.5 text-green-600 hover:bg-green-50 rounded transition-colors" title="Download">
+                    </IconButton>
+                    <IconButton size="small" color="success" title="Download">
                       <Download className="w-4 h-4" />
-                    </button>
-                    <button 
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      color="error"
                       onClick={() => handleDeleteDocument(doc.id)}
-                      className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors" 
                       title="Delete"
                     >
                       <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
+                    </IconButton>
+                  </Box>
+                </Paper>
               ))}
               {uploadedDocuments.length === 0 && (
-                <div className="text-center py-8">
+                <Box sx={{ textAlign: 'center', py: 4 }}>
                   <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-sm text-gray-500">No documents uploaded yet</p>
-                </div>
+                  <Typography variant="body2" color="text.secondary">
+                    No documents uploaded yet
+                  </Typography>
+                </Box>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
+            </Box>
+          </Grid>
+        </Grid>
+      </Paper>
 
       {/* Action Buttons at Bottom */}
-      <div className="flex items-center justify-end gap-3 mt-6">
-        <button
-          onClick={onBack}
-          className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-        >
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+        <Button variant="outlined" onClick={onBack}>
           Cancel
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="contained"
+          startIcon={<Save className="w-5 h-5" />}
           onClick={handleSave}
-          className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
-          <Save className="w-5 h-5" />
           Save Changes
-        </button>
-      </div>
+        </Button>
+      </Box>
     </div>
   );
 }

@@ -1,4 +1,20 @@
 import { BarChart3, TrendingUp, PieChart, Activity, DollarSign, AlertTriangle } from 'lucide-react';
+import {
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button,
+  Box,
+  Paper,
+  Typography,
+  Grid,
+  ToggleButton,
+  ToggleButtonGroup,
+  Card,
+  CardContent,
+} from '@mui/material';
 import { Breadcrumb } from './Breadcrumb';
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, PieChart as RePieChart, Pie, Cell, LineChart, Line } from 'recharts';
@@ -12,7 +28,7 @@ export function Analytics() {
 
   const handleApply = () => {
     // Apply filters logic
-    console.log('Applying filters:', { timeRange, tradeType, country, mode, partner });
+    // TODO: Implement filter application
   };
 
   const handleReset = () => {
@@ -78,313 +94,398 @@ export function Analytics() {
       />
       
       {/* Global Filters */}
-      <div className="bg-white rounded-lg shadow-sm p-6 mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+      <Paper elevation={2} sx={{ p: 3, mt: 3 }}>
+        <Grid container spacing={2} sx={{ mb: 3 }}>
           {/* Time Range */}
-          <div>
-            <label className="block text-sm text-gray-600 mb-2">Time Range</label>
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="last-7-days">Last 7 Days</option>
-              <option value="last-30-days">Last 30 Days</option>
-              <option value="last-90-days">Last 90 Days</option>
-              <option value="last-year">Last Year</option>
-              <option value="custom">Custom Range</option>
-            </select>
-          </div>
+          <Grid size={{ xs: 12, md: 2.4 }}>
+            <FormControl fullWidth>
+              <InputLabel>Time Range</InputLabel>
+              <Select
+                value={timeRange}
+                label="Time Range"
+                onChange={(e) => setTimeRange(e.target.value)}
+              >
+                <MenuItem value="last-7-days">Last 7 Days</MenuItem>
+                <MenuItem value="last-30-days">Last 30 Days</MenuItem>
+                <MenuItem value="last-90-days">Last 90 Days</MenuItem>
+                <MenuItem value="last-year">Last Year</MenuItem>
+                <MenuItem value="custom">Custom Range</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
           {/* Trade Type */}
-          <div>
-            <label className="block text-sm text-gray-600 mb-2">Trade Type</label>
-            <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-              <button
-                onClick={() => setTradeType('import')}
-                className={`flex-1 px-4 py-2 transition-colors ${
-                  tradeType === 'import'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
+          <Grid size={{ xs: 12, md: 2.4 }}>
+            <Box>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                Trade Type
+              </Typography>
+              <ToggleButtonGroup
+                value={tradeType}
+                exclusive
+                onChange={(e, newValue) => newValue && setTradeType(newValue)}
+                fullWidth
+                size="small"
               >
-                Import
-              </button>
-              <button
-                onClick={() => setTradeType('export')}
-                className={`flex-1 px-4 py-2 transition-colors ${
-                  tradeType === 'export'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                Export
-              </button>
-            </div>
-          </div>
+                <ToggleButton value="import">Import</ToggleButton>
+                <ToggleButton value="export">Export</ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          </Grid>
 
           {/* Country */}
-          <div>
-            <label className="block text-sm text-gray-600 mb-2">Country</label>
-            <select
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Countries</option>
-              <option value="us">United States</option>
-              <option value="cn">China</option>
-              <option value="jp">Japan</option>
-              <option value="de">Germany</option>
-              <option value="uk">United Kingdom</option>
-              <option value="in">India</option>
-              <option value="sg">Singapore</option>
-            </select>
-          </div>
+          <Grid size={{ xs: 12, md: 2.4 }}>
+            <FormControl fullWidth>
+              <InputLabel>Country</InputLabel>
+              <Select
+                value={country}
+                label="Country"
+                onChange={(e) => setCountry(e.target.value)}
+              >
+                <MenuItem value="all">All Countries</MenuItem>
+                <MenuItem value="us">United States</MenuItem>
+                <MenuItem value="cn">China</MenuItem>
+                <MenuItem value="jp">Japan</MenuItem>
+                <MenuItem value="de">Germany</MenuItem>
+                <MenuItem value="uk">United Kingdom</MenuItem>
+                <MenuItem value="in">India</MenuItem>
+                <MenuItem value="sg">Singapore</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
           {/* Mode */}
-          <div>
-            <label className="block text-sm text-gray-600 mb-2">Mode</label>
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Modes</option>
-              <option value="sea">Sea Freight</option>
-              <option value="air">Air Freight</option>
-              <option value="rail">Rail Freight</option>
-              <option value="road">Road Freight</option>
-            </select>
-          </div>
+          <Grid size={{ xs: 12, md: 2.4 }}>
+            <FormControl fullWidth>
+              <InputLabel>Mode</InputLabel>
+              <Select
+                value={mode}
+                label="Mode"
+                onChange={(e) => setMode(e.target.value)}
+              >
+                <MenuItem value="all">All Modes</MenuItem>
+                <MenuItem value="sea">Sea Freight</MenuItem>
+                <MenuItem value="air">Air Freight</MenuItem>
+                <MenuItem value="rail">Rail Freight</MenuItem>
+                <MenuItem value="road">Road Freight</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
 
           {/* Partner */}
-          <div>
-            <label className="block text-sm text-gray-600 mb-2">Partner</label>
-            <select
-              value={partner}
-              onChange={(e) => setPartner(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Partners</option>
-              <option value="maersk">Maersk Line</option>
-              <option value="msc">MSC</option>
-              <option value="cosco">COSCO Shipping</option>
-              <option value="hapag">Hapag-Lloyd</option>
-              <option value="one">Ocean Network Express</option>
-            </select>
-          </div>
-        </div>
+          <Grid size={{ xs: 12, md: 2.4 }}>
+            <FormControl fullWidth>
+              <InputLabel>Partner</InputLabel>
+              <Select
+                value={partner}
+                label="Partner"
+                onChange={(e) => setPartner(e.target.value)}
+              >
+                <MenuItem value="all">All Partners</MenuItem>
+                <MenuItem value="maersk">Maersk Line</MenuItem>
+                <MenuItem value="msc">MSC</MenuItem>
+                <MenuItem value="cosco">COSCO Shipping</MenuItem>
+                <MenuItem value="hapag">Hapag-Lloyd</MenuItem>
+                <MenuItem value="one">Ocean Network Express</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
 
         {/* Action Buttons */}
-        <div className="flex gap-3">
-          <button
-            onClick={handleApply}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button variant="contained" onClick={handleApply}>
             Apply
-          </button>
-          <button
-            onClick={handleReset}
-            className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-          >
+          </Button>
+          <Button variant="outlined" onClick={handleReset}>
             Reset
-          </button>
-        </div>
-      </div>
+          </Button>
+        </Box>
+      </Paper>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+      <Grid container spacing={3} sx={{ mt: 3 }}>
         {/* Total Shipments */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm text-gray-600">Total Shipments</h3>
-            <BarChart3 className="w-5 h-5 text-blue-600" />
-          </div>
-          <p className="text-3xl mb-1">1,247</p>
-          <div className="flex items-center gap-1 text-sm">
-            <span className="text-green-600">+12.5%</span>
-            <span className="text-gray-500">vs last period</span>
-          </div>
-        </div>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card elevation={2}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Total Shipments
+                </Typography>
+                <BarChart3 className="w-5 h-5 text-blue-600" />
+              </Box>
+              <Typography variant="h4" gutterBottom>
+                1,247
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="body2" color="success.main">
+                  +12.5%
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  vs last period
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* On-Time Delivery % */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm text-gray-600">On-Time Delivery %</h3>
-            <TrendingUp className="w-5 h-5 text-green-600" />
-          </div>
-          <p className="text-3xl mb-1">94.2%</p>
-          <div className="flex items-center gap-1 text-sm">
-            <span className="text-green-600">+2.3%</span>
-            <span className="text-gray-500">vs last period</span>
-          </div>
-        </div>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card elevation={2}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  On-Time Delivery %
+                </Typography>
+                <TrendingUp className="w-5 h-5 text-green-600" />
+              </Box>
+              <Typography variant="h4" gutterBottom>
+                94.2%
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="body2" color="success.main">
+                  +2.3%
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  vs last period
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* Avg Clearance Time */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm text-gray-600">Avg Clearance Time (Days)</h3>
-            <Activity className="w-5 h-5 text-purple-600" />
-          </div>
-          <p className="text-3xl mb-1">3.4</p>
-          <div className="flex items-center gap-1 text-sm">
-            <span className="text-green-600">-0.8</span>
-            <span className="text-gray-500">vs last period</span>
-          </div>
-        </div>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card elevation={2}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Avg Clearance Time (Days)
+                </Typography>
+                <Activity className="w-5 h-5 text-purple-600" />
+              </Box>
+              <Typography variant="h4" gutterBottom>
+                3.4
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="body2" color="success.main">
+                  -0.8
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  vs last period
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
 
         {/* Compliance Issues */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm text-gray-600">Compliance Issues</h3>
-            <PieChart className="w-5 h-5 text-orange-600" />
-          </div>
-          <p className="text-3xl mb-1">12</p>
-          <div className="flex items-center gap-1 text-sm">
-            <span className="text-red-600">+3</span>
-            <span className="text-gray-500">vs last period</span>
-          </div>
-        </div>
-      </div>
+        <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Card elevation={2}>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="body2" color="text.secondary">
+                  Compliance Issues
+                </Typography>
+                <PieChart className="w-5 h-5 text-orange-600" />
+              </Box>
+              <Typography variant="h4" gutterBottom>
+                12
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Typography variant="body2" color="error.main">
+                  +3
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  vs last period
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
 
       {/* Row 2 - Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <Grid container spacing={3} sx={{ mt: 3 }}>
         {/* Shipment Performance Chart */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <BarChart3 className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h3>Shipment Performance (Monthly)</h3>
-              <p className="text-sm text-gray-600">On-Time vs Delayed | Ports / Routes comparison</p>
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={shipmentPerformanceData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="onTime" fill="#10b981" name="On-Time" />
-              <Bar dataKey="delayed" fill="#ef4444" name="Delayed" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper elevation={2} sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1, bgcolor: 'success.light', borderRadius: 1 }}>
+                <BarChart3 className="w-5 h-5 text-green-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Shipment Performance (Monthly)</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  On-Time vs Delayed | Ports / Routes comparison
+                </Typography>
+              </Box>
+            </Box>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={shipmentPerformanceData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="onTime" fill="#10b981" name="On-Time" />
+                <Bar dataKey="delayed" fill="#ef4444" name="Delayed" />
+              </BarChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
 
         {/* Trade Volume Chart */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h3>Trade Volume (Monthly)</h3>
-              <p className="text-sm text-gray-600">Import vs Export | Volume in millions</p>
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <AreaChart data={tradeVolumeData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Area type="monotone" dataKey="import" fill="#10b981" name="Import" />
-              <Area type="monotone" dataKey="export" fill="#ef4444" name="Export" />
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper elevation={2} sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1, bgcolor: 'info.light', borderRadius: 1 }}>
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Trade Volume (Monthly)</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Import vs Export | Volume in millions
+                </Typography>
+              </Box>
+            </Box>
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={tradeVolumeData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Area type="monotone" dataKey="import" fill="#10b981" name="Import" />
+                <Area type="monotone" dataKey="export" fill="#ef4444" name="Export" />
+              </AreaChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+      </Grid>
 
       {/* Row 3 - Cost & Compliance */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <Grid container spacing={3} sx={{ mt: 3 }}>
         {/* Cost Breakdown Chart */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <DollarSign className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <h3>Cost Breakdown</h3>
-              <p className="text-sm text-gray-600">Distribution by category (% of total)</p>
-            </div>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <RePieChart>
-              <Pie
-                data={costBreakdownData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={100}
-                paddingAngle={5}
-                dataKey="value"
-                label={({ name, value }) => `${name}: ${value}%`}
-              >
-                {costBreakdownData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </RePieChart>
-          </ResponsiveContainer>
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            {costBreakdownData.map((item, index) => (
-              <div key={index} className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: item.color }}></div>
-                <span className="text-sm text-gray-700">{item.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper elevation={2} sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1, bgcolor: 'secondary.light', borderRadius: 1 }}>
+                <DollarSign className="w-5 h-5 text-purple-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Cost Breakdown</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Distribution by category (% of total)
+                </Typography>
+              </Box>
+            </Box>
+            <ResponsiveContainer width="100%" height={300}>
+              <RePieChart>
+                <Pie
+                  data={costBreakdownData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                  label={({ name, value }) => `${name}: ${value}%`}
+                >
+                  {costBreakdownData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </RePieChart>
+            </ResponsiveContainer>
+            <Grid container spacing={2} sx={{ mt: 2 }}>
+              {costBreakdownData.map((item, index) => (
+                <Grid size={6} key={index}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Box
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        bgcolor: item.color,
+                      }}
+                    />
+                    <Typography variant="body2">{item.name}</Typography>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Paper>
+        </Grid>
 
         {/* Compliance & Risk Chart */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="p-2 bg-red-100 rounded-lg">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-            </div>
-            <div>
-              <h3>Compliance & Risk</h3>
-              <p className="text-sm text-gray-600">Issues trend over time</p>
-            </div>
-          </div>
-          
-          {/* Current Issues Summary */}
-          <div className="grid grid-cols-3 gap-3 mb-4">
-            <div className="bg-red-50 p-3 rounded-lg border border-red-200">
-              <p className="text-xs text-red-600 mb-1">HS Code Issues</p>
-              <p className="text-xl text-red-700">8</p>
-            </div>
-            <div className="bg-orange-50 p-3 rounded-lg border border-orange-200">
-              <p className="text-xs text-orange-600 mb-1">License Delays</p>
-              <p className="text-xl text-orange-700">15</p>
-            </div>
-            <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-200">
-              <p className="text-xs text-yellow-600 mb-1">Restrictions</p>
-              <p className="text-xl text-yellow-700">5</p>
-            </div>
-          </div>
-          
-          {/* Trend Chart */}
-          <ResponsiveContainer width="100%" height={180}>
-            <LineChart data={complianceTrendData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="hsCode" stroke="#dc2626" name="HS Code" strokeWidth={2} />
-              <Line type="monotone" dataKey="license" stroke="#f59e0b" name="License" strokeWidth={2} />
-              <Line type="monotone" dataKey="restrictions" stroke="#eab308" name="Restrictions" strokeWidth={2} />
-              <Line type="monotone" dataKey="documentation" stroke="#8b5cf6" name="Documentation" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Paper elevation={2} sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1, bgcolor: 'error.light', borderRadius: 1 }}>
+                <AlertTriangle className="w-5 h-5 text-red-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Compliance & Risk</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Issues trend over time
+                </Typography>
+              </Box>
+            </Box>
+            
+            {/* Current Issues Summary */}
+            <Grid container spacing={2} sx={{ mb: 3 }}>
+              <Grid size={4}>
+                <Paper variant="outlined" sx={{ p: 2, bgcolor: 'error.50', borderColor: 'error.light' }}>
+                  <Typography variant="caption" color="error.main" gutterBottom>
+                    HS Code Issues
+                  </Typography>
+                  <Typography variant="h5" color="error.dark">
+                    8
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid size={4}>
+                <Paper variant="outlined" sx={{ p: 2, bgcolor: 'warning.50', borderColor: 'warning.light' }}>
+                  <Typography variant="caption" color="warning.main" gutterBottom>
+                    License Delays
+                  </Typography>
+                  <Typography variant="h5" color="warning.dark">
+                    15
+                  </Typography>
+                </Paper>
+              </Grid>
+              <Grid size={4}>
+                <Paper variant="outlined" sx={{ p: 2, bgcolor: '#fef9c3', borderColor: '#fde047' }}>
+                  <Typography variant="caption" sx={{ color: '#ca8a04' }} gutterBottom>
+                    Restrictions
+                  </Typography>
+                  <Typography variant="h5" sx={{ color: '#a16207' }}>
+                    5
+                  </Typography>
+                </Paper>
+              </Grid>
+            </Grid>
+            
+            {/* Trend Chart */}
+            <ResponsiveContainer width="100%" height={180}>
+              <LineChart data={complianceTrendData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="hsCode" stroke="#dc2626" name="HS Code" strokeWidth={2} />
+                <Line type="monotone" dataKey="license" stroke="#f59e0b" name="License" strokeWidth={2} />
+                <Line type="monotone" dataKey="restrictions" stroke="#eab308" name="Restrictions" strokeWidth={2} />
+                <Line type="monotone" dataKey="documentation" stroke="#8b5cf6" name="Documentation" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </Paper>
+        </Grid>
+      </Grid>
     </div>
   );
 }

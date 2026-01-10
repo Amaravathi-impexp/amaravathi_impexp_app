@@ -10,12 +10,30 @@ import {
   Search,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import {
+  Box,
+  Paper,
+  Typography,
+  Button,
+  IconButton,
+  TextField,
+  Chip,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  CircularProgress,
+  Collapse,
+} from '@mui/material';
 import { CreateShipment } from "./CreateShipment";
 import { ViewShipmentDetails } from "./ViewShipmentDetails";
 import { ModifyShipment } from "./ModifyShipment";
 import { mockApi } from "../services/mock-api";
 import type { Shipment } from "../types";
 import { Breadcrumb } from "./Breadcrumb";
+import { logger } from '../utils/logger';
 
 export function Shipments() {
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -36,7 +54,7 @@ export function Shipments() {
       const response = await mockApi.shipments.getAll({ page: 1, limit: 50 });
       setShipments(response.data);
     } catch (error) {
-      console.error('Failed to fetch shipments:', error);
+      logger.error('Failed to fetch shipments', { error });
     } finally {
       setLoading(false);
     }
@@ -50,42 +68,56 @@ export function Shipments() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Booked":
-        return "bg-blue-100 text-blue-800";
+        return "info";
       case "Cleared":
-        return "bg-green-100 text-green-800";
+        return "success";
       case "Delayed":
-        return "bg-red-100 text-red-800";
+        return "error";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "default";
     }
   };
 
   const getLocationColor = (location: string) => {
     switch (location) {
       case "Port":
-        return "bg-purple-100 text-purple-800";
+        return "secondary";
       case "Customs":
-        return "bg-orange-100 text-orange-800";
+        return "warning";
       case "In Transit":
-        return "bg-blue-100 text-blue-800";
+        return "info";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "default";
     }
   };
 
   const getAlertColor = (alert: string | null) => {
-    if (!alert) return "";
+    if (!alert) return "default";
     switch (alert) {
       case "Delay":
-        return "bg-red-100 text-red-800";
+        return "error";
       case "Inspection":
-        return "bg-yellow-100 text-yellow-800";
+        return "warning";
       case "Hold":
-        return "bg-orange-100 text-orange-800";
+        return "warning";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "default";
     }
   };
+
+  // Filter shipments based on search query
+  const filteredShipments = shipments.filter((shipment) => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      shipment.id.toLowerCase().includes(query) ||
+      shipment.cargo.toLowerCase().includes(query) ||
+      shipment.currentLocation.toLowerCase().includes(query) ||
+      shipment.status.toLowerCase().includes(query) ||
+      shipment.origin.toLowerCase().includes(query) ||
+      shipment.destination.toLowerCase().includes(query)
+    );
+  });
 
   if (showCreateForm) {
     return (
@@ -113,7 +145,7 @@ export function Shipments() {
   }
 
   return (
-    <div className="h-full flex flex-col overflow-hidden">
+    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       {/* Breadcrumb */}
       <Breadcrumb
         items={[
@@ -122,134 +154,128 @@ export function Shipments() {
       />
 
       {/* Shipments Table */}
-      <div className="bg-white rounded-lg shadow-sm flex-1 flex flex-col overflow-hidden mt-6">
-        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between flex-shrink-0">
-          <h2>Recent Shipments</h2>
-          <div className="flex items-center gap-2">
-            {searchExpanded && (
-              <input
-                type="text"
+      <Paper elevation={2} sx={{ mt: 3, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <Box sx={{ px: 3, py: 2, borderBottom: 1, borderColor: 'divider', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
+          <Typography variant="h6">Recent Shipments</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Collapse in={searchExpanded} orientation="horizontal">
+              <TextField
+                size="small"
                 placeholder="Search shipments..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-64"
                 autoFocus
+                sx={{ width: 250 }}
               />
-            )}
-            <button
+            </Collapse>
+            <IconButton
               onClick={() => setSearchExpanded(!searchExpanded)}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              color="default"
             >
-              <Search className="w-5 h-5 text-gray-600" />
-            </button>
-            <button
+              <Search className="w-5 h-5" />
+            </IconButton>
+            <Button
+              variant="contained"
+              startIcon={<Plus className="w-5 h-5" />}
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              <Plus className="w-5 h-5" />
               Create
-            </button>
-          </div>
-        </div>
-        <div className="overflow-auto flex-1">
-          <table className="w-full">
-            <thead className="bg-gray-50 sticky top-0">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  Shipment ID
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  Cargo
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  Current Location
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  ETA
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  Alerts
-                </th>
-                <th className="px-6 py-3 text-left text-xs uppercase tracking-wider text-gray-500">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {shipments.map((shipment) => {
-                return (
-                  <tr
-                    key={shipment.id}
-                    className="hover:bg-gray-50"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm">
-                        {shipment.id}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-sm text-gray-900">
-                        {shipment.cargo}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-3 py-1 inline-flex text-xs leading-5 rounded-full ${getLocationColor(shipment.currentLocation)}`}
-                      >
-                        {shipment.currentLocation}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span
-                        className={`px-3 py-1 inline-flex text-xs leading-5 rounded-full ${getStatusColor(shipment.status)}`}
-                      >
-                        {shipment.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {shipment.eta}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+            </Button>
+          </Box>
+        </Box>
+
+        {loading ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress />
+          </Box>
+        ) : filteredShipments.length === 0 ? (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <Typography color="text.secondary">
+              {searchQuery ? 'No shipments found matching your search.' : 'No shipments found.'}
+            </Typography>
+          </Box>
+        ) : (
+          <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Shipment ID</TableCell>
+                  <TableCell>Cargo</TableCell>
+                  <TableCell>Current Location</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>ETA</TableCell>
+                  <TableCell>Alerts</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {filteredShipments.map((shipment) => (
+                  <TableRow key={shipment.id} hover>
+                    <TableCell>
+                      <Typography variant="body2">{shipment.id}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{shipment.cargo}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={shipment.currentLocation}
+                        color={getLocationColor(shipment.currentLocation) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Chip
+                        label={shipment.status}
+                        color={getStatusColor(shipment.status) as any}
+                        size="small"
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" color="text.secondary">
+                        {shipment.eta}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
                       {shipment.alert ? (
-                        <span
-                          className={`px-3 py-1 inline-flex text-xs leading-5 rounded-full ${getAlertColor(shipment.alert)}`}
-                        >
-                          {shipment.alert}
-                        </span>
+                        <Chip
+                          label={shipment.alert}
+                          color={getAlertColor(shipment.alert) as any}
+                          size="small"
+                        />
                       ) : (
-                        <span className="text-sm text-gray-400">
+                        <Typography variant="body2" color="text.disabled">
                           -
-                        </span>
+                        </Typography>
                       )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex items-center gap-2">
-                        <button
-                          className="p-1 text-blue-600 hover:text-blue-900 hover:bg-blue-50 rounded transition-colors"
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <IconButton
+                          size="small"
+                          color="primary"
                           title="View"
                           onClick={() => setSelectedShipment(shipment)}
                         >
                           <Eye className="w-4 h-4" />
-                        </button>
-                        <button
-                          className="p-1 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded transition-colors"
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          color="default"
                           title="Modify"
                           onClick={() => setModifyingShipment(shipment)}
                         >
                           <Pencil className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Paper>
+    </Box>
   );
 }

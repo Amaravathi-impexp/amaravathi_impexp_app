@@ -8,4 +8,5 @@ export * from './authApi';
 export * from './shipmentsApi';
 export * from './partnersApi';
 export * from './usersApi';
+export * from './rolesApi';
 export * from './dashboardApi';

@@ -1,5 +1,5 @@
 import { Package, DollarSign, Ship, FileText, Upload, Navigation as NavigationIcon, AlertCircle, Clock, AlertTriangle, Bell, Truck } from 'lucide-react';
-import { useState } from 'react';
+import { Box, Grid, Card, CardContent, Typography, Avatar, Link, Divider, Paper, List, ListItem, ListItemAvatar, ListItemText, ButtonBase } from '@mui/material';
 import { Breadcrumb } from './Breadcrumb';
 import { useAppSelector } from '../store/hooks';
 
@@ -42,304 +42,394 @@ export function Dashboard() {
 
   const handleStatClick = (statLabel: string) => {
     // Handle navigation based on the stat clicked
-    console.log('Stat clicked:', statLabel);
+    // TODO: Implement navigation to respective pages
+  };
+
+  // Color configurations for stats
+  const getStatColors = (color: string) => {
+    const colorMap = {
+      blue: { bg: '#E3F2FD', text: '#1976D2' },
+      green: { bg: '#E8F5E9', text: '#388E3C' },
+      orange: { bg: '#FFF3E0', text: '#F57C00' },
+      amber: { bg: '#FFF8E1', text: '#FFA000' },
+      red: { bg: '#FFEBEE', text: '#D32F2F' },
+    };
+    return colorMap[color as keyof typeof colorMap] || colorMap.blue;
   };
 
   return (
-    <div>
+    <Box>
       {/* Breadcrumb */}
-      <Breadcrumb
-        items={[
-          { label: 'Dashboard' },
-        ]}
-      />
-      
+      <Breadcrumb items={[{ label: 'Dashboard' }]} />
+
       {/* KPI Cards - Single Row */}
-      <div className="mb-8 mt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <Box sx={{ mb: 4, mt: 3 }}>
+        <Grid container spacing={3}>
           {stats.map((stat, index) => {
             const Icon = stat.icon;
-            const colorClasses = {
-              blue: "bg-blue-100 text-blue-600",
-              green: "bg-green-100 text-green-600",
-              orange: "bg-orange-100 text-orange-600",
-              red: "bg-red-100 text-red-600",
-              amber: "bg-amber-100 text-amber-600",
-            }[stat.color];
+            const colors = getStatColors(stat.color);
 
             return (
-              <button
-                key={index}
-                onClick={() => handleStatClick(stat.label)}
-                className="bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer hover:scale-[1.02] w-full text-left"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div
-                    className={`w-12 h-12 ${colorClasses} rounded-lg flex items-center justify-center transition-all duration-200`}
-                  >
-                    <Icon className="w-6 h-6" />
-                  </div>
-                  <span
-                    className={`text-sm ${stat.change.startsWith("+") ? "text-green-600" : "text-red-600"}`}
-                  >
-                    {stat.change}
-                  </span>
-                </div>
-                <div className="text-3xl mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-gray-600">
-                  {stat.label}
-                </div>
-              </button>
+              <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={index}>
+                <Card
+                  component={ButtonBase}
+                  onClick={() => handleStatClick(stat.label)}
+                  sx={{
+                    width: '100%',
+                    textAlign: 'left',
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      boxShadow: 3,
+                      transform: 'scale(1.02)',
+                    },
+                  }}
+                >
+                  <CardContent>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                      <Avatar
+                        sx={{
+                          width: 48,
+                          height: 48,
+                          bgcolor: colors.bg,
+                          color: colors.text,
+                          borderRadius: 2,
+                        }}
+                      >
+                        <Icon size={24} />
+                      </Avatar>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: stat.change.startsWith('+') ? 'success.main' : 'error.main',
+                        }}
+                      >
+                        {stat.change}
+                      </Typography>
+                    </Box>
+                    <Typography variant="h4" sx={{ mb: 0.5 }}>
+                      {stat.value}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {stat.label}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
             );
           })}
-        </div>
-      </div>
+        </Grid>
+      </Box>
 
       {/* Quick Links, Exceptions / Alerts, and Recent Activity - Single Row */}
-      <div className="mb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <Box sx={{ mb: 4 }}>
+        <Grid container spacing={4}>
           {/* Quick Actions */}
-          <div className="flex flex-col">
-            <div className="mb-4">
-              <h2 className="text-lg">Quick Links</h2>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-sm flex-1">
-              <a
-                href="#"
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
-              >
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-                  <Package className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm mb-0.5">
-                    New Shipment
-                  </h3>
-                  <p className="text-xs text-gray-600">
-                    Book and schedule instantly
-                  </p>
-                </div>
-              </a>
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Quick Links
+              </Typography>
+              <Paper sx={{ p: 3, flexGrow: 1 }}>
+                <List disablePadding>
+                  <ListItem
+                    component={Link}
+                    href="#"
+                    sx={{
+                      borderRadius: 2,
+                      transition: 'background-color 0.2s',
+                      '&:hover': { bgcolor: 'grey.50' },
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          bgcolor: '#E3F2FD',
+                          color: '#1976D2',
+                          borderRadius: 2,
+                          transition: 'background-color 0.2s',
+                          '.MuiListItem-root:hover &': { bgcolor: '#BBDEFB' },
+                        }}
+                      >
+                        <Package size={20} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="New Shipment"
+                      secondary="Book and schedule instantly"
+                      primaryTypographyProps={{ variant: 'body2' }}
+                      secondaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
 
-              <div className="border-t border-gray-200 my-3"></div>
+                  <Divider sx={{ my: 1.5 }} />
 
-              <a
-                href="#"
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
-              >
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-                  <Upload className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm mb-0.5">
-                    Upload Documents
-                  </h3>
-                  <p className="text-xs text-gray-600">
-                    Invoices, packing lists, customs docs
-                  </p>
-                </div>
-              </a>
+                  <ListItem
+                    component={Link}
+                    href="#"
+                    sx={{
+                      borderRadius: 2,
+                      transition: 'background-color 0.2s',
+                      '&:hover': { bgcolor: 'grey.50' },
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          bgcolor: '#E8F5E9',
+                          color: '#388E3C',
+                          borderRadius: 2,
+                          transition: 'background-color 0.2s',
+                          '.MuiListItem-root:hover &': { bgcolor: '#C8E6C9' },
+                        }}
+                      >
+                        <Upload size={20} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Upload Documents"
+                      secondary="Invoices, packing lists, customs docs"
+                      primaryTypographyProps={{ variant: 'body2' }}
+                      secondaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
 
-              <div className="border-t border-gray-200 my-3"></div>
+                  <Divider sx={{ my: 1.5 }} />
 
-              <a
-                href="#"
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors group"
-              >
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-                  <NavigationIcon className="w-5 h-5 text-purple-600" />
-                </div>
-                <div>
-                  <h3 className="text-sm mb-0.5">
-                    Track Cargo
-                  </h3>
-                  <p className="text-xs text-gray-600">
-                    Real-time tracking and updates
-                  </p>
-                </div>
-              </a>
-            </div>
-          </div>
+                  <ListItem
+                    component={Link}
+                    href="#"
+                    sx={{
+                      borderRadius: 2,
+                      transition: 'background-color 0.2s',
+                      '&:hover': { bgcolor: 'grey.50' },
+                      textDecoration: 'none',
+                      color: 'inherit',
+                    }}
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          bgcolor: '#F3E5F5',
+                          color: '#7B1FA2',
+                          borderRadius: 2,
+                          transition: 'background-color 0.2s',
+                          '.MuiListItem-root:hover &': { bgcolor: '#E1BEE7' },
+                        }}
+                      >
+                        <NavigationIcon size={20} />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary="Track Cargo"
+                      secondary="Real-time tracking and updates"
+                      primaryTypographyProps={{ variant: 'body2' }}
+                      secondaryTypographyProps={{ variant: 'caption' }}
+                    />
+                  </ListItem>
+                </List>
+              </Paper>
+            </Box>
+          </Grid>
 
           {/* Alerts Panel */}
-          <div className="flex flex-col">
-            <div className="mb-4">
-              <h2 className="text-lg">Exceptions / Alerts</h2>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6 flex-1 flex flex-col">
-              <div className="space-y-4 flex-1">
-                {alerts.map((alert) => {
-                  // Determine alert styling based on type
-                  const alertStyles = {
-                    error: {
-                      bg: 'bg-red-50',
-                      border: 'border-red-200',
-                      iconBg: 'bg-red-100',
-                      iconColor: 'text-red-600',
-                      titleColor: 'text-red-900',
-                      descColor: 'text-red-700',
-                      infoColor: 'text-red-600',
-                      icon: AlertCircle,
-                    },
-                    warning: {
-                      bg: alert.severity === 'medium' && alert.title.includes('Delay') 
-                        ? 'bg-orange-50' 
-                        : 'bg-yellow-50',
-                      border: alert.severity === 'medium' && alert.title.includes('Delay')
-                        ? 'border-orange-200'
-                        : 'border-yellow-200',
-                      iconBg: alert.severity === 'medium' && alert.title.includes('Delay')
-                        ? 'bg-orange-100'
-                        : 'bg-yellow-100',
-                      iconColor: alert.severity === 'medium' && alert.title.includes('Delay')
-                        ? 'text-orange-600'
-                        : 'text-yellow-600',
-                      titleColor: alert.severity === 'medium' && alert.title.includes('Delay')
-                        ? 'text-orange-900'
-                        : 'text-yellow-900',
-                      descColor: alert.severity === 'medium' && alert.title.includes('Delay')
-                        ? 'text-orange-700'
-                        : 'text-yellow-700',
-                      infoColor: alert.severity === 'medium' && alert.title.includes('Delay')
-                        ? 'text-orange-600'
-                        : 'text-yellow-600',
-                      icon: alert.title.includes('Delay') ? Clock : AlertTriangle,
-                    },
-                    info: {
-                      bg: 'bg-blue-50',
-                      border: 'border-blue-200',
-                      iconBg: 'bg-blue-100',
-                      iconColor: 'text-blue-600',
-                      titleColor: 'text-blue-900',
-                      descColor: 'text-blue-700',
-                      infoColor: 'text-blue-600',
-                      icon: AlertCircle,
-                    },
-                  }[alert.type];
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Exceptions / Alerts
+              </Typography>
+              <Paper sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  {alerts.map((alert) => {
+                    // Determine alert styling based on type
+                    const getAlertStyles = () => {
+                      if (alert.type === 'error') {
+                        return {
+                          bg: '#FFEBEE',
+                          border: '#FFCDD2',
+                          iconBg: '#FFCDD2',
+                          iconColor: '#D32F2F',
+                          titleColor: '#B71C1C',
+                          descColor: '#C62828',
+                          icon: AlertCircle,
+                        };
+                      } else if (alert.type === 'warning') {
+                        const isDelay = alert.severity === 'medium' && alert.title.includes('Delay');
+                        return {
+                          bg: isDelay ? '#FFF3E0' : '#FFFDE7',
+                          border: isDelay ? '#FFE0B2' : '#FFF9C4',
+                          iconBg: isDelay ? '#FFE0B2' : '#FFF9C4',
+                          iconColor: isDelay ? '#F57C00' : '#F9A825',
+                          titleColor: isDelay ? '#E65100' : '#F57F17',
+                          descColor: isDelay ? '#EF6C00' : '#F9A825',
+                          icon: alert.title.includes('Delay') ? Clock : AlertTriangle,
+                        };
+                      } else {
+                        return {
+                          bg: '#E3F2FD',
+                          border: '#BBDEFB',
+                          iconBg: '#BBDEFB',
+                          iconColor: '#1976D2',
+                          titleColor: '#0D47A1',
+                          descColor: '#1565C0',
+                          icon: AlertCircle,
+                        };
+                      }
+                    };
 
-                  const AlertIcon = alertStyles.icon;
+                    const alertStyles = getAlertStyles();
+                    const AlertIcon = alertStyles.icon;
 
-                  return (
-                    <div
-                      key={alert.id}
-                      className={`flex gap-3 p-4 ${alertStyles.bg} border ${alertStyles.border} rounded-lg`}
-                    >
-                      <div className="flex-shrink-0">
-                        <div className={`w-10 h-10 ${alertStyles.iconBg} rounded-lg flex items-center justify-center`}>
-                          <AlertIcon className={`w-5 h-5 ${alertStyles.iconColor}`} />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className={`text-sm mb-1 ${alertStyles.titleColor}`}>
-                              {alert.title}
-                            </h3>
-                            <p className={`text-xs ${alertStyles.descColor}`}>
-                              {alert.description}
-                            </p>
-                            {alert.shipmentInfo && (
-                              <p className={`text-xs ${alertStyles.infoColor} mt-1`}>
-                                {alert.shipmentInfo}
-                              </p>
-                            )}
-                          </div>
-                          <span className={`text-xs ${alertStyles.infoColor}`}>
-                            {alert.timeAgo}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
-                <a
-                  href="#"
-                  className="text-sm text-blue-600 hover:text-blue-700"
-                >
-                  View all alerts
-                </a>
-              </div>
-            </div>
-          </div>
+                    return (
+                      <Paper
+                        key={alert.id}
+                        sx={{
+                          p: 2,
+                          bgcolor: alertStyles.bg,
+                          border: `1px solid ${alertStyles.border}`,
+                          display: 'flex',
+                          gap: 1.5,
+                        }}
+                      >
+                        <Box sx={{ flexShrink: 0 }}>
+                          <Avatar
+                            sx={{
+                              width: 40,
+                              height: 40,
+                              bgcolor: alertStyles.iconBg,
+                              color: alertStyles.iconColor,
+                              borderRadius: 2,
+                            }}
+                          >
+                            <AlertIcon size={20} />
+                          </Avatar>
+                        </Box>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                            <Box>
+                              <Typography variant="body2" sx={{ color: alertStyles.titleColor, mb: 0.5 }}>
+                                {alert.title}
+                              </Typography>
+                              <Typography variant="caption" sx={{ color: alertStyles.descColor, display: 'block' }}>
+                                {alert.description}
+                              </Typography>
+                              {alert.shipmentInfo && (
+                                <Typography variant="caption" sx={{ color: alertStyles.iconColor, display: 'block', mt: 0.5 }}>
+                                  {alert.shipmentInfo}
+                                </Typography>
+                              )}
+                            </Box>
+                            <Typography variant="caption" sx={{ color: alertStyles.iconColor, flexShrink: 0, ml: 1 }}>
+                              {alert.timeAgo}
+                            </Typography>
+                          </Box>
+                        </Box>
+                      </Paper>
+                    );
+                  })}
+                </Box>
+                <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
+                  <Link href="#" variant="body2" underline="hover">
+                    View all alerts
+                  </Link>
+                </Box>
+              </Paper>
+            </Box>
+          </Grid>
 
           {/* Recent Activity */}
-          <div className="flex flex-col">
-            <div className="mb-4">
-              <h2 className="text-lg">Recent Activity</h2>
-            </div>
-            <div className="bg-white rounded-lg shadow-sm p-6 flex-1 flex flex-col">
-              <div className="space-y-4 flex-1">
-                {activities.map((activity, index) => {
-                  // Determine activity icon and styling based on type
-                  const activityConfig = {
-                    shipment: {
-                      icon: Truck,
-                      bgColor: 'bg-blue-100',
-                      iconColor: 'text-blue-600',
-                    },
-                    delivery: {
-                      icon: Ship,
-                      bgColor: 'bg-blue-100',
-                      iconColor: 'text-blue-600',
-                    },
-                    payment: {
-                      icon: DollarSign,
-                      bgColor: 'bg-green-100',
-                      iconColor: 'text-green-600',
-                    },
-                    message: {
-                      icon: Bell,
-                      bgColor: 'bg-purple-100',
-                      iconColor: 'text-purple-600',
-                    },
-                    document: {
-                      icon: FileText,
-                      bgColor: 'bg-orange-100',
-                      iconColor: 'text-orange-600',
-                    },
-                  }[activity.type];
+          <Grid size={{ xs: 12, lg: 4 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <Typography variant="h6" sx={{ mb: 2 }}>
+                Recent Activity
+              </Typography>
+              <Paper sx={{ p: 3, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ flexGrow: 1 }}>
+                  <List disablePadding>
+                    {activities.map((activity, index) => {
+                      // Determine activity icon and styling based on type
+                      const getActivityConfig = () => {
+                        const configs = {
+                          shipment: {
+                            icon: Truck,
+                            bgColor: '#E3F2FD',
+                            iconColor: '#1976D2',
+                          },
+                          delivery: {
+                            icon: Ship,
+                            bgColor: '#E3F2FD',
+                            iconColor: '#1976D2',
+                          },
+                          payment: {
+                            icon: DollarSign,
+                            bgColor: '#E8F5E9',
+                            iconColor: '#388E3C',
+                          },
+                          message: {
+                            icon: Bell,
+                            bgColor: '#F3E5F5',
+                            iconColor: '#7B1FA2',
+                          },
+                          document: {
+                            icon: FileText,
+                            bgColor: '#FFF3E0',
+                            iconColor: '#F57C00',
+                          },
+                        };
+                        return configs[activity.type as keyof typeof configs] || configs.shipment;
+                      };
 
-                  const ActivityIcon = activityConfig.icon;
-                  const isLastItem = index === activities.length - 1;
+                      const activityConfig = getActivityConfig();
+                      const ActivityIcon = activityConfig.icon;
+                      const isLastItem = index === activities.length - 1;
 
-                  return (
-                    <div
-                      key={activity.id}
-                      className={`flex gap-3 ${!isLastItem ? 'pb-4 border-b border-gray-100' : ''}`}
-                    >
-                      <div className="flex-shrink-0">
-                        <div className={`w-10 h-10 ${activityConfig.bgColor} rounded-full flex items-center justify-center`}>
-                          <ActivityIcon className={`w-5 h-5 ${activityConfig.iconColor}`} />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-900">
-                          {activity.title}
-                        </p>
-                        <p className="text-xs text-gray-500 mt-1">
-                          {activity.description} • {activity.timeAgo}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-4 pt-4 border-t border-gray-200 text-center">
-                <a
-                  href="#"
-                  className="text-sm text-blue-600 hover:text-blue-700"
-                >
-                  View all activity
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+                      return (
+                        <Box key={activity.id}>
+                          <ListItem disablePadding sx={{ py: 1.5 }}>
+                            <ListItemAvatar>
+                              <Avatar
+                                sx={{
+                                  width: 40,
+                                  height: 40,
+                                  bgcolor: activityConfig.bgColor,
+                                  color: activityConfig.iconColor,
+                                }}
+                              >
+                                <ActivityIcon size={20} />
+                              </Avatar>
+                            </ListItemAvatar>
+                            <ListItemText
+                              primary={activity.title}
+                              secondary={`${activity.description} • ${activity.timeAgo}`}
+                              primaryTypographyProps={{ variant: 'body2' }}
+                              secondaryTypographyProps={{ variant: 'caption', color: 'text.secondary' }}
+                            />
+                          </ListItem>
+                          {!isLastItem && <Divider />}
+                        </Box>
+                      );
+                    })}
+                  </List>
+                </Box>
+                <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider', textAlign: 'center' }}>
+                  <Link href="#" variant="body2" underline="hover">
+                    View all activity
+                  </Link>
+                </Box>
+              </Paper>
+            </Box>
+          </Grid>
+        </Grid>
+      </Box>
+    </Box>
   );
 }

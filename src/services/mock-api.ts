@@ -13,7 +13,7 @@ import type {
   CreateShipmentRequest,
   UpdateShipmentRequest,
   TrackingInfo,
-  Partner,
+  LegacyPartner,
   CreatePartnerRequest,
   CreateUserRequest,
   Invoice,
@@ -99,7 +99,7 @@ let mockShipments: Shipment[] = [
   },
 ];
 
-let mockPartners: Partner[] = [
+let mockPartners: LegacyPartner[] = [
   {
     id: 'PART-001',
     companyName: 'Global Shipping Lines',
@@ -474,7 +474,7 @@ export const mockApi = {
 
   // Partners APIs
   partners: {
-    getAll: async (params?: any): Promise<PaginatedResponse<Partner>> => {
+    getAll: async (params?: any): Promise<PaginatedResponse<LegacyPartner>> => {
       await delay();
       
       let filtered = [...mockPartners];
@@ -510,17 +510,17 @@ export const mockApi = {
       };
     },
 
-    getById: async (id: string): Promise<Partner> => {
+    getById: async (id: string): Promise<LegacyPartner> => {
       await delay();
       const partner = mockPartners.find(p => p.id === id);
       if (!partner) throw new Error('Partner not found');
       return partner;
     },
 
-    create: async (data: CreatePartnerRequest): Promise<Partner> => {
+    create: async (data: CreatePartnerRequest): Promise<LegacyPartner> => {
       await delay();
       
-      const newPartner: Partner = {
+      const newPartner: LegacyPartner = {
         id: 'PART-' + (mockPartners.length + 1).toString().padStart(3, '0'),
         companyName: data.companyName,
         contactPerson: data.contactPerson,
@@ -537,7 +537,7 @@ export const mockApi = {
       return newPartner;
     },
 
-    update: async (id: string, updates: Partial<CreatePartnerRequest>): Promise<Partner> => {
+    update: async (id: string, updates: Partial<CreatePartnerRequest>): Promise<LegacyPartner> => {
       await delay();
       
       const index = mockPartners.findIndex(p => p.id === id);

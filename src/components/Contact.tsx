@@ -1,6 +1,16 @@
 import { Navigation } from './Navigation';
 import { Footer } from './Footer';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import {
+  TextField,
+  Button,
+  Alert,
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Container,
+} from '@mui/material';
 import { useState } from 'react';
 
 interface ContactProps {
@@ -77,7 +87,7 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
   ];
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'white', display: 'flex', flexDirection: 'column' }}>
       <Navigation 
         onSignInClick={onSignInClick}
         onHomeClick={onHomeClick}
@@ -87,167 +97,200 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
         currentView={currentView}
       />
 
-      <main className="flex-1">
+      <Box component="main" sx={{ flex: 1 }}>
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-5xl mb-6">Contact Us</h1>
-            <p className="text-xl max-w-3xl">
+        <Box
+          sx={{
+            background: 'linear-gradient(90deg, #2563eb 0%, #1e40af 100%)',
+            color: 'white',
+            py: 10,
+          }}
+        >
+          <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: '2.5rem', sm: '3rem', md: '3.75rem' },
+                mb: 3,
+              }}
+            >
+              Contact Us
+            </Typography>
+            <Typography
+              variant="h5"
+              sx={{
+                maxWidth: 768,
+                fontSize: { xs: '1.125rem', sm: '1.25rem' },
+              }}
+            >
               Get in touch with our team. We're here to help with all your shipping and logistics needs.
-            </p>
-          </div>
-        </section>
+            </Typography>
+          </Container>
+        </Box>
 
         {/* Contact Form & Info */}
-        <section className="py-16 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid lg:grid-cols-2 gap-12">
+        <Box sx={{ py: 8, bgcolor: 'white' }}>
+          <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+            <Grid container spacing={6}>
               {/* Contact Form */}
-              <div>
-                <h2 className="text-3xl mb-6">Send Us a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm mb-2 text-gray-700">Full Name *</label>
-                      <input
-                        type="text"
+              <Grid size={{ xs: 12, lg: 6 }}>
+                <Typography variant="h4" gutterBottom>
+                  Send Us a Message
+                </Typography>
+                <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                  <Grid container spacing={3}>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <TextField
+                        fullWidth
                         required
+                        label="Full Name"
                         value={formData.name}
                         onChange={(e) => handleChange('name', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                         placeholder="John Doe"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-sm mb-2 text-gray-700">Email Address *</label>
-                      <input
-                        type="email"
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <TextField
+                        fullWidth
                         required
+                        label="Email Address"
+                        type="email"
                         value={formData.email}
                         onChange={(e) => handleChange('email', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                         placeholder="john@example.com"
                       />
-                    </div>
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm mb-2 text-gray-700">Phone Number</label>
-                      <input
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <TextField
+                        fullWidth
+                        label="Phone Number"
                         type="tel"
                         value={formData.phone}
                         onChange={(e) => handleChange('phone', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                         placeholder="+1 (234) 567-890"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-sm mb-2 text-gray-700">Company Name</label>
-                      <input
-                        type="text"
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 6 }}>
+                      <TextField
+                        fullWidth
+                        label="Company Name"
                         value={formData.company}
                         onChange={(e) => handleChange('company', e.target.value)}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
                         placeholder="Your Company"
                       />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2 text-gray-700">Subject *</label>
-                    <input
-                      type="text"
-                      required
-                      value={formData.subject}
-                      onChange={(e) => handleChange('subject', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                      placeholder="How can we help?"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm mb-2 text-gray-700">Message *</label>
-                    <textarea
-                      required
-                      value={formData.message}
-                      onChange={(e) => handleChange('message', e.target.value)}
-                      rows={6}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent resize-none"
-                      placeholder="Tell us more about your needs..."
-                    />
-                  </div>
+                    </Grid>
+                    <Grid size={{ xs: 12 }}>
+                      <TextField
+                        fullWidth
+                        required
+                        label="Subject"
+                        value={formData.subject}
+                        onChange={(e) => handleChange('subject', e.target.value)}
+                        placeholder="How can we help?"
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12 }}>
+                      <TextField
+                        fullWidth
+                        required
+                        label="Message"
+                        multiline
+                        rows={6}
+                        value={formData.message}
+                        onChange={(e) => handleChange('message', e.target.value)}
+                        placeholder="Tell us more about your needs..."
+                      />
+                    </Grid>
+                  </Grid>
 
                   {submitted && (
-                    <div className="p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+                    <Alert severity="success" sx={{ mt: 3 }}>
                       Thank you! Your message has been sent successfully. We'll get back to you soon.
-                    </div>
+                    </Alert>
                   )}
 
-                  <button
+                  <Button
                     type="submit"
-                    className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    variant="contained"
+                    size="large"
+                    fullWidth
+                    startIcon={<Send className="w-5 h-5" />}
+                    sx={{ mt: 3 }}
                   >
-                    <Send className="w-5 h-5" />
-                    <span>Send Message</span>
-                  </button>
-                </form>
-              </div>
+                    Send Message
+                  </Button>
+                </Box>
+              </Grid>
 
               {/* Contact Information */}
-              <div>
-                <h2 className="text-3xl mb-6">Get In Touch</h2>
-                <div className="space-y-6 mb-8">
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Grid size={{ xs: 12, lg: 6 }}>
+                <Typography variant="h4" gutterBottom>
+                  Get In Touch
+                </Typography>
+                <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 3 }}>
+                  <Paper variant="outlined" sx={{ p: 3, display: 'flex', gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        bgcolor: 'info.light',
+                        borderRadius: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
                       <Phone className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="mb-1">Phone</h3>
-                      <p className="text-gray-600">+1 (234) 567-890</p>
-                      <p className="text-gray-600">Available 24/7</p>
-                    </div>
-                  </div>
+                    </Box>
+                    <Box>
+                      <Typography variant="h6" gutterBottom>
+                        Phone
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        +1 (234) 567-890
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Available 24/7
+                      </Typography>
+                    </Box>
+                  </Paper>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <Paper variant="outlined" sx={{ p: 3, display: 'flex', gap: 2 }}>
+                    <Box
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        bgcolor: 'info.light',
+                        borderRadius: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
                       <Mail className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="mb-1">Email</h3>
-                      <p className="text-gray-600">info@amaravathi.com</p>
-                      <p className="text-gray-600">support@amaravathi.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <h3 className="mb-1">Business Hours</h3>
-                      <p className="text-gray-600">Monday - Friday: 9:00 AM - 6:00 PM</p>
-                      <p className="text-gray-600">Saturday - Sunday: 10:00 AM - 4:00 PM</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-blue-50 p-6 rounded-lg">
-                  <h3 className="text-xl mb-4">Need Immediate Assistance?</h3>
-                  <p className="text-gray-600 mb-4">
-                    For urgent shipping matters, contact our 24/7 customer support hotline.
-                  </p>
-                  <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                    Call Support Now
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+                    </Box>
+                    <Box>
+                      <Typography variant="h6" gutterBottom>
+                        Email
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        info@amaravathi.com
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        support@amaravathi.com
+                      </Typography>
+                    </Box>
+                  </Paper>
+                </Box>
+              </Grid>
+            </Grid>
+          </Container>
+        </Box>
+      </Box>
 
       <Footer />
-    </div>
+    </Box>
   );
 }

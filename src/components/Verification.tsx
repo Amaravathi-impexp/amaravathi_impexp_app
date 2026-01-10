@@ -37,7 +37,7 @@ export function Verification({ onClose, onSwitchToSignIn, email }: VerificationP
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-20">
             <button onClick={onClose} className="hover:opacity-80 transition-opacity">
-              <Logo className="h-14" />
+              <Logo className="h-[86px]" />
             </button>
           </div>
         </div>

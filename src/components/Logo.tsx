@@ -1,4 +1,4 @@
-import logo from 'figma:asset/0c91db81c820114cba2fa424e34753a60f869e2e.png';
+import logo from 'figma:asset/bea3c192c26a7b41f3b641feddfa98e2ba96e0f5.png';
 
 export function Logo({ className = "h-12" }: { className?: string }) {
   return (

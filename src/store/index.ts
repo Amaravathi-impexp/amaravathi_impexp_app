@@ -11,6 +11,8 @@ import usersReducer from './slices/usersSlice';
 import uiReducer from './slices/uiSlice';
 import dashboardReducer from './slices/dashboardSlice';
 import { baseApi } from './api/baseApi';
+import { tokenRefreshMiddleware } from './middleware/tokenRefreshMiddleware';
+import { errorMiddleware } from './middleware/errorMiddleware';
 
 export const store = configureStore({
   reducer: {
@@ -26,18 +28,25 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        // Ignore these action types
-        ignoredActions: ['your/action/type'],
+        // Ignore these action types from RTK Query
+        ignoredActions: ['api/executeMutation/pending', 'api/executeMutation/fulfilled', 'api/executeMutation/rejected', 'api/executeQuery/pending', 'api/executeQuery/fulfilled', 'api/executeQuery/rejected'],
         // Ignore these field paths in all actions
-        ignoredActionPaths: ['meta.arg', 'payload.timestamp'],
+        ignoredActionPaths: ['meta.arg', 'meta.baseQueryMeta', 'payload.timestamp'],
         // Ignore these paths in the state
-        ignoredPaths: ['items.dates'],
+        ignoredPaths: ['api.queries', 'api.mutations'],
       },
     })
     // Add RTK Query middleware
-    .concat(baseApi.middleware),
+    .concat(baseApi.middleware)
+    // Add error handling middleware
+    .concat(errorMiddleware)
+    // Add token refresh middleware
+    .concat(tokenRefreshMiddleware),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
+
+// Export default for Figma preview compatibility
+export default store;

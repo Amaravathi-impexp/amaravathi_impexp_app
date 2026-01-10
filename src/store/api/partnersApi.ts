@@ -1,35 +1,55 @@
 /**
  * RTK Query - Partners API
- * Handles partner directory CRUD operations
+ * Handles partner directory CRUD operations with real backend
  */
 
 import { baseApi } from './baseApi';
 
-export interface Partner {
-  id: string;
+// Partner Type interface
+export interface PartnerType {
+  id: number;
+  code: string;
   name: string;
-  type: 'Supplier' | 'Carrier' | 'Warehouse' | 'Customer';
+}
+
+// Partner interface matching backend response
+export interface Partner {
+  id: number;
+  partnerTypes: PartnerType[];
+  name: string;
   email: string;
   phone: string;
-  address: string;
-  country: string;
-  status: 'Active' | 'Inactive';
-  rating: number;
+  website: string;
+  countryId: number;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  rating: number | null;
+  verified: boolean;
+  status: string;
   createdAt: string;
   updatedAt: string;
 }
 
+// Create partner request matching backend API
 export interface CreatePartnerRequest {
+  partnerTypeIds: number[];
   name: string;
-  type: Partner['type'];
   email: string;
   phone: string;
-  address: string;
-  country: string;
+  website: string;
+  countryId: number;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  postalCode: string;
 }
 
 export interface UpdatePartnerRequest extends Partial<CreatePartnerRequest> {
-  status?: Partner['status'];
+  status?: string;
   rating?: number;
 }
 
@@ -41,40 +61,33 @@ export interface PartnerQueryParams {
   search?: string;
 }
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
 export const partnersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    // Get all partners
-    getPartners: builder.query<PaginatedResponse<Partner>, PartnerQueryParams | void>({
+    // Get all partners - returns array directly from backend
+    getPartners: builder.query<Partner[], PartnerQueryParams | void>({
       query: (params = {}) => ({
-        url: '/partners',
+        url: 'http://localhost:8082/api/trade-operation/v1/partners',
         params,
       }),
       providesTags: (result) =>
         result
           ? [
-              ...result.data.map(({ id }) => ({ type: 'Partners' as const, id })),
+              ...result.map(({ id }) => ({ type: 'Partners' as const, id: String(id) })),
               { type: 'Partners', id: 'LIST' },
             ]
           : [{ type: 'Partners', id: 'LIST' }],
     }),
     
     // Get single partner
-    getPartnerById: builder.query<Partner, string>({
-      query: (id) => `/partners/${id}`,
-      providesTags: (result, error, id) => [{ type: 'Partners', id }],
+    getPartnerById: builder.query<Partner, number>({
+      query: (id) => `http://localhost:8082/api/trade-operation/v1/partners/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Partners', id: String(id) }],
     }),
     
     // Create partner
     createPartner: builder.mutation<Partner, CreatePartnerRequest>({
       query: (data) => ({
-        url: '/partners',
+        url: 'http://localhost:8082/api/trade-operation/v1/partners',
         method: 'POST',
         body: data,
       }),
@@ -82,28 +95,29 @@ export const partnersApi = baseApi.injectEndpoints({
     }),
     
     // Update partner
-    updatePartner: builder.mutation<Partner, { id: string; data: UpdatePartnerRequest }>({
+    updatePartner: builder.mutation<Partner, { id: number; data: UpdatePartnerRequest }>({
       query: ({ id, data }) => ({
-        url: `/partners/${id}`,
+        url: `http://localhost:8082/api/trade-operation/v1/partners/${id}`,
         method: 'PUT',
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
-        { type: 'Partners', id },
+        { type: 'Partners', id: String(id) },
         { type: 'Partners', id: 'LIST' },
         'Dashboard',
       ],
     }),
     
     // Delete partner
-    deletePartner: builder.mutation<void, string>({
+    deletePartner: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/partners/${id}`,
+        url: `http://localhost:8082/api/trade-operation/v1/partners/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [{ type: 'Partners', id: 'LIST' }, 'Dashboard'],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {

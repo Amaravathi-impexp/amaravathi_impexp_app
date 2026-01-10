@@ -1,20 +1,57 @@
-import { ArrowLeft, User, Mail, Phone, Smartphone, Shield, Bell, CheckCircle2, UserPlus, Globe, Package } from 'lucide-react';
 import { useState } from 'react';
+import {
+  TextField,
+  Button,
+  Alert,
+  Box,
+  Paper,
+  Typography,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  CircularProgress,
+  Divider,
+  Card,
+  CardContent,
+} from '@mui/material';
+import {
+  User,
+  Mail,
+  Phone,
+  Shield,
+  Globe,
+  Package,
+  Lock,
+  Bell,
+  Smartphone,
+  UserPlus,
+} from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
+import { useCreateUserMutation } from '../store/api/usersApi';
+import { useGetCountriesQuery, useGetProductTypesQuery, useGetRolesQuery } from '../store/api/formDataApi';
 
 interface CreateUserProps {
   onBack: () => void;
 }
 
 export function CreateUser({ onBack }: CreateUserProps) {
+  const [createUser, { isLoading }] = useCreateUserMutation();
+  
+  // Fetch form data from APIs with caching
+  const { data: countries = [], isLoading: countriesLoading } = useGetCountriesQuery();
+  const { data: productTypes = [], isLoading: productTypesLoading } = useGetProductTypesQuery();
+  const { data: roles = [], isLoading: rolesLoading } = useGetRolesQuery();
+  
+  const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
-    role: '',
+    password: '',
+    roleId: '',
     phone: '',
-    originCountry: '',
-    destinationCountry: '',
-    product: '',
+    originCountryId: '',
+    destinationCountryId: '',
+    productTypeId: '',
     notifications: {
       email: true,
       sms: false,
@@ -22,14 +59,48 @@ export function CreateUser({ onBack }: CreateUserProps) {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('User created:', formData);
-    // Handle form submission
-    onBack();
+    setError('');
+    
+    try {
+      const originCountryId = formData.originCountryId;
+      const destinationCountryId = formData.destinationCountryId;
+      const productTypeId = formData.productTypeId;
+      const roleId = formData.roleId;
+      
+      if (!originCountryId || !destinationCountryId || !productTypeId || !roleId) {
+        setError('Please fill in all required fields');
+        return;
+      }
+      
+      // Find the role code from the selected role ID
+      const selectedRole = roles.find(r => r.id === roleId);
+      if (!selectedRole) {
+        setError('Invalid role selected');
+        return;
+      }
+      
+      await createUser({
+        email: formData.email,
+        phone: formData.phone,
+        fullName: formData.fullName,
+        password: formData.password,
+        originCountryId,
+        destinationCountryId,
+        productTypeId,
+        roleCodes: [selectedRole.code],
+      }).unwrap();
+      
+      // Success - go back to users list
+      onBack();
+    } catch (err: any) {
+      const errorMessage = err?.data?.message || err?.message || 'Failed to create user. Please try again.';
+      setError(errorMessage);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -37,8 +108,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
     }));
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
+  const handleCheckboxChange = (name: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       notifications: {
@@ -60,357 +130,366 @@ export function CreateUser({ onBack }: CreateUserProps) {
       />
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mt-6 max-w-5xl">
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, maxWidth: '1200px' }}>
+        {/* Error Message */}
+        {error && (
+          <Alert severity="error" onClose={() => setError('')} sx={{ mb: 3 }}>
+            {error}
+          </Alert>
+        )}
+        
         {/* Personal Information Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <User className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Personal Information</h2>
-              <p className="text-sm text-gray-600">Basic details about the user</p>
-            </div>
-          </div>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'primary.lighter', borderRadius: 2 }}>
+                <User className="w-5 h-5 text-blue-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Personal Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Basic details about the user
+                </Typography>
+              </Box>
+            </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Full Name */}
-            <div>
-              <label htmlFor="name" className="block text-sm text-gray-700 mb-2">
-                Full Name <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter full name"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm text-gray-700 mb-2">
-                Email Address <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="user@example.com"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Phone */}
-            <div>
-              <label htmlFor="phone" className="block text-sm text-gray-700 mb-2">
-                Phone Number <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Phone className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="+1 (555) 000-0000"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Role & Permissions Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Shield className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Role & Permissions</h2>
-              <p className="text-sm text-gray-600">Define user access level</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Role */}
-            <div>
-              <label htmlFor="role" className="block text-sm text-gray-700 mb-2">
-                User Role <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="role"
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Full Name */}
+              <TextField
+                id="fullName"
+                name="fullName"
+                label="Full Name"
                 required
-              >
-                <option value="">Select a role</option>
-                <option value="Admin">Admin</option>
-                <option value="Importer">Importer</option>
-                <option value="Exporter">Exporter</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Role Description */}
-          {formData.role && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Role Permissions:</span>
-                {formData.role === 'Admin' && ' Full system access with user management capabilities.'}
-                {formData.role === 'Importer' && ' Can create import shipments and track deliveries.'}
-                {formData.role === 'Exporter' && ' Can create export shipments and upload documentation.'}
-              </p>
-            </div>
-          )}
-        </div>
-
-        {/* Route Information Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-teal-100 rounded-lg">
-              <Globe className="w-5 h-5 text-teal-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Route Information</h2>
-              <p className="text-sm text-gray-600">Specify origin and destination countries</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Origin Country */}
-            <div>
-              <label htmlFor="originCountry" className="block text-sm text-gray-700 mb-2">
-                Origin Country <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="originCountry"
-                name="originCountry"
-                value={formData.originCountry}
+                fullWidth
+                value={formData.fullName}
                 onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              >
-                <option value="">Select origin country</option>
-                <option value="India">India</option>
-                <option value="China">China</option>
-                <option value="USA">United States</option>
-                <option value="UAE">United Arab Emirates</option>
-                <option value="Singapore">Singapore</option>
-                <option value="Japan">Japan</option>
-                <option value="South Korea">South Korea</option>
-                <option value="Thailand">Thailand</option>
-                <option value="Vietnam">Vietnam</option>
-                <option value="Malaysia">Malaysia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="Germany">Germany</option>
-                <option value="UK">United Kingdom</option>
-                <option value="France">France</option>
-                <option value="Netherlands">Netherlands</option>
-              </select>
-            </div>
+              />
 
-            {/* Destination Country */}
-            <div>
-              <label htmlFor="destinationCountry" className="block text-sm text-gray-700 mb-2">
-                Destination Country <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="destinationCountry"
-                name="destinationCountry"
-                value={formData.destinationCountry}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              >
-                <option value="">Select destination country</option>
-                <option value="India">India</option>
-                <option value="China">China</option>
-                <option value="USA">United States</option>
-                <option value="UAE">United Arab Emirates</option>
-                <option value="Singapore">Singapore</option>
-                <option value="Japan">Japan</option>
-                <option value="South Korea">South Korea</option>
-                <option value="Thailand">Thailand</option>
-                <option value="Vietnam">Vietnam</option>
-                <option value="Malaysia">Malaysia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="Germany">Germany</option>
-                <option value="UK">United Kingdom</option>
-                <option value="France">France</option>
-                <option value="Netherlands">Netherlands</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Product Information Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Package className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Product Information</h2>
-              <p className="text-sm text-gray-600">Select the product type</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Product Name */}
-            <div>
-              <label htmlFor="product" className="block text-sm text-gray-700 mb-2">
-                Product Name <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="product"
-                name="product"
-                value={formData.product}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                required
-              >
-                <option value="">Select a product</option>
-                <option value="Rice">Rice</option>
-                <option value="Turmeric">Turmeric</option>
-                <option value="Chillies">Chillies</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Notification Preferences Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Bell className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Notification Preferences</h2>
-              <p className="text-sm text-gray-600">Choose how the user receives updates</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Email Notifications */}
-            <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
-                 onClick={() => handleCheckboxChange({ target: { name: 'email', checked: !formData.notifications.email } } as any)}>
-              <input
-                type="checkbox"
+              {/* Email */}
+              <TextField
                 id="email"
                 name="email"
-                checked={formData.notifications.email}
-                onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5"
-                onClick={(e) => e.stopPropagation()}
+                type="email"
+                label="Email"
+                required
+                fullWidth
+                value={formData.email}
+                onChange={handleChange}
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  <label htmlFor="email" className="text-sm cursor-pointer">
-                    Email
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Shipment updates & reports
-                </p>
-              </div>
-            </div>
 
-            {/* SMS Notifications */}
-            <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
-                 onClick={() => handleCheckboxChange({ target: { name: 'sms', checked: !formData.notifications.sms } } as any)}>
-              <input
-                type="checkbox"
-                id="sms"
-                name="sms"
-                checked={formData.notifications.sms}
-                onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5"
-                onClick={(e) => e.stopPropagation()}
+              {/* Password */}
+              <TextField
+                id="password"
+                name="password"
+                type="password"
+                label="Password"
+                required
+                fullWidth
+                value={formData.password}
+                onChange={handleChange}
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Smartphone className="w-4 h-4 text-gray-400" />
-                  <label htmlFor="sms" className="text-sm cursor-pointer">
-                    SMS
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Critical alerts via text
-                </p>
-              </div>
-            </div>
 
-            {/* Push Notifications */}
-            <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
-                 onClick={() => handleCheckboxChange({ target: { name: 'push', checked: !formData.notifications.push } } as any)}>
-              <input
-                type="checkbox"
-                id="push"
-                name="push"
-                checked={formData.notifications.push}
-                onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5"
-                onClick={(e) => e.stopPropagation()}
+              {/* Phone */}
+              <TextField
+                id="phone"
+                name="phone"
+                type="tel"
+                label="Phone"
+                required
+                fullWidth
+                value={formData.phone}
+                onChange={handleChange}
               />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Bell className="w-4 h-4 text-gray-400" />
-                  <label htmlFor="push" className="text-sm cursor-pointer">
-                    Push
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Real-time in-app updates
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+            </Box>
+          </CardContent>
+        </Card>
 
-        {/* Action Buttons at Bottom */}
-        <div className="flex items-center justify-end gap-3 mt-6">
-          <button
-            type="button"
+        {/* Role & Permissions Card */}
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'secondary.lighter', borderRadius: 2 }}>
+                <Shield className="w-5 h-5 text-purple-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Role & Permissions</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Define user access level
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Role */}
+              <TextField
+                id="roleId"
+                name="roleId"
+                select
+                label="Role"
+                required
+                fullWidth
+                value={formData.roleId}
+                onChange={handleChange}
+                disabled={rolesLoading}
+              >
+                <MenuItem value="">Select role</MenuItem>
+                {roles.map(role => (
+                  <MenuItem key={role.id} value={role.id}>
+                    {role.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+
+            {/* Role Description */}
+            {formData.roleId && (
+              <Paper variant="outlined" sx={{ mt: 3, p: 2, bgcolor: 'grey.50' }}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Role Permissions:</strong>{' '}
+                  {roles.find(role => role.id === formData.roleId)?.description}
+                </Typography>
+              </Paper>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Route Information Card */}
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'info.lighter', borderRadius: 2 }}>
+                <Globe className="w-5 h-5 text-teal-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Route Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Specify origin and destination countries
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Origin Country */}
+              <TextField
+                id="originCountryId"
+                name="originCountryId"
+                select
+                label="Origin Country"
+                required
+                fullWidth
+                value={formData.originCountryId}
+                onChange={handleChange}
+                disabled={countriesLoading}
+              >
+                <MenuItem value="">Select origin country</MenuItem>
+                {countries.map(country => (
+                  <MenuItem key={country.id} value={country.id}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              {/* Destination Country */}
+              <TextField
+                id="destinationCountryId"
+                name="destinationCountryId"
+                select
+                label="Destination Country"
+                required
+                fullWidth
+                value={formData.destinationCountryId}
+                onChange={handleChange}
+                disabled={countriesLoading}
+              >
+                <MenuItem value="">Select destination country</MenuItem>
+                {countries.map(country => (
+                  <MenuItem key={country.id} value={country.id}>
+                    {country.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Product Information Card */}
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'warning.lighter', borderRadius: 2 }}>
+                <Package className="w-5 h-5 text-orange-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Product Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Select the product type
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Product Name */}
+              <TextField
+                id="productTypeId"
+                name="productTypeId"
+                select
+                label="Product Type"
+                required
+                fullWidth
+                value={formData.productTypeId}
+                onChange={handleChange}
+                disabled={productTypesLoading}
+              >
+                <MenuItem value="">Select product type</MenuItem>
+                {productTypes.map(product => (
+                  <MenuItem key={product.id} value={product.id}>
+                    {product.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Notification Preferences Card */}
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'success.lighter', borderRadius: 2 }}>
+                <Bell className="w-5 h-5 text-green-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Notification Preferences</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Choose how the user receives updates
+                </Typography>
+              </Box>
+            </Box>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 2 }}>
+              {/* Email Notifications */}
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': { borderColor: 'primary.main' },
+                  transition: 'border-color 0.2s',
+                }}
+                onClick={() => handleCheckboxChange('email', !formData.notifications.email)}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.notifications.email}
+                      onChange={(e) => handleCheckboxChange('email', e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Mail className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2">Email</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Shipment updates & reports
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Paper>
+
+              {/* SMS Notifications */}
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': { borderColor: 'primary.main' },
+                  transition: 'border-color 0.2s',
+                }}
+                onClick={() => handleCheckboxChange('sms', !formData.notifications.sms)}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.notifications.sms}
+                      onChange={(e) => handleCheckboxChange('sms', e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Smartphone className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2">SMS</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Critical alerts via text
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Paper>
+
+              {/* Push Notifications */}
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': { borderColor: 'primary.main' },
+                  transition: 'border-color 0.2s',
+                }}
+                onClick={() => handleCheckboxChange('push', !formData.notifications.push)}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.notifications.push}
+                      onChange={(e) => handleCheckboxChange('push', e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Bell className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2">Push</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Real-time in-app updates
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Paper>
+            </Box>
+          </CardContent>
+        </Card>
+
+        {/* Action Buttons */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+          <Button
+            variant="outlined"
             onClick={onBack}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            disabled={isLoading}
+            size="large"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            variant="contained"
+            disabled={isLoading}
+            size="large"
+            startIcon={isLoading ? <CircularProgress size={20} /> : <UserPlus className="w-5 h-5" />}
           >
-            <UserPlus className="w-5 h-5" />
-            Create User
-          </button>
-        </div>
-      </form>
+            {isLoading ? 'Creating...' : 'Create User'}
+          </Button>
+        </Box>
+      </Box>
     </div>
   );
 }

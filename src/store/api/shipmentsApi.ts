@@ -126,6 +126,7 @@ export const shipmentsApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: 'Shipments', id: 'LIST' }, 'Dashboard'],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {

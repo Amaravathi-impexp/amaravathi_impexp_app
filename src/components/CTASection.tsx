@@ -1,25 +1,77 @@
+import { Box, Container, Typography, Button } from '@mui/material';
 import { ArrowRight } from 'lucide-react';
 
 export function CTASection() {
   return (
-    <section className="py-20 bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2 className="mb-6">Ready to Ship with Us?</h2>
-          <p className="text-xl text-gray-300 mb-8">
+    <Box
+      component="section"
+      sx={{
+        py: 10,
+        bgcolor: 'grey.900',
+        color: 'white',
+      }}
+    >
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+        <Box sx={{ maxWidth: 768, mx: 'auto', textAlign: 'center' }}>
+          <Typography
+            variant="h2"
+            sx={{
+              mb: 3,
+              fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' },
+            }}
+          >
+            Ready to Ship with Us?
+          </Typography>
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'grey.300',
+              mb: 4,
+              fontSize: { xs: '1.125rem', sm: '1.25rem' },
+            }}
+          >
             Get started today and experience seamless global logistics with our expert team.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center gap-2">
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
+              gap: 2,
+              justifyContent: 'center',
+            }}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              endIcon={<ArrowRight className="w-5 h-5" />}
+              sx={{
+                px: 4,
+                py: 2,
+              }}
+            >
               Get a Quote
-              <ArrowRight className="w-5 h-5" />
-            </button>
-            <button className="px-8 py-4 border border-white text-white rounded hover:bg-white hover:text-gray-900 transition-colors">
+            </Button>
+            <Button
+              variant="outlined"
+              size="large"
+              sx={{
+                px: 4,
+                py: 2,
+                borderColor: 'white',
+                color: 'white',
+                '&:hover': {
+                  borderColor: 'white',
+                  bgcolor: 'white',
+                  color: 'grey.900',
+                },
+                transition: 'all 0.2s',
+              }}
+            >
               Contact Sales
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
+            </Button>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 }

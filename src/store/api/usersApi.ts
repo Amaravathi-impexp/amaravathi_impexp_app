@@ -4,30 +4,52 @@
  */
 
 import { baseApi } from './baseApi';
+import type { Role, Country, ProductType } from './types';
 
 export interface User {
-  id: string;
-  name: string;
+  id: number;
   email: string;
-  role: 'Admin' | 'Importer' | 'Exporter';
-  status: 'Active' | 'Inactive';
-  createdAt: string;
-  updatedAt: string;
+  fullName: string;
+  phone: string;
+  status: 'ACTIVE' | 'CREATED' | 'PENDING_VERIFICATION' | 'INACTIVE';
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  originCountry: Country | null;
+  destinationCountry: Country | null;
+  productType: ProductType | null;
+  roles: Role[];
+  appNotificationEnabled?: boolean;
+  emailNotificationEnabled?: boolean;
+  phoneNotificationEnabled?: boolean;
 }
 
 export interface CreateUserRequest {
-  name: string;
   email: string;
+  phone: string;
+  fullName: string;
   password: string;
-  role: User['role'];
+  originCountryId: number;
+  destinationCountryId: number;
+  productTypeId: number;
+  roles: Role[];
+  emailNotificationEnabled?: boolean;
+  phoneNotificationEnabled?: boolean;
+  appNotificationEnabled?: boolean;
 }
 
 export interface UpdateUserRequest {
-  name?: string;
+  fullName?: string;
   email?: string;
-  role?: User['role'];
+  phone?: string;
+  roles?: Role[];
   status?: User['status'];
   password?: string;
+  originCountryId?: number | null;
+  destinationCountryId?: number | null;
+  productTypeId?: number | null;
+  emailNotificationEnabled?: boolean;
+  phoneNotificationEnabled?: boolean;
+  appNotificationEnabled?: boolean;
 }
 
 export interface UserQueryParams {
@@ -48,30 +70,30 @@ export interface PaginatedResponse<T> {
 export const usersApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Get all users (Admin only)
-    getUsers: builder.query<PaginatedResponse<User>, UserQueryParams | void>({
+    getUsers: builder.query<User[], UserQueryParams | void>({
       query: (params = {}) => ({
-        url: '/users',
+        url: '/admin/users',
         params,
       }),
       providesTags: (result) =>
         result
           ? [
-              ...result.data.map(({ id }) => ({ type: 'Users' as const, id })),
+              ...result.map(({ id }) => ({ type: 'Users' as const, id })),
               { type: 'Users', id: 'LIST' },
             ]
           : [{ type: 'Users', id: 'LIST' }],
     }),
     
     // Get single user
-    getUserById: builder.query<User, string>({
-      query: (id) => `/users/${id}`,
+    getUserById: builder.query<User, number>({
+      query: (id) => `/admin/users/${id}`,
       providesTags: (result, error, id) => [{ type: 'Users', id }],
     }),
     
     // Create user (Admin only)
     createUser: builder.mutation<User, CreateUserRequest>({
       query: (data) => ({
-        url: '/users',
+        url: '/admin/users',
         method: 'POST',
         body: data,
       }),
@@ -79,10 +101,10 @@ export const usersApi = baseApi.injectEndpoints({
     }),
     
     // Update user (Admin only)
-    updateUser: builder.mutation<User, { id: string; data: UpdateUserRequest }>({
+    updateUser: builder.mutation<User, { id: number; data: UpdateUserRequest }>({
       query: ({ id, data }) => ({
-        url: `/users/${id}`,
-        method: 'PUT',
+        url: `/admin/users/${id}`,
+        method: 'PATCH',
         body: data,
       }),
       invalidatesTags: (result, error, { id }) => [
@@ -93,24 +115,25 @@ export const usersApi = baseApi.injectEndpoints({
     }),
     
     // Delete user (Admin only)
-    deleteUser: builder.mutation<void, string>({
+    deleteUser: builder.mutation<void, number>({
       query: (id) => ({
-        url: `/users/${id}`,
+        url: `/admin/users/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [{ type: 'Users', id: 'LIST' }, 'Dashboard'],
     }),
     
     // Bulk update users
-    bulkUpdateUsers: builder.mutation<void, { ids: string[]; data: UpdateUserRequest }>({
+    bulkUpdateUsers: builder.mutation<void, { ids: number[]; data: UpdateUserRequest }>({
       query: ({ ids, data }) => ({
-        url: '/users/bulk-update',
+        url: '/admin/users/bulk-update',
         method: 'PATCH',
         body: { ids, data },
       }),
       invalidatesTags: [{ type: 'Users', id: 'LIST' }, 'Dashboard'],
     }),
   }),
+  overrideExisting: true,
 });
 
 export const {

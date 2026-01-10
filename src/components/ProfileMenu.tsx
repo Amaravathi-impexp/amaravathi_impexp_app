@@ -1,6 +1,7 @@
-import { User, Settings, LogOut } from 'lucide-react';
+import { User, Settings, LogOut, Shield } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useAppSelector } from '../store/hooks';
+import { selectCurrentUser, selectRoleDisplayName } from '../store/selectors/authSelectors';
 
 interface ProfileMenuProps {
   onSignOut: () => void;
@@ -9,7 +10,8 @@ interface ProfileMenuProps {
 }
 
 export function ProfileMenu({ onSignOut, onSettingsClick, onProfileClick }: ProfileMenuProps) {
-  const currentUser = useAppSelector((state) => state.auth.user);
+  const currentUser = useAppSelector(selectCurrentUser);
+  const roleDisplayName = useAppSelector(selectRoleDisplayName);
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -39,18 +41,19 @@ export function ProfileMenu({ onSignOut, onSettingsClick, onProfileClick }: Prof
         <div className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white">
           <User className="w-5 h-5" />
         </div>
-        <span className="hidden md:block text-sm">{currentUser?.name || 'User'}</span>
+        <span className="hidden md:block text-sm">{currentUser?.fullName || 'User'}</span>
       </button>
 
       {/* Profile Dropdown */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
           <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-sm">{currentUser?.name || 'User'}</p>
+            <p className="text-sm font-medium">{currentUser?.fullName || 'User'}</p>
             <p className="text-xs text-gray-500">{currentUser?.email || 'user@example.com'}</p>
-            {currentUser?.role && (
-              <p className="text-xs text-blue-600 mt-1">Role: {currentUser.role}</p>
-            )}
+            <div className="flex items-center gap-1 mt-2">
+              <Shield className="w-3 h-3 text-blue-600" />
+              <p className="text-xs text-blue-600 font-medium">{roleDisplayName}</p>
+            </div>
           </div>
           <button
             onClick={() => {

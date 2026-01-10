@@ -1,20 +1,12 @@
-import {
-  Search,
-  Menu,
-  X,
-  LayoutDashboard,
-  Ship,
-  Users,
-  BarChart3,
-  Folder,
-  DollarSign,
-  Settings as SettingsIcon,
-  LogOut,
-} from 'lucide-react';
-import { Logo } from './Logo';
+import { Search, Bell, Menu, X, LayoutDashboard, Ship, Users, BarChart3, FileText, Settings as SettingsIcon, User, LogOut } from 'lucide-react';
+import { TextField, InputAdornment } from '@mui/material';
+import { useState } from 'react';
 import { NotificationDropdown } from './NotificationDropdown';
 import { ProfileMenu } from './ProfileMenu';
+import { Logo } from './Logo';
 import { TopRibbon } from './TopRibbon';
+import { useAppSelector } from '../store/hooks';
+import { selectIsAdmin } from '../store/selectors/authSelectors';
 
 interface HeaderProps {
   searchQuery: string;
@@ -24,6 +16,7 @@ interface HeaderProps {
   activeMenu: string;
   onMenuChange: (menu: string) => void;
   onSignOut: () => void;
+  onLogoClick: () => void;
 }
 
 export function Header({
@@ -34,7 +27,11 @@ export function Header({
   activeMenu,
   onMenuChange,
   onSignOut,
+  onLogoClick,
 }: HeaderProps) {
+  // Check if user is admin
+  const isAdmin = useAppSelector(selectIsAdmin);
+  
   const handleMobileMenuClick = (menu: string) => {
     onMenuChange(menu);
     onToggleMobileMenu();
@@ -45,29 +42,35 @@ export function Header({
       <TopRibbon />
       <header className="bg-white border-b border-gray-200 fixed top-10 left-0 right-0 z-50 shadow-sm">
         <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-24">
             {/* Logo */}
             <div className="flex items-center">
               <button
-                onClick={onSignOut}
+                onClick={onLogoClick}
                 className="hover:opacity-80 transition-opacity"
               >
-                <Logo className="h-14" />
+                <Logo className="h-[86px]" />
               </button>
             </div>
 
             {/* Right Side - Search, Notifications and Profile */}
             <div className="flex items-center gap-3">
               {/* Search */}
-              <div className="relative hidden md:block">
-                <input
-                  type="text"
+              <div className="hidden md:block">
+                <TextField
+                  size="small"
                   placeholder="Search shipments..."
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  className="w-64 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                  sx={{ width: 250 }}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search className="w-4 h-4 text-gray-400" />
+                      </InputAdornment>
+                    ),
+                  }}
                 />
-                <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
               </div>
 
               {/* Notifications */}
@@ -159,21 +162,8 @@ export function Header({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Folder className="w-5 h-5" />
+                    <FileText className="w-5 h-5" />
                     <span>Documents</span>
-                  </div>
-                </button>
-                <button
-                  onClick={() => handleMobileMenuClick('payments')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'payments'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <DollarSign className="w-5 h-5" />
-                    <span>Payments & Invoicing</span>
                   </div>
                 </button>
                 <button

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from './Header';
 import { SimpleFooter } from './SimpleFooter';
 import { LeftMenu } from './LeftMenu';
@@ -14,20 +14,48 @@ import { Documents } from './Documents';
 import { Roles } from './Roles';
 import { UploadDocuments } from './UploadDocuments';
 import { useAppSelector } from '../store/hooks';
+import { selectIsAdmin, selectCurrentUser } from '../store/selectors/authSelectors';
 
 interface MainLayoutProps {
   onSignOut: () => void;
 }
 
 export function MainLayout({ onSignOut }: MainLayoutProps) {
-  const currentUser = useAppSelector((state) => state.auth.user);
+  const currentUser = useAppSelector(selectCurrentUser);
+  const isAdmin = useAppSelector(selectIsAdmin);
+  
   const [activeSection, setActiveSection] = useState<'overview' | 'shipments' | 'users' | 'partners' | 'settings' | 'profile' | 'payments' | 'analytics' | 'documents' | 'roles' | 'upload-documents'>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminExpanded, setAdminExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
-  const isAdmin = currentUser?.role === 'Admin';
+  // Redirect based on user status
+  // CREATED status: Incomplete profile → Settings page
+  // ACTIVE status: Complete profile → Dashboard overview
+  useEffect(() => {
+    if (currentUser?.status === 'CREATED') {
+      // New user with incomplete profile - redirect to Settings
+      setActiveSection('settings');
+    } else if (currentUser?.status === 'ACTIVE') {
+      // Active user with complete profile - ensure on Dashboard
+      setActiveSection('overview');
+    }
+  }, [currentUser?.status]);
+
+  // Handle section change with access control
+  const handleSectionChange = (section: any) => {
+    // Check if the section requires admin access
+    const adminOnlySections = ['users', 'roles', 'analytics'];
+    
+    if (adminOnlySections.includes(section) && !isAdmin) {
+      // Don't allow non-admin users to access admin sections
+      alert('Access denied. This section is only available to administrators.');
+      return;
+    }
+    
+    setActiveSection(section);
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -38,8 +66,9 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
         showMobileMenu={showMobileMenu}
         onToggleMobileMenu={() => setShowMobileMenu(!showMobileMenu)}
         activeMenu={activeSection}
-        onMenuChange={setActiveSection}
+        onMenuChange={handleSectionChange}
         onSignOut={onSignOut}
+        onLogoClick={() => handleSectionChange('overview')}
       />
 
       {/* Main Content Wrapper */}
@@ -51,10 +80,13 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
           {activeSection === "overview" && <Dashboard />}
           {activeSection === "shipments" && <Shipments />}
           {activeSection === "partners" && <PartnerDirectory />}
-          {activeSection === "users" && <UsersComponent />}
-          {activeSection === "roles" && <Roles />}
+          
+          {/* Admin-only sections */}
+          {activeSection === "users" && isAdmin && <UsersComponent />}
+          {activeSection === "roles" && isAdmin && <Roles />}
+          {activeSection === "analytics" && isAdmin && <Analytics />}
+          
           {activeSection === "payments" && <PaymentsInvoicing />}
-          {activeSection === "analytics" && <Analytics />}
           {activeSection === "documents" && (
             <Documents
               onNavigateToUpload={() => setActiveSection("upload-documents")}
@@ -74,7 +106,7 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
       {/* Left Sidebar */}
       <LeftMenu
         activeSection={activeSection}
-        onSectionChange={setActiveSection}
+        onSectionChange={handleSectionChange}
         sidebarOpen={sidebarOpen}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         isAdmin={isAdmin}

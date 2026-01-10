@@ -10,6 +10,17 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import {
+  Box,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Collapse,
+  Divider,
+  IconButton,
+  Typography,
+} from '@mui/material';
 
 interface LeftMenuProps {
   activeSection: string;
@@ -31,170 +42,329 @@ export function LeftMenu({
   onAdminToggle,
 }: LeftMenuProps) {
   return (
-    <aside
-      className={`${sidebarOpen ? "w-64" : "w-20"} bg-white border-r border-gray-200 fixed left-0 top-[120px] bottom-0 transition-all duration-300 z-40 hidden lg:block`}
+    <Box
+      component="aside"
+      sx={{
+        width: sidebarOpen ? 256 : 80,
+        bgcolor: 'white',
+        borderRight: 1,
+        borderColor: 'divider',
+        position: 'fixed',
+        left: 0,
+        top: '120px',
+        bottom: 0,
+        transition: 'width 0.3s',
+        zIndex: 40,
+        display: { xs: 'none', lg: 'block' },
+      }}
     >
-      <div className="h-full flex flex-col">
+      <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Sidebar Content */}
-        <nav className="flex-1 px-3 py-4 space-y-1">
-          {/* Dashboard */}
-          <button
-            onClick={() => onSectionChange("overview")}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-              activeSection === "overview"
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <LayoutDashboard className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>Dashboard</span>}
-          </button>
-
-          {/* Shipments */}
-          <button
-            onClick={() => onSectionChange("shipments")}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-              activeSection === "shipments"
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <Ship className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>Shipments</span>}
-          </button>
-
-          {/* Analytics - Admin Only */}
-          {isAdmin && (
-            <button
-              onClick={() => onSectionChange("analytics")}
-              className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-                activeSection === "analytics"
-                  ? "bg-blue-50 text-blue-600"
-                  : "text-gray-700 hover:bg-gray-100"
-              }`}
+        <Box component="nav" sx={{ flexGrow: 1, px: 1.5, py: 2 }}>
+          <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+            {/* Dashboard */}
+            <ListItemButton
+              onClick={() => onSectionChange("overview")}
+              selected={activeSection === "overview"}
+              sx={{
+                borderRadius: 2,
+                gap: 1.5,
+                px: 1.5,
+                py: 1.5,
+                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                },
+              }}
             >
-              <BarChart3 className="w-5 h-5 flex-shrink-0" />
-              {sidebarOpen && <span>Analytics</span>}
-            </button>
-          )}
+              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                <LayoutDashboard size={20} />
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary="Dashboard" primaryTypographyProps={{ variant: 'body2' }} />}
+            </ListItemButton>
 
-          {/* Documents */}
-          <button
-            onClick={() => onSectionChange("documents")}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-              activeSection === "documents"
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <Folder className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>Documents</span>}
-          </button>
+            {/* Shipments */}
+            <ListItemButton
+              onClick={() => onSectionChange("shipments")}
+              selected={activeSection === "shipments"}
+              sx={{
+                borderRadius: 2,
+                gap: 1.5,
+                px: 1.5,
+                py: 1.5,
+                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                <Ship size={20} />
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary="Shipments" primaryTypographyProps={{ variant: 'body2' }} />}
+            </ListItemButton>
 
-          {/* Partner Directory */}
-          <button
-            onClick={() => onSectionChange("partners")}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-              activeSection === "partners"
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <UsersIcon className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>Partner Directory</span>}
-          </button>
-
-          {/* Payments Invoicing */}
-          <button
-            onClick={() => onSectionChange("payments")}
-            className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
-              activeSection === "payments"
-                ? "bg-blue-50 text-blue-600"
-                : "text-gray-700 hover:bg-gray-100"
-            }`}
-          >
-            <DollarSign className="w-5 h-5 flex-shrink-0" />
-            {sidebarOpen && <span>Payments Invoicing</span>}
-          </button>
-
-          {/* Admin - with submenu - Admin Only */}
-          {isAdmin && (
-            <div>
-              <button
-                onClick={() => {
-                  onAdminToggle();
-                  if (!sidebarOpen) {
-                    onToggleSidebar();
-                  }
+            {/* Analytics - Admin Only */}
+            {isAdmin && (
+              <ListItemButton
+                onClick={() => onSectionChange("analytics")}
+                selected={activeSection === "analytics"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 1.5,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
+                  },
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
                 }}
-                className={`w-full flex items-center justify-between gap-3 px-3 py-3 rounded-lg transition-colors ${
-                  activeSection === "users" || activeSection === "roles"
-                    ? "bg-blue-50 text-blue-600"
-                    : "text-gray-700 hover:bg-gray-100"
-                }`}
               >
-                <div className="flex items-center gap-3">
-                  <Shield className="w-5 h-5 flex-shrink-0" />
-                  {sidebarOpen && <span>Admin</span>}
-                </div>
-                {sidebarOpen && (
-                  <ChevronDown
-                    className={`w-4 h-4 transition-transform ${
-                      adminExpanded ? "rotate-180" : ""
-                    }`}
-                  />
-                )}
-              </button>
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <BarChart3 size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Analytics" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
-              {/* Submenu */}
-              {adminExpanded && sidebarOpen && (
-                <div className="ml-8 mt-1 space-y-1">
-                  <button
-                    onClick={() => onSectionChange("users")}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                      activeSection === "users"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <UsersIcon className="w-4 h-4 flex-shrink-0" />
-                    <span>Users</span>
-                  </button>
+            {/* Documents */}
+            <ListItemButton
+              onClick={() => onSectionChange("documents")}
+              selected={activeSection === "documents"}
+              sx={{
+                borderRadius: 2,
+                gap: 1.5,
+                px: 1.5,
+                py: 1.5,
+                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                <Folder size={20} />
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary="Documents" primaryTypographyProps={{ variant: 'body2' }} />}
+            </ListItemButton>
 
-                  <button
-                    onClick={() => onSectionChange("roles")}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm ${
-                      activeSection === "roles"
-                        ? "bg-blue-50 text-blue-600"
-                        : "text-gray-600 hover:bg-gray-100"
-                    }`}
-                  >
-                    <Shield className="w-4 h-4 flex-shrink-0" />
-                    <span>Roles</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </nav>
+            {/* Partner Directory */}
+            <ListItemButton
+              onClick={() => onSectionChange("partners")}
+              selected={activeSection === "partners"}
+              sx={{
+                borderRadius: 2,
+                gap: 1.5,
+                px: 1.5,
+                py: 1.5,
+                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                <UsersIcon size={20} />
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary="Partner Directory" primaryTypographyProps={{ variant: 'body2' }} />}
+            </ListItemButton>
+
+            {/* Payments Invoicing */}
+            <ListItemButton
+              onClick={() => onSectionChange("payments")}
+              selected={activeSection === "payments"}
+              sx={{
+                borderRadius: 2,
+                gap: 1.5,
+                px: 1.5,
+                py: 1.5,
+                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                <DollarSign size={20} />
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary="Payments Invoicing" primaryTypographyProps={{ variant: 'body2' }} />}
+            </ListItemButton>
+
+            {/* Admin - with submenu - Admin Only */}
+            {isAdmin && (
+              <Box>
+                <ListItemButton
+                  onClick={() => {
+                    onAdminToggle();
+                    if (!sidebarOpen) {
+                      onToggleSidebar();
+                    }
+                  }}
+                  selected={activeSection === "users" || activeSection === "roles"}
+                  sx={{
+                    borderRadius: 2,
+                    gap: 1.5,
+                    px: 1.5,
+                    py: 1.5,
+                    justifyContent: sidebarOpen ? 'space-between' : 'center',
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                    '&:hover': {
+                      bgcolor: 'grey.100',
+                    },
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                      <Shield size={20} />
+                    </ListItemIcon>
+                    {sidebarOpen && <ListItemText primary="Admin" primaryTypographyProps={{ variant: 'body2' }} />}
+                  </Box>
+                  {sidebarOpen && (
+                    <ChevronDown
+                      size={16}
+                      style={{
+                        transition: 'transform 0.2s',
+                        transform: adminExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+
+                {/* Submenu */}
+                <Collapse in={adminExpanded && sidebarOpen} timeout="auto" unmountOnExit>
+                  <List disablePadding sx={{ ml: 4, mt: 0.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                    <ListItemButton
+                      onClick={() => onSectionChange("users")}
+                      selected={activeSection === "users"}
+                      sx={{
+                        borderRadius: 2,
+                        gap: 1.5,
+                        px: 1.5,
+                        py: 1,
+                        '&.Mui-selected': {
+                          bgcolor: 'primary.lighter',
+                          color: 'primary.main',
+                          '&:hover': {
+                            bgcolor: 'primary.lighter',
+                          },
+                        },
+                        '&:hover': {
+                          bgcolor: 'grey.100',
+                        },
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                        <UsersIcon size={16} />
+                      </ListItemIcon>
+                      <ListItemText primary="Users" primaryTypographyProps={{ variant: 'body2' }} />
+                    </ListItemButton>
+
+                    <ListItemButton
+                      onClick={() => onSectionChange("roles")}
+                      selected={activeSection === "roles"}
+                      sx={{
+                        borderRadius: 2,
+                        gap: 1.5,
+                        px: 1.5,
+                        py: 1,
+                        '&.Mui-selected': {
+                          bgcolor: 'primary.lighter',
+                          color: 'primary.main',
+                          '&:hover': {
+                            bgcolor: 'primary.lighter',
+                          },
+                        },
+                        '&:hover': {
+                          bgcolor: 'grey.100',
+                        },
+                      }}
+                    >
+                      <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                        <Shield size={16} />
+                      </ListItemIcon>
+                      <ListItemText primary="Roles" primaryTypographyProps={{ variant: 'body2' }} />
+                    </ListItemButton>
+                  </List>
+                </Collapse>
+              </Box>
+            )}
+          </List>
+        </Box>
 
         {/* Collapse/Expand Button */}
-        <div className="p-3 border-t border-gray-200">
-          <button
+        <Box sx={{ p: 1.5, borderTop: 1, borderColor: 'divider' }}>
+          <ListItemButton
             onClick={onToggleSidebar}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            sx={{
+              borderRadius: 2,
+              gap: 1,
+              px: 1.5,
+              py: 1,
+              justifyContent: sidebarOpen ? 'flex-start' : 'center',
+              '&:hover': {
+                bgcolor: 'grey.100',
+              },
+            }}
           >
             {!sidebarOpen ? (
-              <ChevronRight className="w-5 h-5" />
+              <ChevronRight size={20} />
             ) : (
               <>
-                <ChevronLeft className="w-5 h-5" />
-                <span className="text-sm">Collapse</span>
+                <ChevronLeft size={20} />
+                <Typography variant="body2">Collapse</Typography>
               </>
             )}
-          </button>
-        </div>
-      </div>
-    </aside>
+          </ListItemButton>
+        </Box>
+      </Box>
+    </Box>
   );
 }

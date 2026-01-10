@@ -1,23 +1,61 @@
-import { User, Mail, Phone, Smartphone, Shield, Globe, Package, Bell, Save } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import {
+  TextField,
+  Button,
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  FormControlLabel,
+  Checkbox,
+  Paper,
+  Snackbar,
+  Alert as MuiAlert,
+  AlertTitle,
+  CircularProgress,
+} from '@mui/material';
+import { User, Mail, Shield, Globe, Package, Bell, Smartphone, Save } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { updateUser as updateUserAction } from '../store/slices/authSlice';
-import { mockApi } from '../services/mock-api';
+import { logger } from '../utils/logger';
+import { useUpdateUserProfileMutation } from '../store/api/userApi';
+import { RoleDropdown } from './common/RoleDropdown';
+import { CountryDropdown } from './common/CountryDropdown';
+import { ProductTypeDropdown } from './common/ProductTypeDropdown';
+import type { Role, Country, ProductType } from '../store/api/referenceDataApi';
 
 export function Settings() {
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state) => state.auth.user);
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
   
-  const [formData, setFormData] = useState({
-    name: '',
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('Failed to update settings. Please try again.');
+  const [formData, setFormData] = useState<{
+    email: string;
+    fullName: string;
+    phone: string;
+    cell: string;
+    role: Role | null;
+    originCountry: Country | null;
+    destinationCountry: Country | null;
+    product: ProductType | null;
+    notifications: {
+      email: boolean;
+      sms: boolean;
+      push: boolean;
+    };
+  }>({
     email: '',
+    fullName: '',
     phone: '',
     cell: '',
-    role: '',
-    originCountry: '',
-    destinationCountry: '',
-    product: '',
+    role: null,
+    originCountry: null,
+    destinationCountry: null,
+    product: null,
     notifications: {
       email: true,
       sms: false,
@@ -29,18 +67,18 @@ export function Settings() {
   useEffect(() => {
     if (currentUser) {
       setFormData({
-        name: currentUser.name || '',
         email: currentUser.email || '',
+        fullName: currentUser.fullName || '',
         phone: currentUser.phone || '+1-555-0000',
-        cell: currentUser.cell || '+1-555-0001',
-        role: currentUser.role || '',
-        originCountry: (currentUser as any).originCountry || '',
-        destinationCountry: (currentUser as any).destinationCountry || '',
-        product: (currentUser as any).product || '',
+        cell: currentUser.phone || '+1-555-0001',
+        role: (currentUser.roles && currentUser.roles.length > 0 ? currentUser.roles[0] : null) as Role | null,
+        originCountry: (currentUser.originCountry || null) as Country | null,
+        destinationCountry: (currentUser.destinationCountry || null) as Country | null,
+        product: (currentUser.productType || null) as ProductType | null,
         notifications: {
-          email: currentUser.notifications?.email ?? true,
-          sms: currentUser.notifications?.sms ?? false,
-          push: currentUser.notifications?.push ?? true,
+          email: (currentUser as any).emailNotificationEnabled ?? true,
+          sms: (currentUser as any).phoneNotificationEnabled ?? false,
+          push: (currentUser as any).appNotificationEnabled ?? true,
         },
       });
     }
@@ -49,38 +87,71 @@ export function Settings() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (currentUser) {
-      try {
-        // Call the update API
-        const updatedUser = await mockApi.auth.updateCurrentUser(currentUser.id, {
-          role: formData.role,
-          originCountry: formData.originCountry,
-          destinationCountry: formData.destinationCountry,
-          product: formData.product,
-          notifications: formData.notifications,
-        });
-        
-        // Update Redux store with the response
-        dispatch(updateUserAction(updatedUser));
-        
-        alert('Settings updated successfully!');
-      } catch (error) {
-        console.error('Failed to update settings:', error);
-        alert('Failed to update settings. Please try again.');
-      }
+    if (!currentUser) {
+      setErrorMessage('User not found. Please sign in again.');
+      setShowError(true);
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.role) {
+      setErrorMessage('Please select a role');
+      setShowError(true);
+      return;
+    }
+    if (!formData.originCountry) {
+      setErrorMessage('Please select an origin country');
+      setShowError(true);
+      return;
+    }
+    if (!formData.destinationCountry) {
+      setErrorMessage('Please select a destination country');
+      setShowError(true);
+      return;
+    }
+    if (!formData.product) {
+      setErrorMessage('Please select a product type');
+      setShowError(true);
+      return;
+    }
+
+    try {
+      const response = await updateUserProfile({
+        userId: currentUser.id,
+        data: {
+          originCountryId: formData.originCountry.id,
+          destinationCountryId: formData.destinationCountry.id,
+          productTypeId: formData.product.id,
+          roles: [formData.role],
+          emailNotificationEnabled: formData.notifications.email,
+          phoneNotificationEnabled: formData.notifications.sms,
+          appNotificationEnabled: formData.notifications.push,
+        },
+      }).unwrap();
+
+      // Update Redux state with the response
+      dispatch(updateUserAction({
+        status: response.status,
+        originCountry: response.originCountry,
+        destinationCountry: response.destinationCountry,
+        productType: response.productType,
+        roles: response.roles,
+        notifications: {
+          email: response.emailNotificationEnabled,
+          sms: response.phoneNotificationEnabled,
+          push: response.appNotificationEnabled,
+        },
+      } as any));
+
+      setShowSuccess(true);
+    } catch (error: any) {
+      logger.error('Failed to update user profile', { error, userId: currentUser.id });
+      setErrorMessage(error?.data?.message || 'Failed to update settings. Please try again.');
+      setShowError(true);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
+  const handleCheckboxChange = (name: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       notifications: {
@@ -99,325 +170,342 @@ export function Settings() {
         ]}
       />
 
+      {/* Profile Setup Alert for CREATED status users */}
+      {currentUser?.status === 'CREATED' && (
+        <MuiAlert 
+          severity="warning" 
+          sx={{ 
+            mt: 3, 
+            mb: 3,
+            maxWidth: '1200px',
+          }}
+        >
+          <AlertTitle>Complete Your Profile Setup</AlertTitle>
+          Welcome! To get started with Amaravathi Imports & Exports, please complete your profile by selecting your <strong>role</strong>, <strong>origin country</strong>, <strong>destination country</strong>, and <strong>product type</strong> below. This information helps us personalize your experience.
+        </MuiAlert>
+      )}
+
       {/* Form */}
-      <form onSubmit={handleSubmit} className="mt-6 max-w-5xl">
+      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3, maxWidth: '1200px' }}>
         {/* Personal Information Card - Non-Editable */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <User className="w-5 h-5 text-blue-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Personal Information</h2>
-              <p className="text-sm text-gray-600">Your basic account details (non-editable)</p>
-            </div>
-          </div>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'primary.lighter', borderRadius: 2 }}>
+                <User className="w-5 h-5 text-blue-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Personal Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Your basic account details (non-editable)
+                </Typography>
+              </Box>
+            </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Full Name */}
-            <div>
-              <label htmlFor="name" className="block text-sm text-gray-700 mb-2">
-                Full Name
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
-                  disabled
-                  readOnly
-                />
-              </div>
-            </div>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Full Name */}
+              <TextField
+                id="name"
+                name="name"
+                label="Full Name"
+                value={formData.fullName}
+                disabled
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
 
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm text-gray-700 mb-2">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="w-5 h-5 text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 cursor-not-allowed"
-                  disabled
-                  readOnly
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+              {/* Email */}
+              <TextField
+                id="email"
+                name="email"
+                type="email"
+                label="Email"
+                value={formData.email}
+                disabled
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+
+              {/* Phone Number */}
+              <TextField
+                id="phone"
+                name="phone"
+                type="tel"
+                label="Phone Number"
+                value={formData.phone}
+                disabled
+                fullWidth
+                InputProps={{
+                  readOnly: true,
+                }}
+              />
+            </Box>
+          </CardContent>
+        </Card>
 
         {/* Role & Permissions Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <Shield className="w-5 h-5 text-purple-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Role & Permissions</h2>
-              <p className="text-sm text-gray-600">Update your user role</p>
-            </div>
-          </div>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'secondary.lighter', borderRadius: 2 }}>
+                <Shield className="w-5 h-5 text-purple-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Role & Permissions</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Update your user role
+                </Typography>
+              </Box>
+            </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Role */}
-            <div>
-              <label htmlFor="role" className="block text-sm text-gray-700 mb-2">
-                User Role <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="role"
-                name="role"
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Role */}
+              <RoleDropdown
                 value={formData.role}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(role) => setFormData(prev => ({ ...prev, role }))}
+                placeholder="Select a role"
+                label="Role"
                 required
-              >
-                <option value="">Select a role</option>
-                <option value="Importer">Importer</option>
-                <option value="Exporter">Exporter</option>
-              </select>
-            </div>
-          </div>
+              />
+            </Box>
 
-          {/* Role Description */}
-          {formData.role && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Role Permissions:</span>
-                {formData.role === 'Importer' && ' Can create import shipments and track deliveries.'}
-                {formData.role === 'Exporter' && ' Can create export shipments and upload documentation.'}
-              </p>
-            </div>
-          )}
-        </div>
+            {/* Role Description */}
+            {formData.role && (
+              <Paper variant="outlined" sx={{ mt: 3, p: 2, bgcolor: 'grey.50' }}>
+                <Typography variant="body2" color="text.secondary">
+                  <strong>Selected Role:</strong> {formData.role.name}
+                </Typography>
+              </Paper>
+            )}
+          </CardContent>
+        </Card>
 
         {/* Route Information Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-teal-100 rounded-lg">
-              <Globe className="w-5 h-5 text-teal-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Route Information</h2>
-              <p className="text-sm text-gray-600">Specify origin and destination countries</p>
-            </div>
-          </div>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'info.lighter', borderRadius: 2 }}>
+                <Globe className="w-5 h-5 text-teal-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Route Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Specify origin and destination countries
+                </Typography>
+              </Box>
+            </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Origin Country */}
-            <div>
-              <label htmlFor="originCountry" className="block text-sm text-gray-700 mb-2">
-                Origin Country <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="originCountry"
-                name="originCountry"
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Origin Country */}
+              <CountryDropdown
                 value={formData.originCountry}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(country) => setFormData(prev => ({ ...prev, originCountry: country }))}
+                placeholder="Select origin country"
+                label="Origin Country"
                 required
-              >
-                <option value="">Select origin country</option>
-                <option value="India">India</option>
-                <option value="China">China</option>
-                <option value="USA">United States</option>
-                <option value="UAE">United Arab Emirates</option>
-                <option value="Singapore">Singapore</option>
-                <option value="Japan">Japan</option>
-                <option value="South Korea">South Korea</option>
-                <option value="Thailand">Thailand</option>
-                <option value="Vietnam">Vietnam</option>
-                <option value="Malaysia">Malaysia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="Germany">Germany</option>
-                <option value="UK">United Kingdom</option>
-                <option value="France">France</option>
-                <option value="Netherlands">Netherlands</option>
-              </select>
-            </div>
+              />
 
-            {/* Destination Country */}
-            <div>
-              <label htmlFor="destinationCountry" className="block text-sm text-gray-700 mb-2">
-                Destination Country <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="destinationCountry"
-                name="destinationCountry"
+              {/* Destination Country */}
+              <CountryDropdown
                 value={formData.destinationCountry}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(country) => setFormData(prev => ({ ...prev, destinationCountry: country }))}
+                placeholder="Select destination country"
+                label="Destination Country"
                 required
-              >
-                <option value="">Select destination country</option>
-                <option value="India">India</option>
-                <option value="China">China</option>
-                <option value="USA">United States</option>
-                <option value="UAE">United Arab Emirates</option>
-                <option value="Singapore">Singapore</option>
-                <option value="Japan">Japan</option>
-                <option value="South Korea">South Korea</option>
-                <option value="Thailand">Thailand</option>
-                <option value="Vietnam">Vietnam</option>
-                <option value="Malaysia">Malaysia</option>
-                <option value="Indonesia">Indonesia</option>
-                <option value="Germany">Germany</option>
-                <option value="UK">United Kingdom</option>
-                <option value="France">France</option>
-                <option value="Netherlands">Netherlands</option>
-              </select>
-            </div>
-          </div>
-        </div>
+              />
+            </Box>
+          </CardContent>
+        </Card>
 
         {/* Product Information Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-orange-100 rounded-lg">
-              <Package className="w-5 h-5 text-orange-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Product Information</h2>
-              <p className="text-sm text-gray-600">Select the product type</p>
-            </div>
-          </div>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'warning.lighter', borderRadius: 2 }}>
+                <Package className="w-5 h-5 text-orange-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Product Information</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Select the product type
+                </Typography>
+              </Box>
+            </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Product Name */}
-            <div>
-              <label htmlFor="product" className="block text-sm text-gray-700 mb-2">
-                Product Name <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="product"
-                name="product"
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+              {/* Product Type */}
+              <ProductTypeDropdown
                 value={formData.product}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(product) => setFormData(prev => ({ ...prev, product }))}
+                placeholder="Select a product type"
+                label="Product Type"
                 required
-              >
-                <option value="">Select a product</option>
-                <option value="Rice">Rice</option>
-                <option value="Turmeric">Turmeric</option>
-                <option value="Chillies">Chillies</option>
-              </select>
-            </div>
-          </div>
-        </div>
+              />
+            </Box>
+          </CardContent>
+        </Card>
 
         {/* Notification Preferences Card */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Bell className="w-5 h-5 text-green-600" />
-            </div>
-            <div>
-              <h2 className="text-lg">Notification Preferences</h2>
-              <p className="text-sm text-gray-600">Choose how you receive updates</p>
-            </div>
-          </div>
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+              <Box sx={{ p: 1.5, bgcolor: 'success.lighter', borderRadius: 2 }}>
+                <Bell className="w-5 h-5 text-green-600" />
+              </Box>
+              <Box>
+                <Typography variant="h6">Notification Preferences</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Choose how you receive updates
+                </Typography>
+              </Box>
+            </Box>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Email Notifications */}
-            <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
-                 onClick={() => handleCheckboxChange({ target: { name: 'email', checked: !formData.notifications.email } } as any)}>
-              <input
-                type="checkbox"
-                id="email-notif"
-                name="email"
-                checked={formData.notifications.email}
-                onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Mail className="w-4 h-4 text-gray-400" />
-                  <label htmlFor="email-notif" className="text-sm cursor-pointer">
-                    Email
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Shipment updates & reports
-                </p>
-              </div>
-            </div>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 2 }}>
+              {/* Email Notifications */}
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': { borderColor: 'primary.main' },
+                  transition: 'border-color 0.2s',
+                }}
+                onClick={() => handleCheckboxChange('email', !formData.notifications.email)}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.notifications.email}
+                      onChange={(e) => handleCheckboxChange('email', e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Mail className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2">Email</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Shipment updates & reports
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Paper>
 
-            {/* SMS Notifications */}
-            <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
-                 onClick={() => handleCheckboxChange({ target: { name: 'sms', checked: !formData.notifications.sms } } as any)}>
-              <input
-                type="checkbox"
-                id="sms-notif"
-                name="sms"
-                checked={formData.notifications.sms}
-                onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Smartphone className="w-4 h-4 text-gray-400" />
-                  <label htmlFor="sms-notif" className="text-sm cursor-pointer">
-                    SMS
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Critical alerts via text
-                </p>
-              </div>
-            </div>
+              {/* SMS Notifications */}
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': { borderColor: 'primary.main' },
+                  transition: 'border-color 0.2s',
+                }}
+                onClick={() => handleCheckboxChange('sms', !formData.notifications.sms)}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.notifications.sms}
+                      onChange={(e) => handleCheckboxChange('sms', e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Smartphone className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2">SMS</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Critical alerts via text
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Paper>
 
-            {/* Push Notifications */}
-            <div className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer"
-                 onClick={() => handleCheckboxChange({ target: { name: 'push', checked: !formData.notifications.push } } as any)}>
-              <input
-                type="checkbox"
-                id="push-notif"
-                name="push"
-                checked={formData.notifications.push}
-                onChange={handleCheckboxChange}
-                className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 mt-0.5"
-                onClick={(e) => e.stopPropagation()}
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <Bell className="w-4 h-4 text-gray-400" />
-                  <label htmlFor="push-notif" className="text-sm cursor-pointer">
-                    Push
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500">
-                  Real-time in-app updates
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+              {/* Push Notifications */}
+              <Paper
+                variant="outlined"
+                sx={{
+                  p: 2,
+                  cursor: 'pointer',
+                  '&:hover': { borderColor: 'primary.main' },
+                  transition: 'border-color 0.2s',
+                }}
+                onClick={() => handleCheckboxChange('push', !formData.notifications.push)}
+              >
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={formData.notifications.push}
+                      onChange={(e) => handleCheckboxChange('push', e.target.checked)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    <Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                        <Bell className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2">Push</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Real-time in-app updates
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </Paper>
+            </Box>
+          </CardContent>
+        </Card>
 
-        {/* Action Button at Bottom */}
-        <div className="flex items-center justify-end gap-3 mt-6">
-          <button
+        {/* Action Button */}
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
             type="submit"
-            className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            variant="contained"
+            size="large"
+            startIcon={<Save className="w-5 h-5" />}
+            disabled={isLoading}
           >
-            <Save className="w-5 h-5" />
-            Save Changes
-          </button>
-        </div>
-      </form>
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : 'Save Changes'}
+          </Button>
+        </Box>
+      </Box>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={showSuccess}
+        autoHideDuration={3000}
+        onClose={() => setShowSuccess(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert severity="success" onClose={() => setShowSuccess(false)} sx={{ width: '100%' }}>
+          <AlertTitle>Success</AlertTitle>
+          Settings updated successfully!
+        </MuiAlert>
+      </Snackbar>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={showError}
+        autoHideDuration={3000}
+        onClose={() => setShowError(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert severity="error" onClose={() => setShowError(false)} sx={{ width: '100%' }}>
+          <AlertTitle>Error</AlertTitle>
+          {errorMessage}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 }

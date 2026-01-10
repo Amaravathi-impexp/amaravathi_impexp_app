@@ -1,6 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Box, IconButton } from '@mui/material';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
+
+// Import Figma images
+import img1 from 'figma:asset/5fb11d275a19a080815d3496c657c4aae3e27bd7.png';
+import img2 from 'figma:asset/d1333a74c8ee158a46e2bd3eeb2a40cd47cac3dc.png';
+import img3 from 'figma:asset/62caafb41d1fd09984220d127e16a83c687bef7a.png';
+import img4 from 'figma:asset/52cc5ec2157f41754dd541a2e6b0180f2b6966cd.png';
 
 interface CarouselSlide {
   id: number;
@@ -14,31 +21,31 @@ interface CarouselSlide {
 const slides: CarouselSlide[] = [
   {
     id: 1,
-    image: 'https://images.unsplash.com/photo-1634114627043-9a2abf455494?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxJbmRpYW4lMjBzcGljZXMlMjByaWNlJTIwdHVybWVyaWMlMjBjaGlsbGllcyUyMGdyYWluc3xlbnwxfHx8fDE3NjY3NjM2OTJ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    title: '1. Sourcing Excellence',
-    description: 'Direct procurement from South Indian farmers - Premium rice, mirchi, turmeric, aata flour, and millets',
-    alt: 'Indian agricultural products - rice, spices, turmeric, chillies, and grains',
+    image: img1,
+    title: 'One Platform. End-to-End Trade',
+    description: 'Manage your entire import-export operations from a single unified platform',
+    alt: 'End-to-end trade platform dashboard',
   },
   {
     id: 2,
-    image: 'https://images.unsplash.com/photo-1574850183045-b3a7bcc4b93d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb29kJTIwcHJvY2Vzc2luZyUyMHBhY2tpbmclMjBmYWN0b3J5fGVufDF8fHx8MTc2Njc1ODY4Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    title: '2. Processing & Packaging',
-    description: 'State-of-the-art processing facilities with international quality standards',
-    alt: 'Food processing and packing facility',
+    image: img2,
+    title: 'AI-Powered Compliance & Fraud Protection',
+    description: 'Advanced AI verification and risk detection to protect your business',
+    alt: 'AI-powered compliance and fraud detection',
   },
   {
     id: 3,
-    image: 'https://images.unsplash.com/photo-1703977883249-d959f2b0c1ae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXJnbyUyMHNoaXBwaW5nJTIwdHJhbnNwb3J0JTIwbG9naXN0aWNzfGVufDF8fHx8MTc2Njc1ODY4N3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    title: '3. Global Logistics',
-    description: 'Multi-modal transport solutions - Sea, Air & Road freight worldwide',
-    alt: 'Cargo shipping and transport',
+    image: img3,
+    title: 'Smart Documents. Zero Guesswork',
+    description: 'Automated document processing with intelligent verification',
+    alt: 'Smart document automation',
   },
   {
     id: 4,
-    image: 'https://images.unsplash.com/photo-1759409281186-2413fa83738d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXRhaWwlMjBtYXJrZXQlMjBjdXN0b21lcnMlMjBzaG9wcGluZ3xlbnwxfHx8fDE3NjY3NTg2ODd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
-    title: '4. Market Delivery',
-    description: 'Seamless distribution to retailers and customers across global markets',
-    alt: 'Retail market customers shopping',
+    image: img4,
+    title: 'Real-Time Analytics & Trade Visibility',
+    description: 'Track and analyze your shipments with comprehensive real-time insights',
+    alt: 'Real-time analytics and trade visibility dashboard',
   },
 ];
 
@@ -86,35 +93,53 @@ export function HeroCarousel() {
   }, [progress, nextSlide]);
 
   return (
-    <div 
-      className="relative h-[500px] sm:h-[600px] bg-gray-900 overflow-hidden"
+    <Box
+      sx={{
+        position: 'relative',
+        height: { xs: 450, sm: 550 },
+        bgcolor: 'grey.900',
+        overflow: 'hidden',
+      }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Slides */}
-      <div className="relative h-full">
+      <Box sx={{ position: 'relative', height: '100%' }}>
         {slides.map((slide, index) => (
-          <div
+          <Box
             key={slide.id}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-            }`}
+            sx={{
+              position: 'absolute',
+              inset: 0,
+              opacity: index === currentSlide ? 1 : 0,
+              zIndex: index === currentSlide ? 10 : 0,
+              transition: 'opacity 1s',
+            }}
           >
             {/* Background Image with Overlay */}
-            <div className="absolute inset-0">
+            <Box sx={{ position: 'absolute', inset: 0 }}>
               {slide.images ? (
                 // Grid layout for multiple images
-                <div className="grid grid-cols-2 grid-rows-2 gap-1 w-full h-full">
+                <Box
+                  sx={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(2, 1fr)',
+                    gridTemplateRows: 'repeat(2, 1fr)',
+                    gap: 0.125,
+                    width: '100%',
+                    height: '100%',
+                  }}
+                >
                   {slide.images.map((img, imgIndex) => (
-                    <div key={imgIndex} className="relative overflow-hidden">
+                    <Box key={imgIndex} sx={{ position: 'relative', overflow: 'hidden' }}>
                       <ImageWithFallback
                         src={img}
                         alt={`${slide.alt} ${imgIndex + 1}`}
                         className="w-full h-full object-cover"
                       />
-                    </div>
+                    </Box>
                   ))}
-                </div>
+                </Box>
               ) : (
                 // Single image layout
                 <ImageWithFallback
@@ -124,88 +149,152 @@ export function HeroCarousel() {
                 />
               )}
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/30 sm:from-black/70 sm:via-black/50 sm:to-transparent" />
-            </div>
+              <Box
+                sx={{
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.9) 100%)',
+                }}
+              />
+            </Box>
 
-            {/* Content */}
-            <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-              <div className="max-w-2xl">
-                {/* Slide Number */}
-                <div 
-                  className={`inline-block bg-blue-600 text-white px-3 py-1 sm:px-4 sm:py-1 rounded-full text-xs sm:text-sm mb-3 sm:mb-4 transition-all duration-700 ${
-                    index === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-                  }`}
-                >
-                  {String(index + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
-                </div>
-
-                {/* Title */}
-                <h2 
-                  className={`text-white mb-3 sm:mb-4 text-2xl sm:text-3xl lg:text-4xl transition-all duration-700 delay-100 ${
-                    index === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                  }`}
-                >
-                  {slide.title}
-                </h2>
-
-                {/* Description */}
-                <p 
-                  className={`text-lg sm:text-xl text-gray-200 mb-6 sm:mb-8 transition-all duration-700 delay-200 ${
-                    index === currentSlide ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                  }`}
-                >
-                  {slide.description}
-                </p>
-
-                {/* Progress Bar */}
-                <div className="w-full bg-white/20 rounded-full h-1 overflow-hidden">
-                  <div
-                    className="bg-blue-500 h-full transition-all duration-100 ease-linear"
-                    style={{
-                      width: index === currentSlide ? `${progress}%` : '0%',
+            {/* Content - Bottom Left */}
+            <Box
+              sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 10,
+              }}
+            >
+              <Box
+                sx={{
+                  maxWidth: 1280,
+                  mx: 'auto',
+                  px: { xs: 2, sm: 3, lg: 4 },
+                  pb: { xs: 6, sm: 8 },
+                }}
+              >
+                <Box sx={{ maxWidth: 672 }}>
+                  {/* Title */}
+                  <Box
+                    component="h2"
+                    sx={{
+                      color: 'white',
+                      mb: { xs: 1.5, sm: 2 },
+                      fontSize: { xs: '1.5rem', sm: '1.875rem', lg: '2.25rem' },
+                      fontWeight: 700,
+                      opacity: index === currentSlide ? 1 : 0,
+                      transform: index === currentSlide ? 'translateY(0)' : 'translateY(32px)',
+                      transition: 'all 0.7s 0.1s',
                     }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+                  >
+                    {slide.title}
+                  </Box>
+
+                  {/* Description */}
+                  <Box
+                    component="p"
+                    sx={{
+                      fontSize: { xs: '1.125rem', sm: '1.25rem' },
+                      color: 'grey.200',
+                      opacity: index === currentSlide ? 1 : 0,
+                      transform: index === currentSlide ? 'translateY(0)' : 'translateY(32px)',
+                      transition: 'all 0.7s 0.2s',
+                    }}
+                  >
+                    {slide.description}
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
         ))}
-      </div>
+      </Box>
 
       {/* Navigation Arrows */}
-      <button
+      <IconButton
         onClick={prevSlide}
-        className="hidden sm:block absolute left-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
         aria-label="Previous slide"
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          position: 'absolute',
+          left: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 20,
+          bgcolor: 'rgba(255, 255, 255, 0.9)',
+          color: 'grey.800',
+          p: 1.5,
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+          '&:hover': {
+            bgcolor: 'white',
+            transform: 'translateY(-50%) scale(1.1)',
+          },
+          transition: 'all 0.2s',
+        }}
       >
         <ChevronLeft className="w-6 h-6" />
-      </button>
+      </IconButton>
 
-      <button
+      <IconButton
         onClick={nextSlide}
-        className="hidden sm:block absolute right-4 top-1/2 -translate-y-1/2 z-20 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all duration-200 hover:scale-110"
         aria-label="Next slide"
+        sx={{
+          display: { xs: 'none', sm: 'block' },
+          position: 'absolute',
+          right: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          zIndex: 20,
+          bgcolor: 'rgba(255, 255, 255, 0.9)',
+          color: 'grey.800',
+          p: 1.5,
+          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+          '&:hover': {
+            bgcolor: 'white',
+            transform: 'translateY(-50%) scale(1.1)',
+          },
+          transition: 'all 0.2s',
+        }}
       >
         <ChevronRight className="w-6 h-6" />
-      </button>
+      </IconButton>
 
       {/* Dot Indicators */}
-      <div className="absolute bottom-8 left-0 right-0 z-20">
-        <div className="flex justify-center gap-2">
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: 32,
+          left: 0,
+          right: 0,
+          zIndex: 20,
+        }}
+      >
+        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
           {slides.map((_, index) => (
-            <button
+            <Box
               key={index}
+              component="button"
               onClick={() => goToSlide(index)}
-              className={`rounded-full transition-all duration-300 ${
-                index === currentSlide
-                  ? 'bg-white w-8 h-3'
-                  : 'bg-white/50 hover:bg-white/75 w-3 h-3'
-              }`}
               aria-label={`Go to slide ${index + 1}`}
+              sx={{
+                borderRadius: '9999px',
+                transition: 'all 0.3s',
+                bgcolor: index === currentSlide ? 'white' : 'rgba(255, 255, 255, 0.5)',
+                width: index === currentSlide ? 32 : 12,
+                height: 12,
+                border: 'none',
+                cursor: 'pointer',
+                '&:hover': {
+                  bgcolor: index === currentSlide ? 'white' : 'rgba(255, 255, 255, 0.75)',
+                },
+              }}
             />
           ))}
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Box>
+    </Box>
   );
 }

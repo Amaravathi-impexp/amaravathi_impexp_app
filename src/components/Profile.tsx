@@ -1,9 +1,21 @@
-import { User, Mail, Phone, Smartphone, Shield, Globe, Package, Calendar } from 'lucide-react';
+import { User, Mail, Phone, Smartphone, Shield, Globe, Package, Calendar, CheckCircle, XCircle } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { useAppSelector } from '../store/hooks';
 
 export function Profile() {
   const currentUser = useAppSelector((state) => state.auth.user);
+
+  // Helper function to format roles for display
+  const getRolesDisplay = () => {
+    if (!currentUser?.roles || currentUser.roles.length === 0) return 'Not provided';
+    return currentUser.roles.map(role => role.name).join(', ');
+  };
+
+  // Helper function to get primary role
+  const getPrimaryRole = () => {
+    if (!currentUser?.roles || currentUser.roles.length === 0) return 'Not provided';
+    return currentUser.roles[0].name;
+  };
 
   return (
     <div>
@@ -22,8 +34,8 @@ export function Profile() {
               <User className="w-10 h-10" />
             </div>
             <div>
-              <h2 className="text-2xl mb-1">{currentUser?.name || 'User'}</h2>
-              <p className="text-gray-600">{currentUser?.role || 'Role not specified'}</p>
+              <h2 className="text-2xl mb-1">{currentUser?.fullName || 'User'}</h2>
+              <p className="text-gray-600">{getPrimaryRole()}</p>
             </div>
           </div>
 
@@ -40,7 +52,7 @@ export function Profile() {
                   <User className="w-4 h-4 inline mr-2" />
                   Full Name
                 </label>
-                <p className="text-gray-900">{currentUser?.name || 'Not provided'}</p>
+                <p className="text-gray-900">{currentUser?.fullName || 'Not provided'}</p>
               </div>
 
               {/* Email */}
@@ -49,16 +61,24 @@ export function Profile() {
                   <Mail className="w-4 h-4 inline mr-2" />
                   Email Address
                 </label>
-                <p className="text-gray-900">{currentUser?.email || 'Not provided'}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-900">{currentUser?.email || 'Not provided'}</p>
+                  {currentUser?.emailVerified && (
+                    <CheckCircle className="w-4 h-4 text-green-600" title="Email Verified" />
+                  )}
+                  {currentUser && !currentUser.emailVerified && (
+                    <XCircle className="w-4 h-4 text-gray-400" title="Email Not Verified" />
+                  )}
+                </div>
               </div>
 
-              {/* Role */}
+              {/* Role(s) */}
               <div>
                 <label className="block text-sm text-gray-600 mb-1">
                   <Shield className="w-4 h-4 inline mr-2" />
-                  Role
+                  Role(s)
                 </label>
-                <p className="text-gray-900">{currentUser?.role || 'Not provided'}</p>
+                <p className="text-gray-900">{getRolesDisplay()}</p>
               </div>
 
               {/* Phone */}
@@ -67,16 +87,35 @@ export function Profile() {
                   <Phone className="w-4 h-4 inline mr-2" />
                   Phone Number
                 </label>
-                <p className="text-gray-900">{currentUser?.phone || 'Not provided'}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-gray-900">{currentUser?.phone || 'Not provided'}</p>
+                  {currentUser?.phoneVerified && (
+                    <CheckCircle className="w-4 h-4 text-green-600" title="Phone Verified" />
+                  )}
+                  {currentUser && !currentUser.phoneVerified && (
+                    <XCircle className="w-4 h-4 text-gray-400" title="Phone Not Verified" />
+                  )}
+                </div>
               </div>
 
-              {/* Cell */}
+              {/* Account Status */}
               <div>
                 <label className="block text-sm text-gray-600 mb-1">
-                  <Smartphone className="w-4 h-4 inline mr-2" />
-                  Cell Number
+                  <Shield className="w-4 h-4 inline mr-2" />
+                  Account Status
                 </label>
-                <p className="text-gray-900">{currentUser?.cell || 'Not provided'}</p>
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm ${
+                  currentUser?.status === 'ACTIVE' 
+                    ? 'bg-green-100 text-green-800'
+                    : currentUser?.status === 'PENDING_VERIFICATION'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {currentUser?.status === 'ACTIVE' && 'Active'}
+                  {currentUser?.status === 'PENDING_VERIFICATION' && 'Pending Verification'}
+                  {currentUser?.status === 'INACTIVE' && 'Inactive'}
+                  {!currentUser?.status && 'Unknown'}
+                </span>
               </div>
             </div>
           </div>
@@ -94,7 +133,10 @@ export function Profile() {
                   <Globe className="w-4 h-4 inline mr-2" />
                   Origin Country
                 </label>
-                <p className="text-gray-900">{currentUser?.originCountry || 'Not provided'}</p>
+                <p className="text-gray-900">{currentUser?.originCountry?.name || 'Not provided'}</p>
+                {currentUser?.originCountry?.currency && (
+                  <p className="text-sm text-gray-600">Currency: {currentUser.originCountry.currency}</p>
+                )}
               </div>
 
               {/* Destination Country */}
@@ -103,16 +145,25 @@ export function Profile() {
                   <Globe className="w-4 h-4 inline mr-2" />
                   Destination Country
                 </label>
-                <p className="text-gray-900">{currentUser?.destinationCountry || 'Not provided'}</p>
+                <p className="text-gray-900">{currentUser?.destinationCountry?.name || 'Not provided'}</p>
+                {currentUser?.destinationCountry?.currency && (
+                  <p className="text-sm text-gray-600">Currency: {currentUser.destinationCountry.currency}</p>
+                )}
               </div>
 
-              {/* Product */}
+              {/* Product Type */}
               <div>
                 <label className="block text-sm text-gray-600 mb-1">
                   <Package className="w-4 h-4 inline mr-2" />
-                  Product
+                  Product Type
                 </label>
-                <p className="text-gray-900">{currentUser?.product || 'Not provided'}</p>
+                <p className="text-gray-900">{currentUser?.productType?.name || 'Not provided'}</p>
+                {currentUser?.productType?.category && (
+                  <p className="text-sm text-gray-600">Category: {currentUser.productType.category}</p>
+                )}
+                {currentUser?.productType?.hsCode && (
+                  <p className="text-sm text-gray-600">HS Code: {currentUser.productType.hsCode}</p>
+                )}
               </div>
             </div>
           </div>
