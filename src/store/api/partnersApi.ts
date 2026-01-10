@@ -4,6 +4,7 @@
  */
 
 import { baseApi } from './baseApi';
+import config from '../../config/env';
 
 // Partner Type interface
 export interface PartnerType {
@@ -66,7 +67,7 @@ export const partnersApi = baseApi.injectEndpoints({
     // Get all partners - returns array directly from backend
     getPartners: builder.query<Partner[], PartnerQueryParams | void>({
       query: (params = {}) => ({
-        url: 'http://localhost:8082/api/trade-operation/v1/partners',
+        url: `${config.apiEndpoints.tradeOperation}/partners`,
         params,
       }),
       providesTags: (result) =>
@@ -80,14 +81,14 @@ export const partnersApi = baseApi.injectEndpoints({
     
     // Get single partner
     getPartnerById: builder.query<Partner, number>({
-      query: (id) => `http://localhost:8082/api/trade-operation/v1/partners/${id}`,
+      query: (id) => `${config.apiEndpoints.tradeOperation}/partners/${id}`,
       providesTags: (result, error, id) => [{ type: 'Partners', id: String(id) }],
     }),
     
     // Create partner
     createPartner: builder.mutation<Partner, CreatePartnerRequest>({
       query: (data) => ({
-        url: 'http://localhost:8082/api/trade-operation/v1/partners',
+        url: `${config.apiEndpoints.tradeOperation}/partners`,
         method: 'POST',
         body: data,
       }),
@@ -97,7 +98,7 @@ export const partnersApi = baseApi.injectEndpoints({
     // Update partner
     updatePartner: builder.mutation<Partner, { id: number; data: UpdatePartnerRequest }>({
       query: ({ id, data }) => ({
-        url: `http://localhost:8082/api/trade-operation/v1/partners/${id}`,
+        url: `${config.apiEndpoints.tradeOperation}/partners/${id}`,
         method: 'PUT',
         body: data,
       }),
@@ -111,7 +112,7 @@ export const partnersApi = baseApi.injectEndpoints({
     // Delete partner
     deletePartner: builder.mutation<void, number>({
       query: (id) => ({
-        url: `http://localhost:8082/api/trade-operation/v1/partners/${id}`,
+        url: `${config.apiEndpoints.tradeOperation}/partners/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: [{ type: 'Partners', id: 'LIST' }, 'Dashboard'],

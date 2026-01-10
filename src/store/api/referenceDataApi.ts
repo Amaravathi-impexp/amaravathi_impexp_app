@@ -5,6 +5,7 @@
  */
 
 import { baseApi } from './baseApi';
+import config from '../../config/env';
 
 export interface Country {
   id: number;
@@ -58,7 +59,7 @@ export const referenceDataApi = baseApi.injectEndpoints({
 
     getPartnerTypes: builder.query<PartnerType[], void>({
       query: () => ({
-        url: 'http://localhost:8082/api/trade-operation/v1/partner-types',
+        url: `${config.apiEndpoints.tradeOperation}/partner-types`,
         method: 'GET',
       }),
       keepUnusedDataFor: 3600, // Cache for 1 hour since partner types rarely change
