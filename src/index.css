@@ -575,10 +575,6 @@
     display: inline;
   }
 
-  .inline-block {
-    display: inline-block;
-  }
-
   .inline-flex {
     display: inline-flex;
   }
@@ -645,10 +641,6 @@
 
   .h-\[86px\] {
     height: 86px;
-  }
-
-  .h-full {
-    height: 100%;
   }
 
   .max-h-96 {
@@ -1003,10 +995,6 @@
     background-color: var(--color-yellow-600);
   }
 
-  .object-cover {
-    object-fit: cover;
-  }
-
   .p-1 {
     padding: calc(var(--spacing) * 1);
   }
@@ -1115,10 +1103,6 @@
     text-align: left;
   }
 
-  .align-middle {
-    vertical-align: middle;
-  }
-
   .font-mono {
     font-family: var(--font-mono);
   }
@@ -1155,10 +1139,6 @@
 
   .text-amber-600 {
     color: var(--color-amber-600);
-  }
-
-  .text-blue-200 {
-    color: var(--color-blue-200);
   }
 
   .text-blue-500 {

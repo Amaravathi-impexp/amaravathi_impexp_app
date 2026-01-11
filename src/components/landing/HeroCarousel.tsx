@@ -96,7 +96,7 @@ export function HeroCarousel() {
     <Box
       sx={{
         position: 'relative',
-        height: { xs: 450, sm: 550 },
+        height: { xs: 500, sm: 600, md: 700 },
         bgcolor: 'grey.900',
         overflow: 'hidden',
       }}
@@ -131,21 +131,41 @@ export function HeroCarousel() {
                   }}
                 >
                   {slide.images.map((img, imgIndex) => (
-                    <Box key={imgIndex} sx={{ position: 'relative', overflow: 'hidden' }}>
-                      <ImageWithFallback
+                    <Box 
+                      key={imgIndex} 
+                      sx={{ 
+                        position: 'relative', 
+                        overflow: 'hidden',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    >
+                      <Box
+                        component="img"
                         src={img}
                         alt={`${slide.alt} ${imgIndex + 1}`}
-                        className="w-full h-full object-cover"
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          objectPosition: 'center',
+                        }}
                       />
                     </Box>
                   ))}
                 </Box>
               ) : (
                 // Single image layout
-                <ImageWithFallback
+                <Box
+                  component="img"
                   src={slide.image || ''}
                   alt={slide.alt}
-                  className="w-full h-full object-cover"
+                  sx={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                  }}
                 />
               )}
               {/* Gradient Overlay */}

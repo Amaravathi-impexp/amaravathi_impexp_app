@@ -3,7 +3,9 @@ import { Navigation } from './components/layout/Navigation';
 import { HeroCarousel } from './components/landing/HeroCarousel';
 import { HowItWorks } from './components/landing/HowItWorks';
 import { CoreFeatures } from './components/landing/CoreFeatures';
-import { AnalyticsPreview } from './components/landing/AnalyticsPreview';
+import { StatsSection } from './components/landing/StatsSection';
+import { TrustBadges } from './components/landing/TrustBadges';
+import { CTASection } from './components/landing/CTASection';
 import { Footer } from './components/layout/Footer';
 import { SignIn } from './screens/auth/SignIn';
 import { SignUp } from './screens/auth/SignUp';
@@ -146,7 +148,9 @@ function AppContent() {
       <HeroCarousel />
       <HowItWorks />
       <CoreFeatures />
-      <AnalyticsPreview />
+      <StatsSection />
+      <TrustBadges />
+      <CTASection onGetStarted={() => dispatch(setCurrentView('signup'))} />
       <Footer />
     </Box>
   );

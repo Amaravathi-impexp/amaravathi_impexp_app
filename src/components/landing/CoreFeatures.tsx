@@ -51,11 +51,71 @@ export function CoreFeatures() {
     <Box
       component="section"
       sx={{
-        py: 10,
-        background: 'linear-gradient(180deg, #ffffff 0%, #f9fafb 50%, #ffffff 100%)',
+        py: { xs: 6, md: 8 },
+        position: 'relative',
+        overflow: 'hidden',
+        background: 'linear-gradient(180deg, #ffffff 0%, #faf5ff 50%, #ffffff 100%)',
       }}
     >
-      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+      {/* Animated Grid Background */}
+      <Box
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: `
+            linear-gradient(to right, rgba(168, 85, 247, 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(168, 85, 247, 0.04) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+        }}
+      />
+
+      {/* Gradient Orbs */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '20%',
+          left: '-10%',
+          width: 600,
+          height: 600,
+          background: 'radial-gradient(circle, rgba(168, 85, 247, 0.08) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(80px)',
+        }}
+      />
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '10%',
+          right: '-10%',
+          width: 500,
+          height: 500,
+          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(70px)',
+        }}
+      />
+
+      {/* Floating Shapes */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '15%',
+          left: '15%',
+          width: 150,
+          height: 150,
+          background: 'linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%)',
+          borderRadius: '40% 60% 60% 40% / 60% 40% 60% 40%',
+          animation: 'float2 15s ease-in-out infinite',
+          '@keyframes float2': {
+            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg) scale(1)' },
+            '33%': { transform: 'translate(-20px, 30px) rotate(120deg) scale(1.1)' },
+            '66%': { transform: 'translate(30px, -20px) rotate(240deg) scale(0.9)' },
+          },
+        }}
+      />
+
+      <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1, px: { xs: 2, sm: 3, lg: 4 } }}>
         {/* Header */}
         <Box sx={{ textAlign: 'center', mb: 8 }}>
           <Typography

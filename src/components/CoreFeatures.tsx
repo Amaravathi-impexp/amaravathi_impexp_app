@@ -73,9 +73,11 @@ export function CoreFeatures() {
             </Typography>
             <Typography
               variant="h2"
+              component="h2"
               sx={{
-                fontSize: { xs: '2.25rem', sm: '3rem' },
-                fontWeight: 600,
+                fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
+                fontWeight: 900,
+                lineHeight: 1.1,
                 letterSpacing: '-0.025em',
                 background: 'linear-gradient(90deg, #2563eb 0%, #6366f1 50%, #a855f7 100%)',
                 WebkitBackgroundClip: 'text',

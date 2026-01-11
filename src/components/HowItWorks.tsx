@@ -80,33 +80,67 @@ export function HowItWorks() {
     <Box
       component="section"
       sx={{
-        py: { xs: 8, md: 12 },
-        bgcolor: '#f9fafb',
+        py: { xs: 6, md: 8 },
         position: 'relative',
         overflow: 'hidden',
+        background: 'linear-gradient(180deg, #f8fafc 0%, #e0e7ff 50%, #f8fafc 100%)',
       }}
     >
-      {/* Background decoration */}
+      {/* Animated Grid Background */}
       <Box
         sx={{
           position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '100%',
-          background: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.05) 0%, transparent 50%)',
-          pointerEvents: 'none',
+          inset: 0,
+          backgroundImage: `
+            linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+        }}
+      />
+
+      {/* Gradient Orbs */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '10%',
+          left: '5%',
+          width: 500,
+          height: 500,
+          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(60px)',
         }}
       />
       <Box
         sx={{
           position: 'absolute',
-          top: 0,
-          right: 0,
-          width: '50%',
-          height: '100%',
-          background: 'radial-gradient(circle at 80% 50%, rgba(124, 58, 237, 0.05) 0%, transparent 50%)',
-          pointerEvents: 'none',
+          bottom: '10%',
+          right: '5%',
+          width: 600,
+          height: 600,
+          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+          borderRadius: '50%',
+          filter: 'blur(80px)',
+        }}
+      />
+
+      {/* Floating Shapes */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: '20%',
+          right: '10%',
+          width: 200,
+          height: 200,
+          background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%)',
+          borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+          animation: 'float 20s ease-in-out infinite',
+          '@keyframes float': {
+            '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
+            '33%': { transform: 'translate(30px, -30px) rotate(120deg)' },
+            '66%': { transform: 'translate(-20px, 20px) rotate(240deg)' },
+          },
         }}
       />
 
@@ -116,9 +150,10 @@ export function HowItWorks() {
           <Typography
             component="h2"
             sx={{
-              fontSize: { xs: '2rem', md: '2.5rem', lg: '3rem' },
-              fontWeight: 800,
+              fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
+              fontWeight: 900,
               mb: 2,
+              lineHeight: 1.1,
               background: 'linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #059669 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
