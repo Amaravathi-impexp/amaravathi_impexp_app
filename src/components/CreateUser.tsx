@@ -89,7 +89,10 @@ export function CreateUser({ onBack }: CreateUserProps) {
         originCountryId,
         destinationCountryId,
         productTypeId,
-        roleCodes: [selectedRole.code],
+        roles: [selectedRole],
+        emailNotificationEnabled: formData.notifications.email,
+        phoneNotificationEnabled: formData.notifications.sms,
+        appNotificationEnabled: formData.notifications.push,
       }).unwrap();
       
       // Success - go back to users list

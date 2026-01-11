@@ -58,16 +58,22 @@ export interface User {
 }
 
 export interface CreateUserRequest {
-  name: string;
   email: string;
-  role: string;
-  phone?: string;
-  cell?: string;
-  notifications?: {
-    email: boolean;
-    sms: boolean;
-    push: boolean;
-  };
+  phone: string;
+  fullName: string;
+  password: string;
+  originCountryId: number;
+  destinationCountryId: number;
+  productTypeId: number;
+  roles: Array<{
+    id: number;
+    code: string;
+    name: string;
+    description: string;
+  }>;
+  emailNotificationEnabled?: boolean;
+  phoneNotificationEnabled?: boolean;
+  appNotificationEnabled?: boolean;
 }
 
 export interface UpdateUserRequest {
