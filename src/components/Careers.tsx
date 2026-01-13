@@ -1,6 +1,6 @@
 import { Box, Container, Typography, Button, Paper } from '@mui/material';
-import { Navigation } from './Navigation';
-import { Footer } from './Footer';
+import { Navigation } from './layout/Navigation';
+import { Footer } from './layout/Footer';
 import { Construction, Hammer, HardHat, Wrench, Cog, Sparkles } from 'lucide-react';
 
 interface CareersProps {
@@ -32,21 +32,21 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #fff7ed 100%)',
+          background: 'linear-gradient(135deg, #f0f7ed 0%, #ffffff 50%, #f0f7ed 100%)',
         }}
       >
         <Container maxWidth="md" sx={{ px: { xs: 2, sm: 3, lg: 4 }, py: 10, textAlign: 'center' }}>
           {/* Animated Construction Icons */}
           <Box sx={{ position: 'relative', mb: 6 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3, mb: 4 }}>
-              <Box className="animate-bounce">
-                <HardHat className="w-16 h-16 text-orange-500" />
+              <Box className="animate-bounce" sx={{ color: '#D3FF62' }}>
+                <HardHat className="w-16 h-16" />
               </Box>
-              <Box className="animate-bounce">
-                <Construction className="w-20 h-20 text-blue-600" />
+              <Box className="animate-bounce" sx={{ color: 'primary.main' }}>
+                <Construction className="w-20 h-20" />
               </Box>
-              <Box className="animate-bounce">
-                <Wrench className="w-16 h-16 text-orange-500" />
+              <Box className="animate-bounce" sx={{ color: '#D3FF62' }}>
+                <Wrench className="w-16 h-16" />
               </Box>
             </Box>
 
@@ -101,7 +101,7 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
               sx={{
                 fontSize: { xs: '3rem', md: '3.75rem' },
                 mb: 3,
-                background: 'linear-gradient(90deg, #2563eb 0%, #f97316 100%)',
+                background: 'linear-gradient(90deg, #1A3D32 0%, #D3FF62 100%)', // Updated: Green gradient
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -111,17 +111,11 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
             </Typography>
 
             <Typography
-              variant="h6"
-              sx={{
-                color: 'text.secondary',
-                maxWidth: 672,
-                mx: 'auto',
-                mb: 4,
-                fontSize: { xs: '1.125rem', sm: '1.25rem' },
-              }}
+              variant="body1"
+              sx={{ fontSize: '1.125rem', color: 'text.secondary', mb: 3 }}
             >
               We're building something amazing! Our Careers page is currently under development.
-              We're crafting the perfect space to showcase exciting opportunities at Amaravathi.
+              We're crafting the perfect space to showcase exciting opportunities at TIMPEX.club.
             </Typography>
 
             {/* Construction Progress Bar */}
@@ -138,7 +132,7 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                   sx={{
                     width: '65%',
                     height: '100%',
-                    background: 'linear-gradient(90deg, #2563eb 0%, #f97316 100%)',
+                    background: 'linear-gradient(90deg, #1A3D32 0%, #D3FF62 100%)', // Updated: Green gradient
                     borderRadius: '9999px',
                     position: 'relative',
                     overflow: 'hidden',
@@ -176,7 +170,7 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                   p: 3,
                   bgcolor: 'white',
                   border: '2px solid',
-                  borderColor: '#dbeafe',
+                  borderColor: '#d4e8cd', // Updated: Light green border
                 }}
               >
                 <Typography variant="h4" sx={{ color: 'primary.main', mb: 1 }}>
@@ -192,10 +186,10 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                   p: 3,
                   bgcolor: 'white',
                   border: '2px solid',
-                  borderColor: '#ffedd5',
+                  borderColor: '#e0ff8f', // Updated: Lime border
                 }}
               >
-                <Typography variant="h4" sx={{ color: '#f97316', mb: 1 }}>
+                <Typography variant="h4" sx={{ color: '#3D7A68', mb: 1 }}>
                   15+
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'text.secondary' }}>
@@ -208,7 +202,7 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                   p: 3,
                   bgcolor: 'white',
                   border: '2px solid',
-                  borderColor: '#dbeafe',
+                  borderColor: '#d4e8cd', // Updated: Light green border
                 }}
               >
                 <Typography variant="h4" sx={{ color: 'primary.main', mb: 1 }}>
@@ -226,9 +220,9 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
               sx={{
                 mt: 6,
                 p: 4,
-                bgcolor: '#eff6ff',
+                bgcolor: '#f0f7ed', // Updated: Pale green background
                 border: '2px solid',
-                borderColor: '#bfdbfe',
+                borderColor: '#d4e8cd', // Updated: Light green border
                 borderRadius: 4,
                 maxWidth: 672,
                 mx: 'auto',
@@ -261,7 +255,7 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                 </Button>
                 <Button
                   component="a"
-                  href="mailto:careers@amaravathi.com"
+                  href="mailto:careers@timpex.club"
                   variant="outlined"
                   size="large"
                   sx={{
@@ -274,7 +268,7 @@ export function Careers({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                     },
                   }}
                 >
-                  Email: careers@amaravathi.com
+                  Email: careers@timpex.club
                 </Button>
               </Box>
             </Paper>

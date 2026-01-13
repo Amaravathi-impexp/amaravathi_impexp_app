@@ -15,7 +15,10 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
       {/* Home Icon */}
       <button
         onClick={items[0]?.onClick}
-        className="flex items-center text-gray-500 hover:text-blue-600 transition-colors"
+        className="flex items-center text-gray-500 transition-colors"
+        style={{ transition: 'color 0.2s' }}
+        onMouseEnter={(e) => e.currentTarget.style.color = '#1A3D32'}
+        onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
       >
         <Home className="w-4 h-4" />
       </button>
@@ -31,7 +34,10 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
             // Clickable items
             <button
               onClick={item.onClick}
-              className="text-gray-500 hover:text-blue-600 transition-colors"
+              className="text-gray-500 transition-colors"
+              style={{ transition: 'color 0.2s' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#1A3D32'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#6b7280'}
             >
               {item.label}
             </button>

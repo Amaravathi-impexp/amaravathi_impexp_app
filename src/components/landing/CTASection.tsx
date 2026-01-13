@@ -36,7 +36,7 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
         py: { xs: 8, md: 12 },
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(180deg, #0f172a 0%, #1e293b 100%)',
+        background: 'linear-gradient(180deg, #1A3D32 0%, #2D5A4A 100%)', // Updated: Dark green gradient
       }}
     >
       {/* Animated Grid Background */}
@@ -45,8 +45,8 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(to right, rgba(99, 102, 241, 0.1) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(99, 102, 241, 0.1) 1px, transparent 1px)
+            linear-gradient(to right, rgba(61, 122, 104, 0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(61, 122, 104, 0.1) 1px, transparent 1px)
           `,
           backgroundSize: '50px 50px',
           maskImage: 'radial-gradient(ellipse 80% 50% at 50% 50%, black 40%, transparent 100%)',
@@ -62,7 +62,7 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
           transform: 'translate(-50%, -50%)',
           width: 800,
           height: 800,
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(211, 255, 98, 0.15) 0%, transparent 70%)', // Updated: Lime accent
           borderRadius: '50%',
           filter: 'blur(80px)',
         }}
@@ -93,7 +93,7 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
             style={{
               width: 40,
               height: 40,
-              color: 'rgba(129, 140, 248, 0.3)',
+              color: 'rgba(211, 255, 98, 0.3)', // Updated: Lime color
             }}
           />
         </motion.div>
@@ -119,18 +119,18 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
                   gap: 1,
                   px: 3,
                   py: 1,
-                  bgcolor: 'rgba(16, 185, 129, 0.15)',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  bgcolor: 'rgba(211, 255, 98, 0.15)', // Updated: Lime background
+                  border: '1px solid rgba(211, 255, 98, 0.3)', // Updated: Lime border
                   borderRadius: 50,
                   mb: 4,
                 }}
               >
-                <Sparkles style={{ width: 16, height: 16, color: '#10b981' }} />
+                <Sparkles style={{ width: 16, height: 16, color: '#D3FF62' }} /> {/* Updated: Lime */}
                 <Typography
                   sx={{
                     fontSize: '0.875rem',
                     fontWeight: 700,
-                    color: '#10b981',
+                    color: '#D3FF62', // Updated: Lime
                     letterSpacing: '0.1em',
                     textTransform: 'uppercase',
                   }}
@@ -156,7 +156,7 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
               <Box
                 component="span"
                 sx={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #3b82f6 100%)',
+                  background: 'linear-gradient(135deg, #D3FF62 0%, #c4f050 100%)', // Updated: Lime gradient
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -323,9 +323,9 @@ export function CTASection({ onGetStarted }: CTASectionProps) {
                 }}
               >
                 {[
-                  { icon: Users, label: '5,000+ Active Users', color: '#3b82f6' },
-                  { icon: Shield, label: '100% Secure Platform', color: '#10b981' },
-                  { icon: Zap, label: 'Instant Setup', color: '#f59e0b' },
+                  { icon: Users, label: '5,000+ Active Users', color: '#D3FF62' }, // Updated: Lime
+                  { icon: Shield, label: '100% Secure Platform', color: '#3D7A68' }, // Updated: Sage Green
+                  { icon: Zap, label: 'Instant Setup', color: '#c4f050' }, // Updated: Yellow-Green
                 ].map((item, index) => (
                   <Box
                     key={index}

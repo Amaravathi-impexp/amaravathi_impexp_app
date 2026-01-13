@@ -11,8 +11,8 @@ const stats = [
     suffix: '+',
     label: 'Shipments Delivered',
     description: 'Successfully processed worldwide',
-    color: '#3b82f6',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    color: '#1A3D32',
+    gradient: 'linear-gradient(135deg, #1A3D32 0%, #3D7A68 100%)',
     size: 'large',
   },
   {
@@ -21,8 +21,8 @@ const stats = [
     suffix: '+',
     label: 'Countries',
     description: 'Global reach',
-    color: '#10b981',
-    gradient: 'linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%)',
+    color: '#3D7A68',
+    gradient: 'linear-gradient(135deg, #3D7A68 0%, #2D5A4A 100%)',
     size: 'small',
   },
   {
@@ -31,8 +31,8 @@ const stats = [
     suffix: '+',
     label: 'Active Partners',
     description: 'Trusted network',
-    color: '#f59e0b',
-    gradient: 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)',
+    color: '#2D5A4A',
+    gradient: 'linear-gradient(135deg, #2D5A4A 0%, #3D7A68 100%)',
     size: 'small',
   },
   {
@@ -41,8 +41,8 @@ const stats = [
     suffix: '%',
     label: 'On-Time Delivery',
     description: 'Customer satisfaction rate',
-    color: '#8b5cf6',
-    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
+    color: '#D3FF62',
+    gradient: 'linear-gradient(135deg, #3D7A68 0%, #D3FF62 100%)',
     size: 'medium',
   },
   {
@@ -51,8 +51,8 @@ const stats = [
     suffix: '/7',
     label: 'Support',
     description: 'Always available',
-    color: '#ec4899',
-    gradient: 'linear-gradient(135deg, #ec4899 0%, #f43f5e 100%)',
+    color: '#1A3D32',
+    gradient: 'linear-gradient(135deg, #1A3D32 0%, #2D5A4A 100%)',
     size: 'small',
   },
   {
@@ -61,8 +61,8 @@ const stats = [
     suffix: '%',
     label: 'Secure',
     description: 'Data protection',
-    color: '#14b8a6',
-    gradient: 'linear-gradient(135deg, #14b8a6 0%, #10b981 100%)',
+    color: '#3D7A68',
+    gradient: 'linear-gradient(135deg, #2D5A4A 0%, #3D7A68 100%)',
     size: 'small',
   },
 ];
@@ -120,7 +120,7 @@ export function StatsSection() {
       sx={{
         py: { xs: 6, md: 10 },
         position: 'relative',
-        bgcolor: '#0f172a',
+        bgcolor: '#1A3D32', // Updated: Dark Forest Green background
         overflow: 'hidden',
       }}
     >
@@ -130,8 +130,8 @@ export function StatsSection() {
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px)
+            linear-gradient(to right, rgba(61, 122, 104, 0.1) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(61, 122, 104, 0.1) 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px',
           opacity: 0.5,
@@ -146,7 +146,7 @@ export function StatsSection() {
           left: '10%',
           width: 400,
           height: 400,
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(61, 122, 104, 0.2) 0%, transparent 70%)', // Updated: Sage Green
           borderRadius: '50%',
           filter: 'blur(60px)',
         }}
@@ -158,7 +158,7 @@ export function StatsSection() {
           right: '10%',
           width: 500,
           height: 500,
-          background: 'radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(211, 255, 98, 0.15) 0%, transparent 70%)', // Updated: Lime accent
           borderRadius: '50%',
           filter: 'blur(80px)',
         }}
@@ -176,7 +176,7 @@ export function StatsSection() {
               sx={{
                 fontSize: { xs: '0.875rem', md: '1rem' },
                 fontWeight: 700,
-                color: '#818cf8',
+                color: '#D3FF62', // Updated: Bright Lime accent
                 letterSpacing: '0.15em',
                 textTransform: 'uppercase',
                 mb: 2,
@@ -199,7 +199,7 @@ export function StatsSection() {
               <Box
                 component="span"
                 sx={{
-                  background: 'linear-gradient(135deg, #818cf8 0%, #a78bfa 100%)',
+                  background: 'linear-gradient(135deg, #D3FF62 0%, #c4f050 100%)', // Updated: Lime gradient
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}

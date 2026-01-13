@@ -1,6 +1,6 @@
 /**
  * Privacy Policy Component
- * Data protection and privacy policy for Amaravathi Imports & Exports
+ * Data protection and privacy policy for TIMPEX.club (Telugu Import Export Club)
  */
 
 import { Container, Box, Typography, Divider, Paper, Chip } from '@mui/material';
@@ -20,7 +20,7 @@ export default function PrivacyPolicy() {
               Privacy Policy
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              Amaravathi Imports & Exports
+              TIMPEX.club (Telugu Import Export Club)
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mt: 2 }}>
               <Typography variant="body2" color="text.secondary">
@@ -42,7 +42,7 @@ export default function PrivacyPolicy() {
               1. Introduction
             </Typography>
             <Typography variant="body1" paragraph>
-              At Amaravathi Imports & Exports ("we", "our", or "us"), we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our shipping and logistics services.
+              At TIMPEX.club (Telugu Import Export Club) ("we", "our", or "us"), we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our shipping and logistics services.
             </Typography>
             <Typography variant="body1" paragraph>
               This policy applies to all users of our website, mobile applications, and related services (collectively, the "Services"). By using our Services, you consent to the data practices described in this policy.
@@ -54,7 +54,7 @@ export default function PrivacyPolicy() {
           {/* Information We Collect */}
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Database style={{ width: 20, height: 20, color: '#2563eb' }} />
+              <Database style={{ width: 20, height: 20, color: '#1A3D32' }} />
               2. Information We Collect
             </Typography>
             
@@ -130,7 +130,7 @@ export default function PrivacyPolicy() {
           {/* How We Use Your Information */}
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Eye style={{ width: 20, height: 20, color: '#9333ea' }} />
+              <Eye style={{ width: 20, height: 20, color: '#3D7A68' }} />
               3. How We Use Your Information
             </Typography>
             <Typography variant="body1" paragraph>
@@ -290,7 +290,7 @@ export default function PrivacyPolicy() {
               </Typography>
             </Box>
             <Typography variant="body1" paragraph>
-              To exercise these rights, please contact us at privacy@amaravathi.com.
+              To exercise these rights, please contact us at privacy@timpex.club.
             </Typography>
           </Box>
 
@@ -328,7 +328,7 @@ export default function PrivacyPolicy() {
           {/* International Transfers */}
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Globe style={{ width: 20, height: 20, color: '#2563eb' }} />
+              <Globe style={{ width: 20, height: 20, color: '#1A3D32' }} />
               9. International Data Transfers
             </Typography>
             <Typography variant="body1" paragraph>
@@ -406,7 +406,7 @@ export default function PrivacyPolicy() {
           {/* Contact Information */}
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Mail style={{ width: 20, height: 20, color: '#2563eb' }} />
+              <Mail style={{ width: 20, height: 20, color: '#1A3D32' }} />
               13. Contact Us
             </Typography>
             <Typography variant="body1" paragraph>
@@ -417,10 +417,10 @@ export default function PrivacyPolicy() {
                 <strong>Data Protection Officer</strong>
               </Typography>
               <Typography variant="body1" paragraph>
-                Email: privacy@amaravathi.com
+                Email: privacy@timpex.club
               </Typography>
               <Typography variant="body1" paragraph>
-                Phone: +1-800-AMARAVATHI
+                Phone: +1-800-TIMPEX
               </Typography>
               <Typography variant="body1" paragraph>
                 Address: [Company Registered Address]
@@ -444,7 +444,7 @@ export default function PrivacyPolicy() {
             border: '1px solid #a7f3d0'
           }}>
             <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              <strong>Your Privacy Matters:</strong> At Amaravathi Imports & Exports, we are committed to transparency and protecting your personal information. We process data lawfully, fairly, and with appropriate security measures. If you have any concerns about how we handle your data, please don't hesitate to contact our Data Protection Officer.
+              <strong>Your Privacy Matters:</strong> At TIMPEX.club, we are committed to transparency and protecting your personal information. We process data lawfully, fairly, and with appropriate security measures. If you have any concerns about how we handle your data, please don't hesitate to contact our Data Protection Officer.
             </Typography>
           </Box>
         </Paper>

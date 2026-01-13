@@ -11,15 +11,15 @@ interface NavigationProps {
   onCareersClick?: () => void;
   onContactClick?: () => void;
   currentView?: string;
+  hideAuthButton?: boolean;
 }
 
-export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareersClick, onContactClick, currentView = 'home' }: NavigationProps) {
+export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareersClick, onContactClick, currentView = 'home', hideAuthButton = false }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
     { label: 'Home', onClick: onHomeClick, view: 'home' },
     { label: 'About', onClick: onAboutClick, view: 'about' },
-    { label: 'Careers', onClick: onCareersClick, view: 'careers' },
     { label: 'Contact', onClick: onContactClick, view: 'contact' },
   ];
 
@@ -30,7 +30,7 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
         position="sticky" 
         sx={{ 
           top: '40px', 
-          bgcolor: 'white', 
+          bgcolor: '#F5F3ED', 
           color: 'text.primary',
           boxShadow: 'none',
           borderBottom: '1px solid',
@@ -41,16 +41,20 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
         <Container maxWidth="lg">
           <Toolbar sx={{ height: 96, px: { xs: 2, sm: 3, lg: 4 } }} disableGutters>
             {/* Logo */}
-            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: { xs: 1, md: 0 } }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: { xs: 1, md: 0 }, height: 96, overflow: 'hidden' }}>
               <IconButton 
                 onClick={onHomeClick} 
                 sx={{ 
                   p: 0,
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
                   '&:hover': { opacity: 0.8 },
                   transition: 'opacity 0.2s',
+                  overflow: 'hidden',
                 }}
               >
-                <Logo className="h-[86px]" />
+                <Logo className="h-[210px]" />
               </IconButton>
             </Box>
 
@@ -83,19 +87,21 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
               >
                 <ChevronDown className="w-5 h-5" />
               </IconButton>
-              <Button
-                onClick={onSignInClick}
-                variant="contained"
-                sx={{
-                  px: 3,
-                  py: 1.25,
-                  fontSize: '1.125rem',
-                  boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Sign In / Sign Up
-              </Button>
+              {!hideAuthButton && (
+                <Button
+                  onClick={onSignInClick}
+                  variant="contained"
+                  sx={{
+                    px: 3,
+                    py: 1.25,
+                    fontSize: '1.125rem',
+                    boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Sign In / Sign Up
+                </Button>
+              )}
             </Box>
 
             {/* Mobile menu button */}
@@ -123,6 +129,7 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
             top: '136px', // 40px TopRibbon + 96px Toolbar
             borderTop: '1px solid',
             borderColor: 'grey.200',
+            bgcolor: '#F5F3ED',
           },
         }}
       >
@@ -147,19 +154,21 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
               </ListItemButton>
             </ListItem>
           ))}
-          <ListItem>
-            <Button
-              onClick={onSignInClick}
-              variant="contained"
-              fullWidth
-              sx={{
-                py: 1.25,
-                boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-              }}
-            >
-              Sign In / Sign Up
-            </Button>
-          </ListItem>
+          {!hideAuthButton && (
+            <ListItem>
+              <Button
+                onClick={onSignInClick}
+                variant="contained"
+                fullWidth
+                sx={{
+                  py: 1.25,
+                  boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+                }}
+              >
+                Sign In / Sign Up
+              </Button>
+            </ListItem>
+          )}
         </List>
       </Drawer>
     </>

@@ -6,43 +6,43 @@ const features = [
     icon: Package,
     title: 'Shipments',
     benefit: 'End-to-end tracking from origin to destination',
-    gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-    bgColor: '#eff6ff',
+    gradient: 'linear-gradient(135deg, #1A3D32 0%, #2D5A4A 100%)', // Updated: Dark forest green
+    bgColor: '#f0f7ed', // Updated: Light green tint
   },
   {
     icon: FileCheck,
     title: 'Documents',
     benefit: 'Automated documentation and digital signatures',
-    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-    bgColor: '#d1fae5',
+    gradient: 'linear-gradient(135deg, #3D7A68 0%, #5A9A84 100%)', // Updated: Sage green
+    bgColor: '#e8f5e9', // Updated: Light green
   },
   {
     icon: Shield,
     title: 'Compliance',
     benefit: 'AI-powered fraud detection and verification',
-    gradient: 'linear-gradient(135deg, #a855f7 0%, #9333ea 100%)',
-    bgColor: '#f3e8ff',
+    gradient: 'linear-gradient(135deg, #2D5A4A 0%, #3D7A68 100%)', // Updated: Medium to sage
+    bgColor: '#e0f2e9', // Updated: Pale green
   },
   {
     icon: Users,
     title: 'Partners',
     benefit: 'Global network of verified trade partners',
-    gradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-    bgColor: '#ffedd5',
+    gradient: 'linear-gradient(135deg, #1A3D32 0%, #3D7A68 100%)', // Updated: Dark to sage
+    bgColor: '#d4edda', // Updated: Light sage
   },
   {
     icon: CreditCard,
     title: 'Payments',
     benefit: 'Secure payment processing and invoicing',
-    gradient: 'linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)',
-    bgColor: '#e0e7ff',
+    gradient: 'linear-gradient(135deg, #3D7A68 0%, #6BBF96 100%)', // Updated: Sage to light green
+    bgColor: '#d1f2d8', // Updated: Mint green
   },
   {
     icon: BarChart3,
     title: 'Analytics',
     benefit: 'Real-time insights and performance metrics',
-    gradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-    bgColor: '#fce7f3',
+    gradient: 'linear-gradient(135deg, #2D5A4A 0%, #1A3D32 100%)', // Updated: Medium to dark
+    bgColor: '#e5f5e0', // Updated: Pale mint
   },
 ];
 
@@ -79,7 +79,7 @@ export function CoreFeatures() {
                 fontWeight: 900,
                 lineHeight: 1.1,
                 letterSpacing: '-0.025em',
-                background: 'linear-gradient(90deg, #2563eb 0%, #6366f1 50%, #a855f7 100%)',
+                background: 'linear-gradient(90deg, #1A3D32 0%, #3D7A68 50%, #D3FF62 100%)', // Updated: Green gradient
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
@@ -93,7 +93,7 @@ export function CoreFeatures() {
                 width: 96,
                 mx: 'auto',
                 mt: 2,
-                background: 'linear-gradient(90deg, #2563eb 0%, #a855f7 100%)',
+                background: 'linear-gradient(90deg, #1A3D32 0%, #D3FF62 100%)', // Updated: Green gradient
                 borderRadius: '9999px',
               }}
             />

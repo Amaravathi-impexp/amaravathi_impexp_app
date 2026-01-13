@@ -59,10 +59,10 @@ export function Verification({ onClose, onSwitchToSignIn, email }: VerificationP
             </h2>
 
             {/* Main Message */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: '#f0f7ed', border: '1px solid #d4edda' }}>
               <div className="flex items-start">
-                <Mail className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
-                <div className="text-sm text-blue-800">
+                <Mail className="h-5 w-5 mt-0.5 mr-3 flex-shrink-0" style={{ color: '#1A3D32' }} />
+                <div className="text-sm" style={{ color: '#2D5A4A' }}>
                   <p className="mb-2">
                     A verification link has been sent to{' '}
                     <span className="font-medium">{email}</span>
@@ -97,7 +97,10 @@ export function Verification({ onClose, onSwitchToSignIn, email }: VerificationP
                 type="button"
                 onClick={handleResend}
                 disabled={resending}
-                className="text-blue-600 hover:text-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ color: '#1A3D32' }}
+                onMouseEnter={(e) => !resending && (e.currentTarget.style.color = '#2D5A4A')}
+                onMouseLeave={(e) => (e.currentTarget.style.color = '#1A3D32')}
               >
                 {resending ? 'Resending...' : 'Click here to resend'}
               </button>
@@ -108,7 +111,12 @@ export function Verification({ onClose, onSwitchToSignIn, email }: VerificationP
               <button
                 type="button"
                 onClick={onSwitchToSignIn}
-                className="w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="w-full flex justify-center py-3 px-4 border border-transparent rounded shadow-sm text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+                style={{ backgroundColor: '#1A3D32', outline: 'none' }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2D5A4A'}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1A3D32'}
+                onFocus={(e) => e.currentTarget.style.boxShadow = '0 0 0 3px rgba(26, 61, 50, 0.2)'}
+                onBlur={(e) => e.currentTarget.style.boxShadow = 'none'}
               >
                 Go to Sign In
               </button>

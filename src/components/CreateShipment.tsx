@@ -289,7 +289,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
           {currentStep === 0 && (
             <Paper elevation={2} sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                <Package className="w-8 h-8 text-blue-600" />
+                <Package className="w-8 h-8" style={{ color: '#1A3D32' }} />
                 <Box>
                   <Typography variant="h5">Select Shipment Type</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -318,7 +318,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                             borderColor: 'primary.main',
                             boxShadow: 2,
                             '& .import-icon': {
-                              color: '#1e40af',
+                              color: '#1A3D32',
                               transform: 'scale(1.1)',
                             },
                           },
@@ -333,7 +333,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                               <Ship 
                                 className="w-8 h-8 import-icon" 
                                 style={{
-                                  color: shipmentType === 'import' ? '#2563eb' : '#6b7280',
+                                  color: shipmentType === 'import' ? '#1A3D32' : '#6b7280',
                                   transition: 'all 0.2s ease-in-out',
                                 }}
                               />
@@ -362,7 +362,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                             borderColor: 'primary.main',
                             boxShadow: 2,
                             '& .export-icon': {
-                              color: '#1e40af',
+                              color: '#1A3D32',
                               transform: 'scale(1.1)',
                             },
                           },
@@ -377,7 +377,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                               <Plane 
                                 className="w-8 h-8 export-icon" 
                                 style={{
-                                  color: shipmentType === 'export' ? '#2563eb' : '#6b7280',
+                                  color: shipmentType === 'export' ? '#1A3D32' : '#6b7280',
                                   transition: 'all 0.2s ease-in-out',
                                 }}
                               />
@@ -402,7 +402,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
           {currentStep === 1 && (
             <Paper elevation={2} sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                <BoxIcon className="w-8 h-8 text-blue-600" />
+                <BoxIcon className="w-8 h-8" style={{ color: '#1A3D32' }} />
                 <Box>
                   <Typography variant="h5">Cargo Details</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -521,7 +521,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
               {/* Route Information */}
               <Paper elevation={2} sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                  <Globe className="w-8 h-8 text-blue-600" />
+                  <Globe className="w-8 h-8" style={{ color: '#1A3D32' }} />
                   <Box>
                     <Typography variant="h5">Route Information</Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -555,7 +555,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
               {/* Transportation Mode */}
               <Paper elevation={2} sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                  <Truck className="w-8 h-8 text-blue-600" />
+                  <Truck className="w-8 h-8" style={{ color: '#1A3D32' }} />
                   <Box>
                     <Typography variant="h5">Transportation Mode</Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -605,7 +605,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
               {/* Schedule */}
               <Paper elevation={2} sx={{ p: 4 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                  <Package className="w-8 h-8 text-blue-600" />
+                  <Package className="w-8 h-8" style={{ color: '#1A3D32' }} />
                   <Box>
                     <Typography variant="h5">Schedule</Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -650,7 +650,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
           {currentStep === 3 && (
             <Paper elevation={2} sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                <Users className="w-8 h-8 text-blue-600" />
+                <Users className="w-8 h-8" style={{ color: '#1A3D32' }} />
                 <Box>
                   <Typography variant="h5">Select Partners</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -832,7 +832,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
           {currentStep === 4 && (
             <Paper elevation={2} sx={{ p: 4 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                <FileText className="w-8 h-8 text-blue-600" />
+                <FileText className="w-8 h-8" style={{ color: '#1A3D32' }} />
                 <Box>
                   <Typography variant="h5">Upload Documents</Typography>
                   <Typography variant="body2" color="text.secondary">
@@ -907,7 +907,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                   }}
                 >
                   <Box sx={{ textAlign: 'center' }}>
-                    <Upload className="w-10 h-10 text-blue-500 mx-auto mb-2" />
+                    <Upload className="w-10 h-10 mx-auto mb-2" style={{ color: '#3D7A68' }} />
                     <Typography variant="body1" sx={{ mb: 0.5, fontWeight: 500 }}>
                       Drag and drop files here
                     </Typography>
@@ -957,7 +957,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                             <TableRow key={doc.id} hover>
                               <TableCell>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                  <File className="w-5 h-5 text-blue-600" />
+                                  <File className="w-5 h-5" style={{ color: '#1A3D32' }} />
                                   <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                     {doc.name}
                                   </Typography>
@@ -1045,7 +1045,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                     <Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                         <Box sx={{ p: 0.75, bgcolor: 'primary.lighter', borderRadius: 1 }}>
-                          <Package style={{ width: 16, height: 16, color: '#2563eb' }} />
+                          <Package style={{ width: 16, height: 16, color: '#1A3D32' }} />
                         </Box>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Shipment Type</Typography>
                       </Box>
@@ -1058,7 +1058,7 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                     <Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                         <Box sx={{ p: 0.75, bgcolor: 'secondary.lighter', borderRadius: 1 }}>
-                          <BoxIcon style={{ width: 16, height: 16, color: '#7c3aed' }} />
+                          <BoxIcon style={{ width: 16, height: 16, color: '#3D7A68' }} />
                         </Box>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>Cargo Details</Typography>
                       </Box>
@@ -1117,9 +1117,9 @@ export function CreateShipment({ onBack, onShipmentCreated }: CreateShipmentProp
                         <Box>
                           <Typography variant="caption" color="text.secondary">Transportation Mode</Typography>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
-                            {mode === 'sea' && <Ship style={{ width: 16, height: 16, color: '#2563eb' }} />}
-                            {mode === 'air' && <Plane style={{ width: 16, height: 16, color: '#2563eb' }} />}
-                            {mode === 'road' && <Truck style={{ width: 16, height: 16, color: '#2563eb' }} />}
+                            {mode === 'sea' && <Ship style={{ width: 16, height: 16, color: '#1A3D32' }} />}
+                            {mode === 'air' && <Plane style={{ width: 16, height: 16, color: '#1A3D32' }} />}
+                            {mode === 'road' && <Truck style={{ width: 16, height: 16, color: '#1A3D32' }} />}
                             <Typography variant="body2" sx={{ fontWeight: 500, textTransform: 'capitalize' }}>
                               {mode ? `${mode} Freight` : '-'}
                             </Typography>

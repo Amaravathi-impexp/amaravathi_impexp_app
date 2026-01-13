@@ -36,11 +36,11 @@ export function ShipmentsDataGrid({
   const getLocationColor = (location: string) => {
     switch (location) {
       case 'Port':
-        return { bg: '#e9d5ff', text: '#6b21a8' }; // purple
+        return { bg: '#e0f2e9', text: '#2D5A4A' }; // Updated: Light green, medium green
       case 'Customs':
         return { bg: '#fed7aa', text: '#c2410c' }; // orange
       case 'In Transit':
-        return { bg: '#dbeafe', text: '#1e40af' }; // blue
+        return { bg: '#d4edda', text: '#1A3D32' }; // Updated: Light sage, dark forest green
       default:
         return { bg: '#f3f4f6', text: '#1f2937' }; // gray
     }

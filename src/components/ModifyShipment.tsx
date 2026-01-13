@@ -269,7 +269,7 @@ export function ModifyShipment({ shipment, onBack, onShipmentModified }: ModifyS
       {/* Shipment Details Section */}
       <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-          <Ship className="w-5 h-5 text-blue-600" />
+          <Ship className="w-5 h-5" style={{ color: '#1A3D32' }} />
           <Typography variant="h5">Shipment Details</Typography>
         </Box>
 
@@ -658,7 +658,7 @@ export function ModifyShipment({ shipment, onBack, onShipmentModified }: ModifyS
       {/* Document Upload Section */}
       <Paper elevation={2} sx={{ p: 3 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-          <FileText className="w-5 h-5 text-blue-600" />
+          <FileText className="w-5 h-5" style={{ color: '#1A3D32' }} />
           <Typography variant="h5">Document Management</Typography>
         </Box>
 
@@ -760,7 +760,7 @@ export function ModifyShipment({ shipment, onBack, onShipmentModified }: ModifyS
                   }}
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, flex: 1 }}>
-                    <FileText className="w-5 h-5 text-blue-600" />
+                    <FileText className="w-5 h-5" style={{ color: '#1A3D32' }} />
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="body2">{doc.name}</Typography>
                       <Typography variant="caption" color="text.secondary">

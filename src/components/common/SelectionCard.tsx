@@ -19,8 +19,8 @@ export function SelectionCard({
   value,
   selected,
   onClick,
-  iconColor = '#2563eb', // Default to primary blue
-  hoverIconColor = '#1e40af', // Darker blue on hover
+  iconColor = '#1A3D32', // Updated: Dark forest green
+  hoverIconColor = '#2D5A4A', // Updated: Medium green on hover
 }: SelectionCardProps) {
   return (
     <Card

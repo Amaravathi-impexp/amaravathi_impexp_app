@@ -37,14 +37,14 @@ const CustomConnector = styled(StepConnector)<{ gradientColor?: string }>(
       [`& .${stepConnectorClasses.line}`]: {
         backgroundImage:
           gradientColor ||
-          'linear-gradient(90deg, #2563eb 0%, #7c3aed 25%, #059669 50%, #dc2626 75%, #ea580c 100%)',
+          'linear-gradient(90deg, #1A3D32 0%, #3D7A68 25%, #6BBF96 50%, #8FD5B3 75%, #D3FF62 100%)', // Updated: Green gradient
       },
     },
     [`&.${stepConnectorClasses.completed}`]: {
       [`& .${stepConnectorClasses.line}`]: {
         backgroundImage:
           gradientColor ||
-          'linear-gradient(90deg, #2563eb 0%, #7c3aed 25%, #059669 50%, #dc2626 75%, #ea580c 100%)',
+          'linear-gradient(90deg, #1A3D32 0%, #3D7A68 25%, #6BBF96 50%, #8FD5B3 75%, #D3FF62 100%)', // Updated: Green gradient
       },
     },
     [`& .${stepConnectorClasses.line}`]: {
@@ -63,14 +63,14 @@ const VerticalConnector = styled(StepConnector)<{ gradientColor?: string }>(
       [`& .${stepConnectorClasses.line}`]: {
         backgroundImage:
           gradientColor ||
-          'linear-gradient(180deg, #2563eb 0%, #7c3aed 50%, #059669 100%)',
+          'linear-gradient(180deg, #1A3D32 0%, #3D7A68 50%, #6BBF96 100%)', // Updated: Green gradient
       },
     },
     [`&.${stepConnectorClasses.completed}`]: {
       [`& .${stepConnectorClasses.line}`]: {
         backgroundImage:
           gradientColor ||
-          'linear-gradient(180deg, #2563eb 0%, #7c3aed 50%, #059669 100%)',
+          'linear-gradient(180deg, #1A3D32 0%, #3D7A68 50%, #6BBF96 100%)', // Updated: Green gradient
       },
     },
     [`& .${stepConnectorClasses.line}`]: {
@@ -92,8 +92,8 @@ const CustomStepIconRoot = styled('div')<{
     secondaryColor?: string;
   };
 }>(({ theme, ownerState }) => {
-  const primaryColor = ownerState.primaryColor || '#2563eb';
-  const secondaryColor = ownerState.secondaryColor || '#3b82f6';
+  const primaryColor = ownerState.primaryColor || '#1A3D32'; // Updated: Dark forest green
+  const secondaryColor = ownerState.secondaryColor || '#3D7A68'; // Updated: Sage green
 
   return {
     backgroundColor: '#e5e7eb',
@@ -139,8 +139,8 @@ const CompactStepIconRoot = styled('div')<{
     secondaryColor?: string;
   };
 }>(({ theme, ownerState }) => {
-  const primaryColor = ownerState.primaryColor || '#2563eb';
-  const secondaryColor = ownerState.secondaryColor || '#3b82f6';
+  const primaryColor = ownerState.primaryColor || '#1A3D32'; // Updated: Dark forest green
+  const secondaryColor = ownerState.secondaryColor || '#3D7A68'; // Updated: Sage green
 
   return {
     backgroundColor: '#f3f4f6',
@@ -173,9 +173,9 @@ export function AnimatedStepper({
   steps,
   activeStep,
   colorScheme = {
-    primary: '#2563eb',
-    secondary: '#3b82f6',
-    gradient: 'linear-gradient(90deg, #2563eb 0%, #3b82f6 100%)',
+    primary: '#1A3D32', // Updated: Dark forest green
+    secondary: '#3D7A68', // Updated: Sage green
+    gradient: 'linear-gradient(90deg, #1A3D32 0%, #3D7A68 100%)', // Updated: Green gradient
   },
   orientation = 'horizontal',
   showDescription = false,

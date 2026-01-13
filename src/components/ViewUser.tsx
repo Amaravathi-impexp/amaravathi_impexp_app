@@ -11,17 +11,14 @@ interface ViewUserProps {
 export function ViewUser({ userId, onBack }: ViewUserProps) {
   const { data: user, isLoading, error } = useGetUserByIdQuery(userId);
 
-  const getRoleColor = (role: Role) => {
-    const roleCode = role.code.toUpperCase();
-    switch (roleCode) {
+  const getRoleBadgeColor = (role: string) => {
+    switch (role) {
       case 'ADMIN':
         return 'bg-red-100 text-red-800';
-      case 'IMPT':
       case 'IMPORTER':
-        return 'bg-blue-100 text-blue-800';
-      case 'EXPT':
-      case 'EXPORTER':
         return 'bg-green-100 text-green-800';
+      case 'EXPT':
+        return 'bg-yellow-100 text-yellow-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -245,7 +242,7 @@ export function ViewUser({ userId, onBack }: ViewUserProps) {
               {user.roles.map((role) => (
                 <div
                   key={role.id}
-                  className={`px-4 py-2 rounded-lg ${getRoleColor(role)}`}
+                  className={`px-4 py-2 rounded-lg ${getRoleBadgeColor(role.code)}`}
                 >
                   <div className="flex items-center gap-2">
                     <Shield className="w-4 h-4" />

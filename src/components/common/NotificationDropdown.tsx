@@ -52,7 +52,12 @@ export function NotificationDropdown() {
             ))}
           </div>
           <div className="px-4 py-2 border-t border-gray-200 text-center">
-            <button className="text-sm text-blue-600 hover:text-blue-700">
+            <button 
+              className="text-sm transition-colors"
+              style={{ color: '#1A3D32' }}
+              onMouseEnter={(e) => e.currentTarget.style.color = '#2D5A4A'}
+              onMouseLeave={(e) => e.currentTarget.style.color = '#1A3D32'}
+            >
               View all notifications
             </button>
           </div>

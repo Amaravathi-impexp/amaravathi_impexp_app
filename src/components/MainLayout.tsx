@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Box } from '@mui/material';
 import { Header } from './Header';
 import { SimpleFooter } from './SimpleFooter';
 import { LeftMenu } from './LeftMenu';
@@ -13,6 +14,7 @@ import { Analytics } from './Analytics';
 import { Documents } from './Documents';
 import { Roles } from './Roles';
 import { UploadDocuments } from './UploadDocuments';
+import { TrainingSchedule } from './TrainingSchedule';
 import { useAppSelector } from '../store/hooks';
 import { selectIsAdmin, selectCurrentUser } from '../store/selectors/authSelectors';
 
@@ -24,7 +26,7 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
   const currentUser = useAppSelector(selectCurrentUser);
   const isAdmin = useAppSelector(selectIsAdmin);
   
-  const [activeSection, setActiveSection] = useState<'overview' | 'shipments' | 'users' | 'partners' | 'settings' | 'profile' | 'payments' | 'analytics' | 'documents' | 'roles' | 'upload-documents'>('overview');
+  const [activeSection, setActiveSection] = useState<'overview' | 'shipments' | 'users' | 'partners' | 'settings' | 'profile' | 'payments' | 'analytics' | 'documents' | 'roles' | 'upload-documents' | 'training'>('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminExpanded, setAdminExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,7 +60,7 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
       {/* Header - Fixed and Full Width */}
       <Header
         searchQuery={searchQuery}
@@ -72,11 +74,31 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
       />
 
       {/* Main Content Wrapper */}
-      <div
-        className={`flex-1 flex flex-col pt-[120px] transition-all duration-300 ${sidebarOpen ? "lg:pl-64" : "lg:pl-20"}`}
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          pt: '96px', // Top padding for fixed header (no TopRibbon)
+          pl: {
+            xs: 0,
+            lg: sidebarOpen ? '256px' : '80px',
+          },
+          transition: 'padding-left 0.3s',
+        }}
       >
         {/* Body Area - Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-1">
+        <Box
+          component="main"
+          sx={{
+            maxWidth: '1280px',
+            mx: 'auto',
+            px: { xs: 2, sm: 3, lg: 4 },
+            py: 4,
+            width: '100%',
+            flexGrow: 1,
+          }}
+        >
           {activeSection === "overview" && <Dashboard />}
           {activeSection === "shipments" && <Shipments />}
           {activeSection === "partners" && <PartnerDirectory />}
@@ -95,13 +117,14 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
           {activeSection === "upload-documents" && <UploadDocuments />}
           {activeSection === "settings" && <SettingsComponent />}
           {activeSection === "profile" && <ProfileComponent />}
-        </main>
+          {activeSection === "training" && <TrainingSchedule />}
+        </Box>
 
         {/* Footer - Adjusts with sidebar */}
-        <div className="mt-auto">
+        <Box sx={{ mt: 'auto' }}>
           <SimpleFooter />
-        </div>
-      </div>
+        </Box>
+      </Box>
 
       {/* Left Sidebar */}
       <LeftMenu
@@ -113,6 +136,6 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
         adminExpanded={adminExpanded}
         onAdminToggle={() => setAdminExpanded(!adminExpanded)}
       />
-    </div>
+    </Box>
   );
 }

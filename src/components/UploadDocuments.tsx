@@ -190,7 +190,7 @@ export function UploadDocuments() {
               </Box>
               
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <AlertCircle className="w-4 h-4 text-blue-500" />
+                <AlertCircle className="w-4 h-4" style={{ color: '#1A3D32' }} />
                 <Typography variant="body2" color="text.secondary">Status:</Typography>
                 <Chip label="READY FOR CUSTOMS" color="info" size="small" />
               </Box>

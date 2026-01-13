@@ -15,28 +15,28 @@ export function Dashboard() {
       value: '24',
       change: '+12%',
       icon: Ship,
-      color: 'blue' as const,
+      color: 'green' as const, // Updated: Primary green
     },
     {
       label: 'Total Revenue',
       value: '$48.2K',
       change: '+23%',
       icon: DollarSign,
-      color: 'green' as const,
+      color: 'lime' as const, // Updated: Lime accent
     },
     {
       label: 'Pending Compliance',
       value: '8',
       change: '-5%',
       icon: FileText,
-      color: 'orange' as const,
+      color: 'sage' as const, // Updated: Sage green
     },
     {
       label: 'Payments Due',
       value: '3',
       change: '+2',
       icon: Package,
-      color: 'amber' as const,
+      color: 'medium' as const, // Updated: Medium green
     },
   ];
 
@@ -45,16 +45,16 @@ export function Dashboard() {
     // TODO: Implement navigation to respective pages
   };
 
-  // Color configurations for stats
+  // Color configurations for stats - Updated to green theme
   const getStatColors = (color: string) => {
     const colorMap = {
-      blue: { bg: '#E3F2FD', text: '#1976D2' },
-      green: { bg: '#E8F5E9', text: '#388E3C' },
-      orange: { bg: '#FFF3E0', text: '#F57C00' },
-      amber: { bg: '#FFF8E1', text: '#FFA000' },
-      red: { bg: '#FFEBEE', text: '#D32F2F' },
+      green: { bg: '#d4e8cd', text: '#1A3D32' },      // Light Green / Dark Forest Green
+      lime: { bg: '#e0ff8f', text: '#1A3D32' },        // Lighter Lime / Dark Forest Green
+      sage: { bg: '#f0f7ed', text: '#3D7A68' },        // Pale Green / Sage Green
+      medium: { bg: '#c8e3bf', text: '#2D5A4A' },      // Medium Light Green / Medium Green
+      red: { bg: '#FFEBEE', text: '#D32F2F' },         // Keep red for errors
     };
-    return colorMap[color as keyof typeof colorMap] || colorMap.blue;
+    return colorMap[color as keyof typeof colorMap] || colorMap.green;
   };
 
   return (
@@ -147,11 +147,11 @@ export function Dashboard() {
                         sx={{
                           width: 40,
                           height: 40,
-                          bgcolor: '#E3F2FD',
-                          color: '#1976D2',
+                          bgcolor: '#d4e8cd', // Updated: Light Green
+                          color: '#1A3D32', // Updated: Dark Forest Green
                           borderRadius: 2,
                           transition: 'background-color 0.2s',
-                          '.MuiListItem-root:hover &': { bgcolor: '#BBDEFB' },
+                          '.MuiListItem-root:hover &': { bgcolor: '#c8e3bf' },
                         }}
                       >
                         <Package size={20} />
@@ -183,11 +183,11 @@ export function Dashboard() {
                         sx={{
                           width: 40,
                           height: 40,
-                          bgcolor: '#E8F5E9',
-                          color: '#388E3C',
+                          bgcolor: '#e0ff8f', // Updated: Lighter Lime
+                          color: '#1A3D32', // Updated: Dark Forest Green
                           borderRadius: 2,
                           transition: 'background-color 0.2s',
-                          '.MuiListItem-root:hover &': { bgcolor: '#C8E6C9' },
+                          '.MuiListItem-root:hover &': { bgcolor: '#D3FF62' },
                         }}
                       >
                         <Upload size={20} />
@@ -219,11 +219,11 @@ export function Dashboard() {
                         sx={{
                           width: 40,
                           height: 40,
-                          bgcolor: '#F3E5F5',
-                          color: '#7B1FA2',
+                          bgcolor: '#f0f7ed', // Updated: Pale Green
+                          color: '#3D7A68', // Updated: Sage Green
                           borderRadius: 2,
                           transition: 'background-color 0.2s',
-                          '.MuiListItem-root:hover &': { bgcolor: '#E1BEE7' },
+                          '.MuiListItem-root:hover &': { bgcolor: '#d4e8cd' },
                         }}
                       >
                         <NavigationIcon size={20} />
@@ -361,28 +361,28 @@ export function Dashboard() {
                         const configs = {
                           shipment: {
                             icon: Truck,
-                            bgColor: '#E3F2FD',
-                            iconColor: '#1976D2',
+                            bgColor: '#d4e8cd', // Updated: Light Green
+                            iconColor: '#1A3D32', // Updated: Dark Forest Green
                           },
                           delivery: {
                             icon: Ship,
-                            bgColor: '#E3F2FD',
-                            iconColor: '#1976D2',
+                            bgColor: '#d4e8cd', // Updated: Light Green
+                            iconColor: '#1A3D32', // Updated: Dark Forest Green
                           },
                           payment: {
                             icon: DollarSign,
-                            bgColor: '#E8F5E9',
-                            iconColor: '#388E3C',
+                            bgColor: '#e0ff8f', // Updated: Lighter Lime
+                            iconColor: '#2D5A4A', // Updated: Medium Green
                           },
                           message: {
                             icon: Bell,
-                            bgColor: '#F3E5F5',
-                            iconColor: '#7B1FA2',
+                            bgColor: '#f0f7ed', // Updated: Pale Green
+                            iconColor: '#3D7A68', // Updated: Sage Green
                           },
                           document: {
                             icon: FileText,
-                            bgColor: '#FFF3E0',
-                            iconColor: '#F57C00',
+                            bgColor: '#c8e3bf', // Updated: Medium Light Green
+                            iconColor: '#2D5A4A', // Updated: Medium Green
                           },
                         };
                         return configs[activity.type as keyof typeof configs] || configs.shipment;

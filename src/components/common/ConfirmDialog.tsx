@@ -35,9 +35,13 @@ export function ConfirmDialog({
       button: 'bg-yellow-600 hover:bg-yellow-700',
     },
     info: {
-      icon: 'text-blue-600',
-      iconBg: 'bg-blue-100',
-      button: 'bg-blue-600 hover:bg-blue-700',
+      icon: '',
+      iconBg: '',
+      button: '',
+      iconColor: '#1A3D32',
+      iconBgColor: '#f0f7ed',
+      buttonColor: '#1A3D32',
+      buttonHoverColor: '#2D5A4A',
     },
   };
 
@@ -64,8 +68,14 @@ export function ConfirmDialog({
         {/* Content */}
         <div className="p-6">
           {/* Icon */}
-          <div className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${styles.iconBg} mb-4`}>
-            <AlertTriangle className={`h-6 w-6 ${styles.icon}`} />
+          <div 
+            className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full mb-4 ${styles.iconBg}`}
+            style={variant === 'info' ? { backgroundColor: styles.iconBgColor } : undefined}
+          >
+            <AlertTriangle 
+              className={`h-6 w-6 ${styles.icon}`} 
+              style={variant === 'info' ? { color: styles.iconColor } : undefined}
+            />
           </div>
 
           {/* Title */}
@@ -89,6 +99,17 @@ export function ConfirmDialog({
             <button
               onClick={onConfirm}
               className={`flex-1 px-4 py-2.5 text-white rounded-lg transition-colors ${styles.button}`}
+              style={variant === 'info' ? { backgroundColor: styles.buttonColor } : undefined}
+              onMouseEnter={(e) => {
+                if (variant === 'info') {
+                  e.currentTarget.style.backgroundColor = styles.buttonHoverColor!;
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (variant === 'info') {
+                  e.currentTarget.style.backgroundColor = styles.buttonColor!;
+                }
+              }}
             >
               {confirmText}
             </button>

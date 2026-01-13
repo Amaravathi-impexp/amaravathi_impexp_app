@@ -3,13 +3,11 @@ import { Logo } from '../common/Logo';
 export function SimpleFooter() {
   return (
     <footer className="bg-gray-900 text-gray-300 py-6 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="bg-white px-4 py-2 rounded">
-            <Logo className="h-[70px]" />
-          </div>
-          <p className="text-sm">© 2025 Amaravathi Imports & Exports. All rights reserved.</p>
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        <div className="bg-white px-8 py-4 rounded-lg inline-flex items-center overflow-hidden mb-6" style={{ height: '100px' }}>
+          <Logo className="h-[200px]" />
         </div>
+        <p className="text-sm">© 2025 TIMPEX.club - Telugu Import Export Club. All rights reserved.</p>
       </div>
     </footer>
   );

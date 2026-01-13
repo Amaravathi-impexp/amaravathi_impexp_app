@@ -8,7 +8,8 @@ import {
   Shield,
   ChevronDown,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Calendar
 } from 'lucide-react';
 import {
   Box,
@@ -51,7 +52,7 @@ export function LeftMenu({
         borderColor: 'divider',
         position: 'fixed',
         left: 0,
-        top: '120px',
+        top: '96px', // Header height (96px)
         bottom: 0,
         transition: 'width 0.3s',
         zIndex: 40,
@@ -61,7 +62,7 @@ export function LeftMenu({
       <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
         {/* Sidebar Content */}
         <Box component="nav" sx={{ flexGrow: 1, px: 1.5, py: 2 }}>
-          <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+          <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {/* Dashboard */}
             <ListItemButton
               onClick={() => onSectionChange("overview")}
@@ -70,7 +71,7 @@ export function LeftMenu({
                 borderRadius: 2,
                 gap: 1.5,
                 px: 1.5,
-                py: 1.5,
+                py: 0.75,
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
                 '&.Mui-selected': {
                   bgcolor: 'primary.lighter',
@@ -98,7 +99,7 @@ export function LeftMenu({
                 borderRadius: 2,
                 gap: 1.5,
                 px: 1.5,
-                py: 1.5,
+                py: 0.75,
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
                 '&.Mui-selected': {
                   bgcolor: 'primary.lighter',
@@ -127,7 +128,7 @@ export function LeftMenu({
                   borderRadius: 2,
                   gap: 1.5,
                   px: 1.5,
-                  py: 1.5,
+                  py: 0.75,
                   justifyContent: sidebarOpen ? 'flex-start' : 'center',
                   '&.Mui-selected': {
                     bgcolor: 'primary.lighter',
@@ -156,7 +157,7 @@ export function LeftMenu({
                 borderRadius: 2,
                 gap: 1.5,
                 px: 1.5,
-                py: 1.5,
+                py: 0.75,
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
                 '&.Mui-selected': {
                   bgcolor: 'primary.lighter',
@@ -184,7 +185,7 @@ export function LeftMenu({
                 borderRadius: 2,
                 gap: 1.5,
                 px: 1.5,
-                py: 1.5,
+                py: 0.75,
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
                 '&.Mui-selected': {
                   bgcolor: 'primary.lighter',
@@ -212,7 +213,7 @@ export function LeftMenu({
                 borderRadius: 2,
                 gap: 1.5,
                 px: 1.5,
-                py: 1.5,
+                py: 0.75,
                 justifyContent: sidebarOpen ? 'flex-start' : 'center',
                 '&.Mui-selected': {
                   bgcolor: 'primary.lighter',
@@ -232,6 +233,34 @@ export function LeftMenu({
               {sidebarOpen && <ListItemText primary="Payments Invoicing" primaryTypographyProps={{ variant: 'body2' }} />}
             </ListItemButton>
 
+            {/* Training Schedule */}
+            <ListItemButton
+              onClick={() => onSectionChange("training")}
+              selected={activeSection === "training"}
+              sx={{
+                borderRadius: 2,
+                gap: 1.5,
+                px: 1.5,
+                py: 0.75,
+                justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                '&.Mui-selected': {
+                  bgcolor: 'primary.lighter',
+                  color: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.lighter',
+                  },
+                },
+                '&:hover': {
+                  bgcolor: 'grey.100',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                <Calendar size={20} />
+              </ListItemIcon>
+              {sidebarOpen && <ListItemText primary="Training Schedule" primaryTypographyProps={{ variant: 'body2' }} />}
+            </ListItemButton>
+
             {/* Admin - with submenu - Admin Only */}
             {isAdmin && (
               <Box>
@@ -247,7 +276,7 @@ export function LeftMenu({
                     borderRadius: 2,
                     gap: 1.5,
                     px: 1.5,
-                    py: 1.5,
+                    py: 0.75,
                     justifyContent: sidebarOpen ? 'space-between' : 'center',
                     '&.Mui-selected': {
                       bgcolor: 'primary.lighter',

@@ -61,10 +61,11 @@ export function Analytics() {
 
   // Cost Breakdown Data
   const costBreakdownData = [
-    { name: 'Freight', value: 45, color: '#3b82f6' },
-    { name: 'Customs Duty', value: 25, color: '#10b981' },
-    { name: 'GST / IGST', value: 18, color: '#f59e0b' },
-    { name: 'Insurance', value: 12, color: '#8b5cf6' },
+    { name: 'Freight', value: 45, color: '#1A3D32' }, // Updated: Dark Forest Green
+    { name: 'Customs Duty', value: 25, color: '#3D7A68' }, // Updated: Sage Green
+    { name: 'GST / IGST', value: 18, color: '#D3FF62' }, // Updated: Lime
+    { name: 'Documentation', value: 8, color: '#2D5A4A' }, // Updated: Medium Green
+    { name: 'Other', value: 4, color: '#c8e3bf' }, // Updated: Light Green
   ];
 
   // Compliance & Risk Data
@@ -213,7 +214,7 @@ export function Analytics() {
                 <Typography variant="body2" color="text.secondary">
                   Total Shipments
                 </Typography>
-                <BarChart3 className="w-5 h-5 text-blue-600" />
+                <BarChart3 style={{ width: 20, height: 20, color: '#1A3D32' }} /> {/* Updated: Dark Forest Green */}
               </Box>
               <Typography variant="h4" gutterBottom>
                 1,247
@@ -263,7 +264,7 @@ export function Analytics() {
                 <Typography variant="body2" color="text.secondary">
                   Avg Clearance Time (Days)
                 </Typography>
-                <Activity className="w-5 h-5 text-purple-600" />
+                <Activity style={{ width: 20, height: 20, color: '#3D7A68' }} /> {/* Updated: Sage Green */}
               </Box>
               <Typography variant="h4" gutterBottom>
                 3.4
@@ -341,7 +342,7 @@ export function Analytics() {
           <Paper elevation={2} sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Box sx={{ p: 1, bgcolor: 'info.light', borderRadius: 1 }}>
-                <TrendingUp className="w-5 h-5 text-blue-600" />
+                <TrendingUp style={{ width: 20, height: 20, color: '#1A3D32' }} /> {/* Updated: Dark Forest Green */}
               </Box>
               <Box>
                 <Typography variant="h6">Trade Volume (Monthly)</Typography>
@@ -372,7 +373,7 @@ export function Analytics() {
           <Paper elevation={2} sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Box sx={{ p: 1, bgcolor: 'secondary.light', borderRadius: 1 }}>
-                <DollarSign className="w-5 h-5 text-purple-600" />
+                <DollarSign style={{ width: 20, height: 20, color: '#3D7A68' }} /> {/* Updated: Sage Green */}
               </Box>
               <Box>
                 <Typography variant="h6">Cost Breakdown</Typography>

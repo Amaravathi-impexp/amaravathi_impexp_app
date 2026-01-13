@@ -19,7 +19,10 @@ export function Documents({ onNavigateToUpload }: DocumentsProps) {
       <div className="flex justify-end mb-4 mt-6">
         <button 
           onClick={onNavigateToUpload}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 text-white rounded-lg transition-colors"
+          style={{ backgroundColor: '#1A3D32' }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#2D5A4A'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#1A3D32'}
         >
           <Upload className="w-5 h-5" />
           Upload

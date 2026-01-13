@@ -22,32 +22,32 @@ const impactStats = [
     value: '130+',
     label: 'Countries Connected',
     description: 'Global trade network',
-    color: '#3b82f6',
-    gradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+    color: '#3D7A68',
+    gradient: 'linear-gradient(135deg, #3D7A68 0%, #2D5A4A 100%)',
   },
   {
     icon: Clock,
     value: '60%',
     label: 'Faster Processing',
     description: 'Save time on every shipment',
-    color: '#10b981',
-    gradient: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+    color: '#1A3D32',
+    gradient: 'linear-gradient(135deg, #1A3D32 0%, #2D5A4A 100%)',
   },
   {
     icon: TrendingUp,
     value: '$2.3B',
     label: 'Trade Volume',
     description: 'Processed this year',
-    color: '#8b5cf6',
-    gradient: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+    color: '#D3FF62',
+    gradient: 'linear-gradient(135deg, #3D7A68 0%, #D3FF62 100%)',
   },
   {
     icon: Users,
     value: '5,000+',
     label: 'Active Traders',
     description: 'Growing community',
-    color: '#f59e0b',
-    gradient: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    color: '#2D5A4A',
+    gradient: 'linear-gradient(135deg, #2D5A4A 0%, #3D7A68 100%)',
   },
 ];
 
@@ -56,34 +56,34 @@ const achievements = [
     icon: Award,
     title: 'Best Trade Platform 2024',
     organization: 'Global Trade Awards',
-    color: '#f59e0b',
+    color: '#D3FF62',
   },
   {
     icon: Star,
     title: 'Top Rated Solution',
     organization: '4.9/5 from 1,200+ reviews',
-    color: '#eab308',
+    color: '#c4f050',
   },
   {
     icon: Target,
     title: '99.9% Uptime',
     organization: 'Enterprise Reliability',
-    color: '#10b981',
+    color: '#1A3D32',
   },
   {
     icon: Rocket,
     title: 'Fastest Growing',
     organization: 'Logistics Tech 2024',
-    color: '#6366f1',
+    color: '#3D7A68',
   },
 ];
 
 const testimonialAvatars = [
-  { name: 'Michael Chen', bg: '#3b82f6' },
-  { name: 'Sarah Johnson', bg: '#10b981' },
-  { name: 'David Kumar', bg: '#8b5cf6' },
-  { name: 'Emily Wong', bg: '#f59e0b' },
-  { name: 'James Smith', bg: '#ec4899' },
+  { name: 'Michael Chen', bg: '#1A3D32' },
+  { name: 'Sarah Johnson', bg: '#3D7A68' },
+  { name: 'David Kumar', bg: '#2D5A4A' },
+  { name: 'Emily Wong', bg: '#D3FF62' },
+  { name: 'James Smith', bg: '#c4f050' },
 ];
 
 export function TrustBadges() {
@@ -100,7 +100,7 @@ export function TrustBadges() {
         py: { xs: 6, md: 8 },
         position: 'relative',
         overflow: 'hidden',
-        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 50%, #ffffff 100%)',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f0f7ed 50%, #ffffff 100%)', // Updated: Pale green gradient
       }}
     >
       {/* Animated Grid Background */}
@@ -109,8 +109,8 @@ export function TrustBadges() {
           position: 'absolute',
           inset: 0,
           backgroundImage: `
-            linear-gradient(to right, rgba(99, 102, 241, 0.03) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(99, 102, 241, 0.03) 1px, transparent 1px)
+            linear-gradient(to right, rgba(61, 122, 104, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(61, 122, 104, 0.05) 1px, transparent 1px)
           `,
           backgroundSize: '50px 50px',
         }}
@@ -124,7 +124,7 @@ export function TrustBadges() {
           right: '-5%',
           width: 500,
           height: 500,
-          background: 'radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(61, 122, 104, 0.08) 0%, transparent 70%)', // Updated: Sage Green
           borderRadius: '50%',
           filter: 'blur(60px)',
         }}
@@ -136,7 +136,7 @@ export function TrustBadges() {
           left: '-5%',
           width: 450,
           height: 450,
-          background: 'radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(211, 255, 98, 0.08) 0%, transparent 70%)', // Updated: Lime accent
           borderRadius: '50%',
           filter: 'blur(60px)',
         }}
@@ -158,18 +158,18 @@ export function TrustBadges() {
                 gap: 1,
                 px: 3,
                 py: 1,
-                bgcolor: 'rgba(99, 102, 241, 0.1)',
-                border: '1px solid rgba(99, 102, 241, 0.2)',
+                bgcolor: 'rgba(211, 255, 98, 0.15)', // Updated: Lime accent background
+                border: '1px solid rgba(61, 122, 104, 0.3)', // Updated: Sage green border
                 borderRadius: 50,
                 mb: 3,
               }}
             >
-              <Sparkles style={{ width: 16, height: 16, color: '#6366f1' }} />
+              <Sparkles style={{ width: 16, height: 16, color: '#3D7A68' }} /> {/* Updated: Sage Green */}
               <Typography
                 sx={{
                   fontSize: '0.875rem',
                   fontWeight: 700,
-                  color: '#6366f1',
+                  color: '#1A3D32', // Updated: Dark Forest Green
                   letterSpacing: '0.1em',
                   textTransform: 'uppercase',
                 }}
@@ -184,7 +184,7 @@ export function TrustBadges() {
               sx={{
                 fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
                 fontWeight: 900,
-                color: '#0f172a',
+                color: '#1A1A1A', // Updated: Almost Black
                 mb: 3,
                 lineHeight: 1.1,
               }}
@@ -194,7 +194,7 @@ export function TrustBadges() {
               <Box
                 component="span"
                 sx={{
-                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%)',
+                  background: 'linear-gradient(135deg, #1A3D32 0%, #3D7A68 50%, #D3FF62 100%)', // Updated: Green gradient
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                 }}
@@ -207,7 +207,7 @@ export function TrustBadges() {
             <Typography
               sx={{
                 fontSize: { xs: '1.125rem', md: '1.375rem' },
-                color: '#64748b',
+                color: '#3D7A68', // Updated: Sage Green
                 maxWidth: 800,
                 mx: 'auto',
                 lineHeight: 1.6,
@@ -549,34 +549,34 @@ export function TrustBadges() {
                 flexWrap: 'wrap',
               }}
             >
-              <Zap style={{ width: 20, height: 20, color: '#6366f1' }} />
+              <Zap style={{ width: 20, height: 20, color: '#D3FF62' }} /> {/* Updated: Lime accent */}
               <Typography
                 sx={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  color: '#6366f1',
+                  color: '#1A3D32', // Updated: Dark Forest Green
                 }}
               >
                 Free Forever
               </Typography>
               <Typography sx={{ fontSize: '0.875rem', color: '#cbd5e1' }}>•</Typography>
-              <Shield style={{ width: 20, height: 20, color: '#10b981' }} />
+              <Shield style={{ width: 20, height: 20, color: '#3D7A68' }} /> {/* Updated: Sage Green */}
               <Typography
                 sx={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  color: '#10b981',
+                  color: '#3D7A68', // Updated: Sage Green
                 }}
               >
                 100% Secure
               </Typography>
               <Typography sx={{ fontSize: '0.875rem', color: '#cbd5e1' }}>•</Typography>
-              <Rocket style={{ width: 20, height: 20, color: '#f59e0b' }} />
+              <Rocket style={{ width: 20, height: 20, color: '#2D5A4A' }} /> {/* Updated: Medium Green */}
               <Typography
                 sx={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  color: '#f59e0b',
+                  color: '#2D5A4A', // Updated: Medium Green
                 }}
               >
                 Instant Setup

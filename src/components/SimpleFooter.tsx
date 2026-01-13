@@ -1,16 +1,54 @@
-import { Logo } from './Logo';
+import { Box, Container, Typography } from '@mui/material';
+import logoImage from 'figma:asset/98b22d8ba3cccddd432e81bdbe1d183f77d139b9.png';
 
+/**
+ * SimpleFooter Component - Version 2.0 GREEN THEME
+ * Updated: Dark Forest Green Background - Matches Landing Page Footer
+ */
 export function SimpleFooter() {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-6 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="bg-white px-4 py-2 rounded">
-            <Logo className="h-[70px]" />
-          </div>
-          <p className="text-sm">© 2025 Amaravathi Imports & Exports. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: '#1A3D32',
+        color: '#E8F5E9',
+        py: 3,
+        mt: 'auto',
+      }}
+    >
+      <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, lg: 4 } }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: 2,
+          }}
+        >
+          <Box
+            sx={{
+              height: 80,
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <Box
+              component="img"
+              src={logoImage}
+              alt="TIMPEX.club"
+              sx={{
+                height: 175,
+                width: 'auto',
+              }}
+            />
+          </Box>
+          <Typography variant="body2" sx={{ color: '#7FA896', fontSize: '0.875rem' }}>
+            © 2025 TIMPEX.club - Telugu Import Export Club. All rights reserved.
+          </Typography>
+        </Box>
+      </Container>
+    </Box>
   );
 }

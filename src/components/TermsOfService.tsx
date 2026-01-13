@@ -14,7 +14,7 @@ export default function TermsOfService() {
           {/* Header */}
           <Box sx={{ textAlign: 'center', mb: 5 }}>
             <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
-              <FileText style={{ width: 48, height: 48, color: '#2563eb' }} />
+              <FileText style={{ width: 48, height: 48, color: '#1A3D32' }} />
             </Box>
             <Typography variant="h3" sx={{ mb: 2, fontWeight: 700, color: '#1a1a1a' }}>
               Terms of Service
@@ -196,7 +196,7 @@ export default function TermsOfService() {
           {/* Liability Limitations */}
           <Box sx={{ mb: 4 }}>
             <Typography variant="h5" sx={{ mb: 2, fontWeight: 600, display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Shield style={{ width: 20, height: 20, color: '#2563eb' }} />
+              <Shield style={{ width: 20, height: 20, color: '#1A3D32' }} />
               7. Limitation of Liability
             </Typography>
             <Typography variant="body1" paragraph>

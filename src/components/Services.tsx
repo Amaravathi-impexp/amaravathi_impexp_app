@@ -87,9 +87,10 @@ export function Services() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     mb: 2,
+                    flexShrink: 0,
                   }}
                 >
-                  <Icon className="w-6 h-6 text-blue-600" />
+                  <Icon className="w-6 h-6" style={{ color: '#1A3D32' }} />
                 </Box>
                 <Typography variant="h6" sx={{ mb: 1.5 }}>
                   {service.title}

@@ -15,12 +15,14 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Ship, FileText, Shield, TrendingUp } from "lucide-react";
-import { Logo } from '../../components/common/Logo';
-import { SimpleFooter } from '../../components/layout/SimpleFooter';
-import { TopRibbon } from '../../components/layout/TopRibbon';
+import { Navigation } from '../../components/layout/Navigation';
+import { Footer } from '../../components/layout/Footer';
 import { useSignUpMutation } from '../../store/api/authApi';
 import { useAppDispatch } from '../../store/hooks';
 import { setCredentials } from '../../store/slices/authSlice';
@@ -29,9 +31,11 @@ interface SignUpProps {
   onClose: () => void;
   onSwitchToSignIn: () => void;
   onSignUpSuccess: () => void;
+  onAboutClick?: () => void;
+  onContactClick?: () => void;
 }
 
-export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpProps) {
+export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClick, onContactClick }: SignUpProps) {
   const dispatch = useAppDispatch();
   const [signUp, { isLoading }] = useSignUpMutation();
   const [showPassword, setShowPassword] = useState(false);
@@ -39,10 +43,17 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
+    phone: '',
+    country: '',
+    city: '',
+    language: '',
+    profileType: '',
+    primaryInterest: '',
+    tradingExperience: '',
     password: '',
     confirmPassword: '',
-    phone: '',
     agreeToTerms: false,
+    agreeToComms: false,
   });
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -65,6 +76,18 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
     passwordValidation.hasLowercase &&
     passwordValidation.hasNumber &&
     passwordValidation.hasSpecialChar;
+
+  // Check if all required fields are filled and consent is given
+  const isFormValid = 
+    formData.fullName.trim() !== '' &&
+    formData.email.trim() !== '' &&
+    formData.phone.trim() !== '' &&
+    formData.country !== '' &&
+    formData.city.trim() !== '' &&
+    formData.password !== '' &&
+    formData.confirmPassword !== '' &&
+    formData.agreeToTerms &&
+    allPasswordRequirementsMet;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,203 +149,202 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <TopRibbon />
-      <header className="bg-white shadow-sm sticky top-10 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-24">
-            <button onClick={onClose} className="hover:opacity-80 transition-opacity">
-              <Logo className="h-[86px]" />
-            </button>
-          </div>
-        </div>
-      </header>
+    <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5', display: 'flex', flexDirection: 'column' }}>
+      <Navigation 
+        onHomeClick={onClose}
+        onAboutClick={onAboutClick}
+        onContactClick={onContactClick}
+        currentView="signup"
+        hideAuthButton={true}
+      />
 
-      <div className="flex-1 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%', px: { xs: 2, sm: 3, lg: 4 }, mt: { xs: 4, md: 6 } }}>
-          <Box 
+      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
+        <Box sx={{ width: '100%', maxWidth: 600, px: 3 }}>
+          <Paper 
+            elevation={0}
             sx={{ 
-              display: 'flex',
-              flexDirection: { xs: 'column', md: 'row' },
-              minHeight: { md: 550 },
-              boxShadow: 3,
-              borderRadius: '12px',
+              p: 5, 
+              borderRadius: 3,
+              bgcolor: 'white',
+              border: '1px solid',
+              borderColor: 'grey.200',
             }}
           >
-            {/* Left Side - Features Panel */}
-            <Box
-              sx={{
-                display: { xs: 'none', md: 'flex' },
-                flex: 1,
-                background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
-                borderRadius: '12px 0 0 12px',
-                p: 6,
-                flexDirection: 'column',
-                justifyContent: 'center',
-              }}
-            >
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                {/* Feature 1 */}
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Box sx={{ 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
-                    borderRadius: '8px', 
-                    p: 1.5,
-                    height: 'fit-content',
-                  }}>
-                    <Ship className="w-6 h-6 text-white" />
-                  </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 0.5 }}>
-                      One Platform. End-to-End Trade
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                      Manage your entire import-export operations from a single unified platform
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {/* Feature 2 */}
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Box sx={{ 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
-                    borderRadius: '8px', 
-                    p: 1.5,
-                    height: 'fit-content',
-                  }}>
-                    <Shield className="w-6 h-6 text-white" />
-                  </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 0.5 }}>
-                      AI-Powered Compliance & Fraud Protection
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                      Advanced AI verification and risk detection to protect your business
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {/* Feature 3 */}
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Box sx={{ 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
-                    borderRadius: '8px', 
-                    p: 1.5,
-                    height: 'fit-content',
-                  }}>
-                    <FileText className="w-6 h-6 text-white" />
-                  </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 0.5 }}>
-                      Smart Documents. Zero Guesswork
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                      Automated document processing with intelligent verification
-                    </Typography>
-                  </Box>
-                </Box>
-
-                {/* Feature 4 */}
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Box sx={{ 
-                    bgcolor: 'rgba(255, 255, 255, 0.1)', 
-                    borderRadius: '8px', 
-                    p: 1.5,
-                    height: 'fit-content',
-                  }}>
-                    <TrendingUp className="w-6 h-6 text-white" />
-                  </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ color: 'white', fontWeight: 600, mb: 0.5 }}>
-                      Real-Time Analytics & Trade Visibility
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: 'rgba(255, 255, 255, 0.8)' }}>
-                      Track and analyze your shipments with comprehensive real-time insights
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-            </Box>
-
-            {/* Right Side - Sign Up Form */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flex: 1,
-              }}
-            >
-              <Paper 
-                elevation={0}
-                sx={{ 
-                  p: { xs: 3, sm: 4, md: 5 }, 
-                  width: '100%',
-                  maxWidth: 480,
-                  bgcolor: { xs: 'white', md: 'transparent' },
-                  boxShadow: { xs: 3, md: 0 },
-                  borderRadius: { xs: '12px', md: '0 12px 12px 0' },
-                }}
-              >
-            {/* Sign Up Header */}
+            {/* Enroll Header */}
             <Box sx={{ mb: 3 }}>
-              <h2 style={{ fontSize: '1.875rem', fontWeight: 600, margin: 0, color: '#1a1a1a' }}>
-                Sign up
+              <h2 style={{ fontSize: '1.875rem', fontWeight: 600, margin: 0, marginBottom: '0.5rem', color: '#1a1a1a' }}>
+                Enroll
               </h2>
+              <p style={{ fontSize: '1rem', margin: 0, color: '#6b7280' }}>
+                Create your TIMPEX.club account
+              </p>
             </Box>
 
-            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-              {/* Full Name */}
-              <TextField
-                id="fullName"
-                name="fullName"
-                type="text"
-                label="Full Name"
-                placeholder="John Doe"
-                required
-                fullWidth
-                value={formData.fullName}
-                onChange={(e) => handleChange('fullName', e.target.value)}
-                variant="outlined"
-              />
-
-              {/* Email */}
-              <TextField
-                id="email"
-                name="email"
-                type="email"
-                label="Email Address"
-                placeholder="you@example.com"
-                autoComplete="email"
-                required
-                fullWidth
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                variant="outlined"
-              />
-
-              {/* Phone */}
-              <TextField
-                id="phone"
-                name="phone"
-                type="tel"
-                label="Phone Number"
-                placeholder="+1 (555) 000-0000"
-                required
-                fullWidth
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-                variant="outlined"
-              />
-
-              {/* Password */}
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {/* Section A: Basic Details */}
               <Box>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a1a1a' }}>
+                  A. Basic Details
+                </Typography>
+                
+                {/* Full Name */}
+                <TextField
+                  id="fullName"
+                  name="fullName"
+                  type="text"
+                  label="Full Name"
+                  placeholder="Enter your full name"
+                  required
+                  fullWidth
+                  value={formData.fullName}
+                  onChange={(e) => handleChange('fullName', e.target.value)}
+                  variant="outlined"
+                  sx={{ mb: 2.5 }}
+                />
+
+                {/* Email */}
+                <TextField
+                  id="email"
+                  name="email"
+                  type="email"
+                  label="Email Address"
+                  placeholder="your.email@example.com"
+                  autoComplete="email"
+                  required
+                  fullWidth
+                  value={formData.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  variant="outlined"
+                  sx={{ mb: 2.5 }}
+                />
+
+                {/* Mobile / WhatsApp Number */}
+                <TextField
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  label="Mobile / WhatsApp Number"
+                  placeholder="+1 234 567 8901"
+                  required
+                  fullWidth
+                  value={formData.phone}
+                  onChange={(e) => handleChange('phone', e.target.value)}
+                  variant="outlined"
+                  sx={{ mb: 2.5 }}
+                />
+
+                {/* Country and City */}
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2.5 }}>
+                  <FormControl fullWidth required>
+                    <InputLabel>Country of Residence</InputLabel>
+                    <Select
+                      value={formData.country}
+                      onChange={(e) => handleChange('country', e.target.value)}
+                      label="Country of Residence"
+                    >
+                      <MenuItem value="US">United States</MenuItem>
+                      <MenuItem value="UK">United Kingdom</MenuItem>
+                      <MenuItem value="CA">Canada</MenuItem>
+                      <MenuItem value="AU">Australia</MenuItem>
+                      <MenuItem value="IN">India</MenuItem>
+                      <MenuItem value="SG">Singapore</MenuItem>
+                      <MenuItem value="AE">UAE</MenuItem>
+                    </Select>
+                  </FormControl>
+                  <TextField
+                    id="city"
+                    name="city"
+                    label="City"
+                    placeholder="Enter your city"
+                    required
+                    fullWidth
+                    value={formData.city}
+                    onChange={(e) => handleChange('city', e.target.value)}
+                    variant="outlined"
+                  />
+                </Box>
+
+                {/* Preferred Language */}
+                <FormControl fullWidth>
+                  <InputLabel>Preferred Language</InputLabel>
+                  <Select
+                    value={formData.language}
+                    onChange={(e) => handleChange('language', e.target.value)}
+                    label="Preferred Language"
+                  >
+                    <MenuItem value="telugu">Telugu</MenuItem>
+                    <MenuItem value="english">English</MenuItem>
+                    <MenuItem value="both">Both</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              {/* Section B: Profile Information */}
+              <Box>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a1a1a' }}>
+                  B. Profile Information
+                </Typography>
+                
+                {/* You are a: */}
+                <FormControl fullWidth sx={{ mb: 2.5 }}>
+                  <InputLabel>You are a:</InputLabel>
+                  <Select
+                    value={formData.profileType}
+                    onChange={(e) => handleChange('profileType', e.target.value)}
+                    label="You are a:"
+                  >
+                    <MenuItem value="working_professional">Working Professional</MenuItem>
+                    <MenuItem value="homemaker">Homemaker</MenuItem>
+                    <MenuItem value="student">Student</MenuItem>
+                    <MenuItem value="business_owner">Business Owner</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {/* Primary Interest */}
+                <FormControl fullWidth sx={{ mb: 2.5 }}>
+                  <InputLabel>Primary Interest:</InputLabel>
+                  <Select
+                    value={formData.primaryInterest}
+                    onChange={(e) => handleChange('primaryInterest', e.target.value)}
+                    label="Primary Interest:"
+                  >
+                    <MenuItem value="import">Import</MenuItem>
+                    <MenuItem value="export">Export</MenuItem>
+                    <MenuItem value="both">Both</MenuItem>
+                    <MenuItem value="exploring">Exploring / Not sure</MenuItem>
+                  </Select>
+                </FormControl>
+
+                {/* Previous exposure to trading */}
+                <FormControl fullWidth>
+                  <InputLabel>Previous exposure to trading:</InputLabel>
+                  <Select
+                    value={formData.tradingExperience}
+                    onChange={(e) => handleChange('tradingExperience', e.target.value)}
+                    label="Previous exposure to trading:"
+                  >
+                    <MenuItem value="none">None</MenuItem>
+                    <MenuItem value="beginner">Beginner</MenuItem>
+                    <MenuItem value="some">Some experience</MenuItem>
+                    <MenuItem value="experienced">Experienced</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+
+              {/* Section C: Account Setup */}
+              <Box>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a1a1a' }}>
+                  C. Account Setup
+                </Typography>
+                
+                {/* Create Password */}
                 <TextField
                   id="password"
                   name="password"
                   type={showPassword ? 'text' : 'password'}
-                  label="Password"
-                  placeholder="••••••••"
+                  label="Create Password"
+                  placeholder="Minimum 8 characters"
                   autoComplete="new-password"
                   required
                   fullWidth
@@ -337,7 +359,7 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
                   }}
                   onBlur={() => setPasswordFocused(false)}
                   variant="outlined"
-                  helperText="Must be at least 8 characters"
+                  sx={{ mb: 2.5 }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -351,150 +373,88 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
                     ),
                   }}
                 />
-                
-                {/* Password Requirements */}
-                {hasPasswordBeenFocused && (
-                  <Paper variant="outlined" sx={{ mt: 2, p: 2, bgcolor: 'grey.50' }}>
-                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
-                      Password must contain:
-                    </Typography>
-                    <List dense disablePadding>
-                      <ListItem disablePadding sx={{ py: 0.25 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          {passwordValidation.minLength ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <X className="w-4 h-4 text-gray-400" />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary="Minimum 8 characters"
-                          primaryTypographyProps={{
-                            variant: 'caption',
-                            color: passwordValidation.minLength ? 'success.main' : 'text.secondary'
-                          }}
-                        />
-                      </ListItem>
-                      <ListItem disablePadding sx={{ py: 0.25 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          {passwordValidation.hasUppercase ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <X className="w-4 h-4 text-gray-400" />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary="1 uppercase letter"
-                          primaryTypographyProps={{
-                            variant: 'caption',
-                            color: passwordValidation.hasUppercase ? 'success.main' : 'text.secondary'
-                          }}
-                        />
-                      </ListItem>
-                      <ListItem disablePadding sx={{ py: 0.25 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          {passwordValidation.hasLowercase ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <X className="w-4 h-4 text-gray-400" />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary="1 lowercase letter"
-                          primaryTypographyProps={{
-                            variant: 'caption',
-                            color: passwordValidation.hasLowercase ? 'success.main' : 'text.secondary'
-                          }}
-                        />
-                      </ListItem>
-                      <ListItem disablePadding sx={{ py: 0.25 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          {passwordValidation.hasNumber ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <X className="w-4 h-4 text-gray-400" />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary="1 number"
-                          primaryTypographyProps={{
-                            variant: 'caption',
-                            color: passwordValidation.hasNumber ? 'success.main' : 'text.secondary'
-                          }}
-                        />
-                      </ListItem>
-                      <ListItem disablePadding sx={{ py: 0.25 }}>
-                        <ListItemIcon sx={{ minWidth: 32 }}>
-                          {passwordValidation.hasSpecialChar ? (
-                            <Check className="w-4 h-4 text-green-600" />
-                          ) : (
-                            <X className="w-4 h-4 text-gray-400" />
-                          )}
-                        </ListItemIcon>
-                        <ListItemText 
-                          primary="1 special character (! @ # $ % & * _ - .)"
-                          primaryTypographyProps={{
-                            variant: 'caption',
-                            color: passwordValidation.hasSpecialChar ? 'success.main' : 'text.secondary'
-                          }}
-                        />
-                      </ListItem>
-                    </List>
-                  </Paper>
-                )}
+
+                {/* Confirm Password */}
+                <TextField
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  label="Confirm Password"
+                  placeholder="Re-enter your password"
+                  autoComplete="new-password"
+                  required
+                  fullWidth
+                  value={formData.confirmPassword}
+                  onChange={(e) => handleChange('confirmPassword', e.target.value)}
+                  variant="outlined"
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          edge="end"
+                        >
+                          {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
               </Box>
 
-              {/* Confirm Password */}
-              <TextField
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showConfirmPassword ? 'text' : 'password'}
-                label="Confirm Password"
-                placeholder="••••••••"
-                autoComplete="new-password"
-                required
-                fullWidth
-                value={formData.confirmPassword}
-                onChange={(e) => handleChange('confirmPassword', e.target.value)}
-                variant="outlined"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        edge="end"
-                      >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
+              {/* Section D: Consent */}
+              <Box>
+                <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, color: '#1a1a1a' }}>
+                  D. Consent
+                </Typography>
+                
+                {/* Terms & Conditions Checkbox */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="agreeToTerms"
+                      name="agreeToTerms"
+                      checked={formData.agreeToTerms}
+                      onChange={(e) => handleChange('agreeToTerms', e.target.checked)}
+                      sx={{
+                        color: 'grey.400',
+                        '&.Mui-checked': {
+                          color: '#1A3D32',
+                        },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography sx={{ fontSize: '0.875rem', color: 'grey.700' }}>
+                      I agree to the Terms & Conditions
+                    </Typography>
+                  }
+                  sx={{ mb: 1.5 }}
+                />
 
-              {/* Terms Checkbox */}
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    id="agreeToTerms"
-                    name="agreeToTerms"
-                    required
-                    checked={formData.agreeToTerms}
-                    onChange={(e) => handleChange('agreeToTerms', e.target.checked)}
-                  />
-                }
-                label={
-                  <Typography variant="body2" color="text.secondary">
-                    I agree to the{' '}
-                    <Button variant="text" size="small" sx={{ p: 0, minWidth: 0, textTransform: 'none' }}>
-                      Terms of Service
-                    </Button>{' '}
-                    and{' '}
-                    <Button variant="text" size="small" sx={{ p: 0, minWidth: 0, textTransform: 'none' }}>
-                      Privacy Policy
-                    </Button>
-                  </Typography>
-                }
-              />
+                {/* Communications Checkbox */}
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      id="agreeToComms"
+                      name="agreeToComms"
+                      checked={formData.agreeToComms}
+                      onChange={(e) => handleChange('agreeToComms', e.target.checked)}
+                      sx={{
+                        color: 'grey.400',
+                        '&.Mui-checked': {
+                          color: '#1A3D32',
+                        },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography sx={{ fontSize: '0.875rem', color: 'grey.700' }}>
+                      I consent to receive platform communications via email/WhatsApp
+                    </Typography>
+                  }
+                />
+              </Box>
 
               {/* Error Message */}
               {error && (
@@ -516,42 +476,74 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
                 variant="contained"
                 fullWidth
                 size="large"
-                disabled={isLoading}
+                disabled={isLoading || !isFormValid}
+                sx={{
+                  mt: 1,
+                  py: 1.5,
+                  bgcolor: '#1A3D32',
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                  fontWeight: 500,
+                  '&:hover': {
+                    bgcolor: '#142d25',
+                  },
+                  '&:disabled': {
+                    bgcolor: 'grey.300',
+                  }
+                }}
               >
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
             </Box>
 
-            {/* Sign In Link */}
+            {/* Login Link */}
             <Box sx={{ mt: 3, textAlign: 'center' }}>
-              <span className="text-sm text-gray-600">
+              <Typography component="span" sx={{ fontSize: '0.875rem', color: 'grey.600' }}>
                 Already have an account?{' '}
-              </span>
+              </Typography>
               <Button
                 type="button"
                 variant="text"
                 onClick={onSwitchToSignIn}
-                sx={{ textTransform: 'none', p: 0, minWidth: 0 }}
+                sx={{ 
+                  textTransform: 'none', 
+                  p: 0, 
+                  minWidth: 0,
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  color: '#1A3D32',
+                  '&:hover': {
+                    bgcolor: 'transparent',
+                    textDecoration: 'underline',
+                  }
+                }}
               >
-                Sign in
+                Login
               </Button>
             </Box>
           </Paper>
+
+          {/* Back to Home Link */}
+          <Box sx={{ mt: 3, textAlign: 'center' }}>
+            <Button
+              onClick={onClose}
+              variant="text"
+              sx={{
+                fontSize: '0.875rem',
+                color: 'grey.600',
+                textTransform: 'none',
+                '&:hover': {
+                  bgcolor: 'transparent',
+                  color: 'grey.900',
+                }
+              }}
+            >
+              ← Back to home
+            </Button>
+          </Box>
         </Box>
       </Box>
-
-      {/* Back to Home Link */}
-      <Box sx={{ mt: 4, textAlign: 'center' }}>
-        <button
-          onClick={onClose}
-          className="text-sm text-gray-600 hover:text-gray-900"
-        >
-          ← Back to home
-        </button>
-      </Box>
+      <Footer hideAuthButtons={true} />
     </Box>
-  </div>
-  <SimpleFooter />
-</div>
-);
+  );
 }

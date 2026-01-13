@@ -146,7 +146,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Box sx={{ p: 1.5, bgcolor: 'primary.lighter', borderRadius: 2 }}>
-                <User className="w-5 h-5 text-blue-600" />
+                <User className="w-5 h-5" style={{ color: '#1A3D32' }} />
               </Box>
               <Box>
                 <Typography variant="h6">Personal Information</Typography>
@@ -212,7 +212,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
               <Box sx={{ p: 1.5, bgcolor: 'secondary.lighter', borderRadius: 2 }}>
-                <Shield className="w-5 h-5 text-purple-600" />
+                <Shield className="w-5 h-5" style={{ color: '#3D7A68' }} />
               </Box>
               <Box>
                 <Typography variant="h6">Role & Permissions</Typography>

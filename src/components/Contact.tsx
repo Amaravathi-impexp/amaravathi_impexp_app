@@ -1,5 +1,5 @@
-import { Navigation } from './Navigation';
-import { Footer } from './Footer';
+import { Navigation } from './layout/Navigation';
+import { Footer } from './layout/Footer';
 import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
 import {
   TextField,
@@ -59,30 +59,30 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
     {
       city: 'Mumbai',
       country: 'India',
-      address: '123 Marine Drive, Mumbai 400001',
+      address: 'Nariman Point, Mumbai 400021',
       phone: '+91 22 1234 5678',
-      email: 'mumbai@amaravathi.com'
+      email: 'mumbai@timpex.club'
     },
     {
       city: 'Singapore',
       country: 'Singapore',
-      address: '456 Marina Bay, Singapore 018960',
+      address: '1 Marina Boulevard #20-01',
       phone: '+65 6789 0123',
-      email: 'singapore@amaravathi.com'
+      email: 'singapore@timpex.club'
     },
     {
       city: 'Dubai',
       country: 'UAE',
-      address: '789 Jebel Ali, Dubai, UAE',
+      address: 'DMCC Business Center, Jumeirah Lakes Towers',
       phone: '+971 4 567 8901',
-      email: 'dubai@amaravathi.com'
+      email: 'dubai@timpex.club'
     },
     {
       city: 'Rotterdam',
       country: 'Netherlands',
-      address: '321 Port Avenue, Rotterdam 3011',
+      address: 'Port of Rotterdam, 3011 GG',
       phone: '+31 10 234 5678',
-      email: 'rotterdam@amaravathi.com'
+      email: 'rotterdam@timpex.club'
     }
   ];
 
@@ -101,7 +101,7 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
         {/* Hero Section */}
         <Box
           sx={{
-            background: 'linear-gradient(90deg, #2563eb 0%, #1e40af 100%)',
+            background: 'linear-gradient(135deg, #1A3D32 0%, #2D5A4A 50%, #3D7A68 100%)', // Updated: Green gradient
             color: 'white',
             py: 10,
           }}
@@ -233,15 +233,16 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                       sx={{
                         width: 48,
                         height: 48,
-                        bgcolor: 'info.light',
+                        bgcolor: 'primary.lighter',
                         borderRadius: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
+                        color: 'primary.main',
                       }}
                     >
-                      <Phone className="w-6 h-6 text-blue-600" />
+                      <Phone className="w-6 h-6" />
                     </Box>
                     <Box>
                       <Typography variant="h6" gutterBottom>
@@ -261,25 +262,26 @@ export function Contact({ onClose, onHomeClick, onAboutClick, onCareersClick, on
                       sx={{
                         width: 48,
                         height: 48,
-                        bgcolor: 'info.light',
+                        bgcolor: 'primary.lighter',
                         borderRadius: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
+                        color: 'primary.main',
                       }}
                     >
-                      <Mail className="w-6 h-6 text-blue-600" />
+                      <Mail className="w-6 h-6" />
                     </Box>
                     <Box>
                       <Typography variant="h6" gutterBottom>
                         Email
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        info@amaravathi.com
+                        info@timpex.club
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        support@amaravathi.com
+                        support@timpex.club
                       </Typography>
                     </Box>
                   </Paper>

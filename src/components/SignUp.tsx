@@ -17,9 +17,8 @@ import {
   ListItemText,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { Logo } from './Logo';
+import { Navigation } from './Navigation';
 import { SimpleFooter } from './SimpleFooter';
-import { TopRibbon } from './TopRibbon';
 import { useSignUpMutation } from '../store/api/authApi';
 import { useAppDispatch } from '../store/hooks';
 import { setCredentials } from '../store/slices/authSlice';
@@ -125,20 +124,14 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <TopRibbon />
-      <header className="bg-white shadow-sm sticky top-10 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-24">
-            <button onClick={onClose} className="hover:opacity-80 transition-opacity">
-              <Logo className="h-[86px]" />
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="flex-1 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'grey.50', display: 'flex', flexDirection: 'column' }}>
+      <Navigation 
+        onHomeClick={onClose}
+        currentView="signup"
+        hideAuthButton={true}
+      />
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', py: 12, px: { xs: 3, sm: 6, lg: 8 } }}>
+        <Box sx={{ mx: 'auto', width: '100%', maxWidth: 'md' }}>
           <Paper elevation={3} sx={{ p: 4 }}>
             <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               {/* Full Name */}
@@ -416,9 +409,9 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess }: SignUpPro
               ← Back to home
             </button>
           </div>
-        </div>
-      </div>
+        </Box>
+      </Box>
       <SimpleFooter />
-    </div>
+    </Box>
   );
 }

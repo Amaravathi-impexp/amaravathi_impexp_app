@@ -36,9 +36,9 @@ export function ProfileMenu({ onSignOut, onSettingsClick, onProfileClick }: Prof
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 hover:bg-gray-100 rounded-full p-1 pr-3 transition-colors"
+        className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
       >
-        <div className="w-9 h-9 bg-blue-600 rounded-full flex items-center justify-center text-white">
+        <div className="w-9 h-9 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: '#1A3D32' }}>
           <User className="w-5 h-5" />
         </div>
         <span className="hidden md:block text-sm">{currentUser?.fullName || 'User'}</span>
@@ -51,8 +51,8 @@ export function ProfileMenu({ onSignOut, onSettingsClick, onProfileClick }: Prof
             <p className="text-sm font-medium">{currentUser?.fullName || 'User'}</p>
             <p className="text-xs text-gray-500">{currentUser?.email || 'user@example.com'}</p>
             <div className="flex items-center gap-1 mt-2">
-              <Shield className="w-3 h-3 text-blue-600" />
-              <p className="text-xs text-blue-600 font-medium">{roleDisplayName}</p>
+              <Shield className="w-3 h-3" style={{ color: '#1A3D32' }} />
+              <p className="text-xs font-medium" style={{ color: '#1A3D32' }}>{roleDisplayName}</p>
             </div>
           </div>
           <button

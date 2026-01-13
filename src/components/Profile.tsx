@@ -30,7 +30,7 @@ export function Profile() {
         <div className="bg-white rounded-lg shadow-sm p-6">
           {/* Profile Header */}
           <div className="flex items-center gap-4 mb-8 pb-6 border-b border-gray-200">
-            <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-white">
+            <div className="w-20 h-20 rounded-full flex items-center justify-center text-white" style={{ backgroundColor: '#1A3D32' }}>
               <User className="w-10 h-10" />
             </div>
             <div>
@@ -42,7 +42,7 @@ export function Profile() {
           {/* Personal Information Section */}
           <div>
             <h3 className="text-lg mb-4 flex items-center gap-2">
-              <User className="w-5 h-5 text-blue-600" />
+              <User className="w-5 h-5" style={{ color: '#1A3D32' }} />
               Personal Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -123,7 +123,7 @@ export function Profile() {
           {/* Business Information Section */}
           <div className="pt-6 border-t border-gray-200">
             <h3 className="text-lg mb-4 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-blue-600" />
+              <Globe className="w-5 h-5" style={{ color: '#1A3D32' }} />
               Business Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -171,7 +171,7 @@ export function Profile() {
           {/* Account Information Section */}
           <div className="pt-6 border-t border-gray-200">
             <h3 className="text-lg mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
+              <Calendar className="w-5 h-5" style={{ color: '#1A3D32' }} />
               Account Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -210,7 +210,7 @@ export function Profile() {
           {/* Notification Preferences Section */}
           <div className="pt-6 border-t border-gray-200">
             <h3 className="text-lg mb-4 flex items-center gap-2">
-              <Mail className="w-5 h-5 text-blue-600" />
+              <Mail className="w-5 h-5" style={{ color: '#1A3D32' }} />
               Notification Preferences
             </h3>
             <div className="space-y-4 mb-6">
@@ -271,10 +271,10 @@ export function Profile() {
           </div>
 
           {/* Info Message */}
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start gap-3">
-            <Shield className="w-5 h-5 text-blue-600 mt-0.5" />
+          <div className="rounded-lg p-4 flex items-start gap-3" style={{ backgroundColor: '#f0f7ed', border: '1px solid #d4edda' }}>
+            <Shield className="w-5 h-5 mt-0.5" style={{ color: '#1A3D32' }} />
             <div>
-              <p className="text-sm text-blue-900">
+              <p className="text-sm" style={{ color: '#2D5A4A' }}>
                 This is your profile information in read-only mode. To edit your details, please visit the Settings page.
               </p>
             </div>

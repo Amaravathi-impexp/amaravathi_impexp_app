@@ -1,13 +1,17 @@
 import { Box, Container, Button, Typography } from '@mui/material';
 import { Logo } from './Logo';
 
+/**
+ * Footer Component - Version 2.0 GREEN THEME
+ * Updated: Dark Forest Green Background
+ */
 export function Footer() {
   return (
     <Box
       component="footer"
       sx={{
-        bgcolor: 'grey.900',
-        color: 'grey.300',
+        bgcolor: '#1A3D32 !important', // Dark Forest Green - Force override
+        color: '#f0f7ed', // Light green-tinted text
       }}
     >
       <Container maxWidth="lg" sx={{ py: 6 }}>
@@ -24,20 +28,24 @@ export function Footer() {
           <Box
             sx={{
               bgcolor: 'white',
-              px: 2,
-              py: 1,
+              px: 4,
+              py: 2,
               borderRadius: 1,
+              height: 100,
+              display: 'flex',
+              alignItems: 'center',
+              overflow: 'hidden',
             }}
           >
-            <Logo className="h-[78px]" />
+            <Logo className="h-[200px]" />
           </Box>
 
           <Box sx={{ display: 'flex', gap: 3 }}>
             <Button
               sx={{
-                color: 'grey.300',
+                color: '#f0f7ed', // Light green-tinted
                 '&:hover': {
-                  color: 'white',
+                  color: '#D3FF62', // Lime hover
                   bgcolor: 'transparent',
                 },
               }}
@@ -46,9 +54,9 @@ export function Footer() {
             </Button>
             <Button
               sx={{
-                color: 'grey.300',
+                color: '#f0f7ed', // Light green-tinted
                 '&:hover': {
-                  color: 'white',
+                  color: '#D3FF62', // Lime hover
                   bgcolor: 'transparent',
                 },
               }}
@@ -57,9 +65,9 @@ export function Footer() {
             </Button>
             <Button
               sx={{
-                color: 'grey.300',
+                color: '#f0f7ed', // Light green-tinted
                 '&:hover': {
-                  color: 'white',
+                  color: '#D3FF62', // Lime hover
                   bgcolor: 'transparent',
                 },
               }}
@@ -68,8 +76,8 @@ export function Footer() {
             </Button>
           </Box>
 
-          <Typography variant="body2" sx={{ color: 'grey.300' }}>
-            © 2025 Amaravathi. All rights reserved.
+          <Typography variant="body2" sx={{ color: '#f0f7ed' }}>
+            © 2025 TIMPEX.club. All rights reserved.
           </Typography>
         </Box>
       </Container>

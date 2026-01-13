@@ -1,11 +1,15 @@
 import { Box, Container, Link, IconButton } from '@mui/material';
 import { Phone, Mail, Facebook, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react';
 
+/**
+ * TopRibbon Component - Version 2.0 GREEN THEME
+ * Updated: Dark Forest Green Background
+ */
 export function TopRibbon() {
   return (
     <Box
       sx={{
-        bgcolor: '#1e3a8a',
+        bgcolor: '#1A3D32 !important', // Dark Forest Green - Force override
         color: 'white',
         position: 'fixed',
         top: 0,
@@ -35,7 +39,7 @@ export function TopRibbon() {
                 color: 'white',
                 textDecoration: 'none',
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime hover
                 },
                 transition: 'color 0.2s',
               }}
@@ -48,29 +52,32 @@ export function TopRibbon() {
             <Box
               component="span"
               sx={{
-                color: '#60a5fa',
+                color: '#3D7A68', // Updated: Sage Green
                 display: { xs: 'none', sm: 'inline' },
               }}
             >
               |
             </Box>
             <Link
-              href="mailto:info@amaravathi.com"
+              href="mailto:info@timpex.club"
               sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.75,
-                color: 'white',
+                color: '#f0f7ed',
                 textDecoration: 'none',
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62',
+                  textDecoration: 'underline',
                 },
-                transition: 'color 0.2s',
               }}
             >
-              <Mail className="w-3.5 h-3.5" />
+              <Mail
+                style={{
+                  width: 16,
+                  height: 16,
+                  display: 'inline',
+                }}
+              />
               <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                info@amaravathi.com
+                info@timpex.club
               </Box>
             </Link>
           </Box>
@@ -87,7 +94,7 @@ export function TopRibbon() {
                 color: 'white',
                 p: 0.5,
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime hover
                 },
                 transition: 'color 0.2s',
               }}
@@ -104,7 +111,7 @@ export function TopRibbon() {
                 color: 'white',
                 p: 0.5,
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime hover
                 },
                 transition: 'color 0.2s',
               }}
@@ -121,7 +128,7 @@ export function TopRibbon() {
                 color: 'white',
                 p: 0.5,
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime hover
                 },
                 transition: 'color 0.2s',
               }}
@@ -138,7 +145,7 @@ export function TopRibbon() {
                 color: 'white',
                 p: 0.5,
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime hover
                 },
                 transition: 'color 0.2s',
               }}
@@ -155,7 +162,7 @@ export function TopRibbon() {
                 color: 'white',
                 p: 0.5,
                 '&:hover': {
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime hover
                 },
                 transition: 'color 0.2s',
               }}

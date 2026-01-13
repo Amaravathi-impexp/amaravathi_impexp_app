@@ -306,7 +306,7 @@ export function CreatePartner({
         {currentStep === 0 && (
           <Paper elevation={2} sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <UserCheck style={{ width: 32, height: 32, color: '#2563eb' }} />
+              <UserCheck style={{ width: 32, height: 32, color: '#1A3D32' }} />
               <Box>
                 <Typography variant="h5">Select Partner Types</Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -457,7 +457,7 @@ export function CreatePartner({
         {currentStep === 1 && (
           <Paper elevation={2} sx={{ p: 4 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-              <Building2 style={{ width: 32, height: 32, color: '#2563eb' }} />
+              <Building2 style={{ width: 32, height: 32, color: '#1A3D32' }} />
               <Box>
                 <Typography variant="h5">Company Information</Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -654,7 +654,7 @@ export function CreatePartner({
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
                   <Box sx={{ p: 1.5, bgcolor: 'primary.lighter', borderRadius: 2 }}>
-                    <Building2 style={{ width: 20, height: 20, color: '#2563eb' }} />
+                    <Building2 style={{ width: 20, height: 20, color: '#1A3D32' }} />
                   </Box>
                   <Typography variant="h6">Partner Types</Typography>
                 </Box>
@@ -680,7 +680,7 @@ export function CreatePartner({
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
                   <Box sx={{ p: 1.5, bgcolor: 'secondary.lighter', borderRadius: 2 }}>
-                    <Building2 style={{ width: 20, height: 20, color: '#7c3aed' }} />
+                    <Building2 style={{ width: 20, height: 20, color: '#3D7A68' }} />
                   </Box>
                   <Typography variant="h6">Company Information</Typography>
                 </Box>

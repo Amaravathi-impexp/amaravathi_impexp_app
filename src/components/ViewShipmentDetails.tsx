@@ -131,9 +131,9 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Booked':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'rounded-full px-2 py-1 text-xs border' + ' ' + 'bg-green-100 text-green-800 border-green-200';
       case 'In Transit':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
+        return 'rounded-full px-2 py-1 text-xs border' + ' ' + 'bg-green-100 text-green-800 border-green-200';
       case 'Cleared':
         return 'bg-green-100 text-green-800 border-green-200';
       case 'Delivered':
@@ -184,8 +184,8 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
         </div>
         <div className="w-full bg-gray-200 rounded-full h-3">
           <div
-            className="bg-blue-600 h-3 rounded-full transition-all duration-500"
-            style={{ width: `${shipmentDetails.completionPercentage}%` }}
+            className="h-3 rounded-full transition-all duration-500"
+            style={{ backgroundColor: '#1A3D32', width: `${shipmentDetails.completionPercentage}%` }}
           ></div>
         </div>
         <div className="flex justify-between mt-3 text-xs text-gray-600">
@@ -203,7 +203,7 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
           {/* Shipment Type & Mode */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="mb-4 flex items-center gap-2">
-              <Ship className="w-5 h-5 text-blue-600" />
+              <Ship className="w-5 h-5" style={{ color: '#1A3D32' }} />
               Shipment Information
             </h3>
             <div className="space-y-3">
@@ -261,7 +261,7 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
           {/* Container Info */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="mb-4 flex items-center gap-2">
-              <Box className="w-5 h-5 text-purple-600" />
+              <Box className="w-5 h-5" style={{ color: '#3D7A68' }} />
               Container Details
             </h3>
             <div className="space-y-3">
@@ -392,7 +392,7 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
               <div>
                 <label className="text-sm text-gray-600">Estimated Arrival</label>
                 <p className="text-sm mt-1 flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-blue-500" />
+                  <Clock className="w-4 h-4" style={{ color: '#3D7A68' }} />
                   {shipmentDetails.estimatedArrival}
                 </p>
               </div>
@@ -424,7 +424,7 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
           {/* Documents */}
           <div className="bg-white rounded-lg shadow-sm p-6">
             <h3 className="mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-blue-600" />
+              <FileText className="w-5 h-5" style={{ color: '#1A3D32' }} />
               Documents
             </h3>
             <div className="space-y-3">
@@ -483,7 +483,7 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
       {/* Tracking Timeline - Full Width */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <h2 className="mb-6 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-blue-600" />
+          <TrendingUp className="w-5 h-5" style={{ color: '#1A3D32' }} />
           Tracking Timeline
         </h2>
         <div className="space-y-4">
@@ -495,14 +495,15 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
                     event.completed
                       ? 'bg-green-100'
                       : event.current
-                      ? 'bg-blue-100'
+                      ? ''
                       : 'bg-gray-100'
                   }`}
+                  style={event.current ? { backgroundColor: '#f0f7ed' } : undefined}
                 >
                   {event.completed ? (
                     <CheckCircle className="w-5 h-5 text-green-600" />
                   ) : event.current ? (
-                    <Truck className="w-5 h-5 text-blue-600" />
+                    <Truck className="w-5 h-5" style={{ color: '#1A3D32' }} />
                   ) : (
                     <Clock className="w-5 h-5 text-gray-400" />
                   )}
@@ -511,7 +512,10 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
                   <div className={`w-0.5 h-12 ${event.completed ? 'bg-green-300' : 'bg-gray-300'}`}></div>
                 )}
               </div>
-              <div className={`flex-1 pb-6 ${event.current ? 'bg-blue-50 border border-blue-200 rounded-lg p-4 -ml-2' : ''}`}>
+              <div 
+                className={`flex-1 pb-6`}
+                style={event.current ? { backgroundColor: '#f0f7ed', border: '1px solid #d4edda', borderRadius: '0.5rem', padding: '1rem', marginLeft: '-0.5rem' } : undefined}
+              >
                 <div className="flex justify-between items-start mb-1">
                   <h4 className="text-sm">{event.status}</h4>
                   <span className="text-xs text-gray-500">{event.date}</span>
@@ -520,7 +524,7 @@ export function ViewShipmentDetails({ shipment, onBack }: ViewShipmentDetailsPro
                 <p className="text-xs text-gray-500 mt-1">{event.description}</p>
                 {event.current && (
                   <div className="mt-2">
-                    <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">Current Status</span>
+                    <span className="px-2 py-1 text-xs rounded-full" style={{ backgroundColor: '#d4edda', color: '#1A3D32' }}>Current Status</span>
                   </div>
                 )}
               </div>

@@ -1,10 +1,61 @@
 /* 
- * Global Styles for Amaravathi Imports & Exports
+ * Global Styles for TIMPEX.club (Telugu Import Export Club)
  * Pure CSS - 100% MUI Application (Tailwind Completely Removed)
+ * Updated with Timpex-inspired Green Theme Color Palette
  */
 
 :root {
   --font-size: 16px;
+  
+  /* ===== TIMPEX GREEN THEME COLOR PALETTE ===== */
+  
+  /* Primary Brand Colors (Green/Teal Theme) */
+  --color-primary-dark: #1A3D32;      /* Dark Forest Green - Primary buttons, headers, text */
+  --color-primary-medium: #2D5A4A;    /* Medium Green - Hover states, secondary actions */
+  --color-primary-sage: #3D7A68;      /* Sage Green - Tertiary, text accents, icons */
+  
+  /* Accent Colors */
+  --color-accent-lime: #D3FF62;       /* Bright Lime - Primary accent, CTAs, highlights */
+  --color-accent-lime-hover: #c4f050; /* Yellow-Green - Hover state for lime accent */
+  
+  /* Background Colors */
+  --color-bg-white: #FFFFFF;          /* Primary backgrounds, cards */
+  --color-bg-cream: #FCFEF8;          /* Off-White/Cream - Subtle backgrounds */
+  --color-bg-light-gray: #F5F5FA;     /* Light Gray - Section backgrounds */
+  --color-bg-pale-green: #f0f7ed;     /* Pale Green - Featured sections */
+  
+  /* Text Colors */
+  --color-text-primary: #1A1A1A;      /* Almost Black - Primary text, headings */
+  --color-text-secondary: #3D7A68;    /* Sage Green - Secondary text */
+  --color-text-tertiary: #9A9A9A;     /* Medium Gray - Tertiary text, captions */
+  
+  /* Border Colors */
+  --color-border-primary: #1A3D32;    /* Dark Green - Primary borders */
+  --color-border-sage: #3D7A68;       /* Sage Green - Hover borders */
+  --color-border-light-green: #d4e8cd; /* Light Green - Subtle borders */
+  --color-border-light-gray: #E5E5EE; /* Light Gray - Dividers, card borders */
+  --color-border-gray: #e5e7eb;       /* Gray - Default borders */
+  
+  /* Status Colors (for badges, alerts) */
+  --color-success-dark: #1A3D32;
+  --color-success-light: #d1fae5;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  
+  /* Shadow Colors */
+  --shadow-sm: 0 1px 2px 0 rgba(26, 61, 50, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(26, 61, 50, 0.1), 0 2px 4px -2px rgba(26, 61, 50, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(26, 61, 50, 0.1), 0 4px 6px -4px rgba(26, 61, 50, 0.1);
+  
+  /* Glassmorphism Effects */
+  --glass-white-20: rgba(255, 255, 255, 0.2);
+  --glass-white-50: rgba(255, 255, 255, 0.5);
+  --glass-white-60: rgba(255, 255, 255, 0.6);
+  --glass-white-70: rgba(255, 255, 255, 0.7);
+  --glass-green-5: rgba(26, 61, 50, 0.05);
+  --glass-pale-green-95: rgba(240, 247, 237, 0.95);
 }
 
 * {
@@ -18,10 +69,13 @@ html {
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  /* Updated to use system UI fonts for better cross-platform consistency */
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-white);
 }
 
 /* Custom Animations */
@@ -72,6 +126,24 @@ body {
   }
 }
 
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
 /* Animation utility classes */
 .animate-spin-slow {
   animation: spin-slow 60s linear infinite;
@@ -95,4 +167,68 @@ body {
 
 .animate-slide-up-delay {
   animation: slide-up 0.8s ease-out 0.4s backwards;
+}
+
+.animate-gradient {
+  animation: gradient-shift 15s ease infinite;
+  background-size: 200% 200%;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Utility Classes for New Color Palette */
+.bg-primary-dark {
+  background-color: var(--color-primary-dark);
+}
+
+.bg-primary-medium {
+  background-color: var(--color-primary-medium);
+}
+
+.bg-accent-lime {
+  background-color: var(--color-accent-lime);
+}
+
+.bg-pale-green {
+  background-color: var(--color-bg-pale-green);
+}
+
+.text-primary-dark {
+  color: var(--color-primary-dark);
+}
+
+.text-accent-lime {
+  color: var(--color-accent-lime);
+}
+
+.border-primary-dark {
+  border-color: var(--color-primary-dark);
+}
+
+/* Gradient Utilities */
+.gradient-green-primary {
+  background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-primary-sage) 50%, var(--color-accent-lime) 100%);
+}
+
+.gradient-green-secondary {
+  background: linear-gradient(135deg, var(--color-primary-medium) 0%, var(--color-primary-sage) 50%, var(--color-accent-lime-hover) 100%);
+}
+
+.gradient-green-subtle {
+  background: linear-gradient(180deg, var(--color-bg-white) 0%, var(--color-bg-pale-green) 100%);
+}
+
+/* Glass Effect Utilities */
+.glass-effect {
+  background: var(--glass-white-20);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-effect-strong {
+  background: var(--glass-white-50);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }

@@ -1,10 +1,9 @@
 import { Search, Bell, Menu, X, LayoutDashboard, Ship, Users, BarChart3, FileText, Settings as SettingsIcon, User, LogOut } from 'lucide-react';
-import { TextField, InputAdornment } from '@mui/material';
+import { Box, TextField, InputAdornment, IconButton, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import { useState } from 'react';
 import { NotificationDropdown } from './NotificationDropdown';
 import { ProfileMenu } from './ProfileMenu';
 import { Logo } from './Logo';
-import { TopRibbon } from './TopRibbon';
 import { useAppSelector } from '../store/hooks';
 import { selectIsAdmin } from '../store/selectors/authSelectors';
 
@@ -39,24 +38,44 @@ export function Header({
 
   return (
     <>
-      <TopRibbon />
-      <header className="bg-white border-b border-gray-200 fixed top-10 left-0 right-0 z-50 shadow-sm">
-        <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-24">
+      <Box
+        component="header"
+        sx={{
+          bgcolor: 'white',
+          borderBottom: 1,
+          borderColor: 'divider',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          boxShadow: 1,
+        }}
+      >
+        <Box sx={{ maxWidth: '100%', mx: 'auto', px: { xs: 2, sm: 3, lg: 4 } }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', height: 96 }}>
             {/* Logo */}
-            <div className="flex items-center">
-              <button
+            <Box sx={{ display: 'flex', alignItems: 'center', height: 96, overflow: 'hidden' }}>
+              <IconButton
                 onClick={onLogoClick}
-                className="hover:opacity-80 transition-opacity"
+                sx={{
+                  p: 0,
+                  height: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  '&:hover': { opacity: 0.8 },
+                  transition: 'opacity 0.2s',
+                  overflow: 'hidden',
+                }}
               >
-                <Logo className="h-[86px]" />
-              </button>
-            </div>
+                <Logo className="h-[210px]" />
+              </IconButton>
+            </Box>
 
             {/* Right Side - Search, Notifications and Profile */}
-            <div className="flex items-center gap-3">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
               {/* Search */}
-              <div className="hidden md:block">
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                 <TextField
                   size="small"
                   placeholder="Search shipments..."
@@ -66,12 +85,12 @@ export function Header({
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <Search className="w-4 h-4 text-gray-400" />
+                        <Search size={16} style={{ color: 'rgba(0, 0, 0, 0.54)' }} />
                       </InputAdornment>
                     ),
                   }}
                 />
-              </div>
+              </Box>
 
               {/* Notifications */}
               <NotificationDropdown />
@@ -84,117 +103,175 @@ export function Header({
               />
 
               {/* Mobile Menu Button */}
-              <button
-                className="md:hidden p-2"
+              <IconButton
+                sx={{ display: { xs: 'flex', md: 'none' } }}
                 onClick={onToggleMobileMenu}
               >
-                {showMobileMenu ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
-            </div>
-          </div>
+                {showMobileMenu ? <X size={24} /> : <Menu size={24} />}
+              </IconButton>
+            </Box>
+          </Box>
 
           {/* Mobile Menu */}
-          {showMobileMenu && (
-            <div className="md:hidden py-4 border-t border-gray-200 bg-white">
-              <nav className="flex flex-col space-y-2">
-                <button
+          <Collapse in={showMobileMenu}>
+            <Box sx={{ display: { md: 'none' }, py: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'white' }}>
+              <List component="nav" disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <ListItemButton
                   onClick={() => handleMobileMenuClick('dashboard')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'dashboard'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  selected={activeMenu === 'dashboard'}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <LayoutDashboard className="w-5 h-5" />
-                    <span>Dashboard</span>
-                  </div>
-                </button>
-                <button
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <LayoutDashboard size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Dashboard" />
+                </ListItemButton>
+
+                <ListItemButton
                   onClick={() => handleMobileMenuClick('shipments')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'shipments'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  selected={activeMenu === 'shipments'}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <Ship className="w-5 h-5" />
-                    <span>Shipments</span>
-                  </div>
-                </button>
-                <button
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <Ship size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Shipments" />
+                </ListItemButton>
+
+                <ListItemButton
                   onClick={() => handleMobileMenuClick('partner-directory')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'partner-directory'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  selected={activeMenu === 'partner-directory'}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <Users className="w-5 h-5" />
-                    <span>Partner Directory</span>
-                  </div>
-                </button>
-                <button
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <Users size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Partner Directory" />
+                </ListItemButton>
+
+                <ListItemButton
                   onClick={() => handleMobileMenuClick('analytics')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'analytics'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  selected={activeMenu === 'analytics'}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <BarChart3 className="w-5 h-5" />
-                    <span>Analytics</span>
-                  </div>
-                </button>
-                <button
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <BarChart3 size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Analytics" />
+                </ListItemButton>
+
+                <ListItemButton
                   onClick={() => handleMobileMenuClick('documents')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'documents'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  selected={activeMenu === 'documents'}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5" />
-                    <span>Documents</span>
-                  </div>
-                </button>
-                <button
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <FileText size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Documents" />
+                </ListItemButton>
+
+                <ListItemButton
                   onClick={() => handleMobileMenuClick('settings')}
-                  className={`text-left px-4 py-2 rounded ${
-                    activeMenu === 'settings'
-                      ? 'text-blue-600 bg-blue-50'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  }`}
+                  selected={activeMenu === 'settings'}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    '&.Mui-selected': {
+                      bgcolor: 'primary.lighter',
+                      color: 'primary.main',
+                      '&:hover': {
+                        bgcolor: 'primary.lighter',
+                      },
+                    },
+                  }}
                 >
-                  <div className="flex items-center gap-3">
-                    <SettingsIcon className="w-5 h-5" />
-                    <span>Settings</span>
-                  </div>
-                </button>
-                <div className="border-t border-gray-200 mt-2 pt-2">
-                  <button
-                    onClick={onSignOut}
-                    className="text-left px-4 py-2 text-red-600 hover:bg-red-50 rounded w-full"
-                  >
-                    <div className="flex items-center gap-3">
-                      <LogOut className="w-5 h-5" />
-                      <span>Sign Out</span>
-                    </div>
-                  </button>
-                </div>
-              </nav>
-            </div>
-          )}
-        </div>
-      </header>
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <SettingsIcon size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Settings" />
+                </ListItemButton>
+
+                <Divider sx={{ my: 1 }} />
+
+                <ListItemButton
+                  onClick={onSignOut}
+                  sx={{
+                    borderRadius: 1,
+                    px: 2,
+                    py: 1,
+                    color: 'error.main',
+                    '&:hover': {
+                      bgcolor: 'error.lighter',
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                    <LogOut size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary="Sign Out" />
+                </ListItemButton>
+              </List>
+            </Box>
+          </Collapse>
+        </Box>
+      </Box>
     </>
   );
 }

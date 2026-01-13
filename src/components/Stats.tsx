@@ -42,7 +42,7 @@ export function Stats() {
               <Typography
                 variant="body1"
                 sx={{
-                  color: '#bfdbfe',
+                  color: '#D3FF62', // Updated: Lime accent
                 }}
               >
                 {stat.label}

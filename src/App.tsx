@@ -1,11 +1,12 @@
 import React from 'react';
 import { Navigation } from './components/layout/Navigation';
-import { HeroCarousel } from './components/landing/HeroCarousel';
+import { Hero } from './components/landing/Hero';
+import { WhyTimpex } from './components/landing/WhyTimpex';
+import { IdealForNRTs } from './components/landing/IdealForNRTs';
+import { WhoIsThisFor } from './components/landing/WhoIsThisFor';
+import { WhatWeOffer } from './components/landing/WhatWeOffer';
 import { HowItWorks } from './components/landing/HowItWorks';
-import { CoreFeatures } from './components/landing/CoreFeatures';
-import { StatsSection } from './components/landing/StatsSection';
-import { TrustBadges } from './components/landing/TrustBadges';
-import { CTASection } from './components/landing/CTASection';
+import { OutcomesForParticipants } from './components/landing/OutcomesForParticipants';
 import { Footer } from './components/layout/Footer';
 import { SignIn } from './screens/auth/SignIn';
 import { SignUp } from './screens/auth/SignUp';
@@ -48,7 +49,7 @@ function AppContent() {
   // ProductTypes are loaded on-demand when the dropdown is first used
 
   useEffect(() => {
-    document.title = 'Amaravathi Imports & Exports';
+    document.title = 'TIMPEX.club - Telugu Import Export Club';
   }, []);
 
   const handleSignOut = async () => {
@@ -81,6 +82,8 @@ function AppContent() {
         onClose={() => dispatch(setCurrentView('home'))} 
         onSwitchToSignUp={() => dispatch(setCurrentView('signup'))}
         onSignInSuccess={() => dispatch(setCurrentView('dashboard'))}
+        onAboutClick={() => dispatch(setCurrentView('about'))}
+        onContactClick={() => dispatch(setCurrentView('contact'))}
       />
     );
   }
@@ -91,6 +94,8 @@ function AppContent() {
         onClose={() => dispatch(setCurrentView('home'))} 
         onSwitchToSignIn={() => dispatch(setCurrentView('signin'))}
         onSignUpSuccess={() => dispatch(setCurrentView('dashboard'))}
+        onAboutClick={() => dispatch(setCurrentView('about'))}
+        onContactClick={() => dispatch(setCurrentView('contact'))}
       />
     );
   }
@@ -145,12 +150,13 @@ function AppContent() {
         onContactClick={() => dispatch(setCurrentView('contact'))}
         currentView={currentView}
       />
-      <HeroCarousel />
+      <Hero onGetStarted={() => dispatch(setCurrentView('signup'))} />
+      <WhyTimpex />
+      <IdealForNRTs />
+      <WhoIsThisFor />
+      <WhatWeOffer />
       <HowItWorks />
-      <CoreFeatures />
-      <StatsSection />
-      <TrustBadges />
-      <CTASection onGetStarted={() => dispatch(setCurrentView('signup'))} />
+      <OutcomesForParticipants />
       <Footer />
     </Box>
   );
@@ -206,7 +212,18 @@ if (typeof window !== 'undefined') {
   // Add a safety check for Figma's preview logging (development only)
   if (!(window as any).logPreviewError) {
     (window as any).logPreviewError = (error: any, reduxState?: any) => {
-      logger.error('Preview Error', { error, reduxState });
+      // Only log in development to avoid console clutter
+      if (import.meta.env.DEV) {
+        logger.error('Preview Error', { error, reduxState });
+      }
+    };
+  } else {
+    // Wrap existing logPreviewError to provide default reduxState if missing
+    const originalLogPreviewError = (window as any).logPreviewError;
+    (window as any).logPreviewError = (error: any, reduxState?: any) => {
+      // If reduxState is not provided, try to get it from the store
+      const state = reduxState || (App as any).reduxState?.();
+      originalLogPreviewError(error, state);
     };
   }
 }

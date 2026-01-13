@@ -1,6 +1,6 @@
 import { Box, Container, Typography, Paper } from '@mui/material';
-import { Footer } from './Footer';
-import { Navigation } from './Navigation';
+import { Footer } from './layout/Footer';
+import { Navigation } from './layout/Navigation';
 import { Globe, Lock, TrendingUp, Brain } from 'lucide-react';
 
 interface AboutProps {
@@ -56,10 +56,10 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
       />
 
       <Box component="main" sx={{ flex: 1 }}>
-        {/* Hero Section */}
+        {/* Hero Section - Updated: Green Gradient */}
         <Box
           sx={{
-            background: 'linear-gradient(90deg, #2563eb 0%, #1e40af 100%)',
+            background: 'linear-gradient(135deg, #1A3D32 0%, #2D5A4A 50%, #3D7A68 100%)',
             color: 'white',
             py: 10,
           }}
@@ -102,12 +102,13 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
               <Typography
                 variant="body1"
                 sx={{
+                  fontSize: { xs: '1rem', sm: '1.125rem' },
+                  lineHeight: 1.75,
                   color: 'text.secondary',
-                  mb: 2,
-                  lineHeight: 1.7,
+                  mb: 3,
                 }}
               >
-                Amaravathi Imports & Exports is a modern digital platform built to simplify the way businesses trade across borders. We bring together importers, exporters, compliance, documentation, analytics, and payments into a single, intelligent system—so businesses can focus on growth instead of complexity.
+                TIMPEX.club (Telugu Import Export Club) is a modern digital platform built to simplify the way businesses trade across borders. We bring together importers, exporters, compliance, documentation, analytics, and payments into a single, intelligent system—so businesses can focus on growth instead of complexity.
               </Typography>
               <Typography
                 variant="body1"
@@ -116,7 +117,7 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
                   lineHeight: 1.7,
                 }}
               >
-                Global trade today is fragmented. Businesses are forced to coordinate between freight forwarders, customs agents, document handlers, compliance teams, and payment systems. We created Amaravathi to remove this friction and offer a single point of entry for end-to-end trade operations.
+                Global trade today is fragmented. Businesses are forced to coordinate between freight forwarders, customs agents, document handlers, compliance teams, and payment systems. We created TIMPEX.club to remove this friction and offer a single point of entry for end-to-end trade operations.
               </Typography>
             </Box>
           </Container>
@@ -160,9 +161,10 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
                         bgcolor: 'primary.lighter',
                         borderRadius: '50%',
                         mb: 2,
+                        color: 'primary.main', // Updated: Green color
                       }}
                     >
-                      <Icon className="w-8 h-8 text-blue-600" />
+                      <Icon className="w-8 h-8" />
                     </Box>
                     <Typography
                       variant="h6"
@@ -223,7 +225,9 @@ export function About({ onClose, onHomeClick, onAboutClick, onCareersClick, onCo
                     bgcolor: 'white',
                   }}
                 >
-                  <Globe className="w-12 h-12 text-blue-600 mx-auto mb-3" />
+                  <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1.5, color: 'primary.main' }}>
+                    <Globe className="w-12 h-12" />
+                  </Box>
                   <Typography
                     variant="h6"
                     sx={{
