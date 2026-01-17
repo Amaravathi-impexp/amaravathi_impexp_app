@@ -243,7 +243,7 @@ export function SignIn({
                   }
                 }}
               >
-                Enroll
+                Enroll Now
               </Button>
             </Box>
           </Paper>

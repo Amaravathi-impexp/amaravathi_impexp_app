@@ -1,9 +1,9 @@
 /**
- * Centralized Error Handling Utilities
- * Provides production-ready error handling without exposing sensitive data
+ * Centralized Error Handler
+ * Provides consistent error handling across the application
  */
 
-import config, { isDevelopment, isDebugMode } from '../config/env';
+import { config, isDevelopment, isDebugMode } from '../config/env';
 
 export enum ErrorSeverity {
   LOW = 'low',

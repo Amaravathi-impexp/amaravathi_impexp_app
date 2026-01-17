@@ -1,7 +1,12 @@
 import { store } from '../store';
+import { config } from '../config/env';
 
-const API_BASE_URL = 'http://localhost:8081';
-const BASE_URL = '/api/trade-identity/v1/training';
+const BASE_URL = '/training';
+
+// Get the base URL for trade identity API
+const getApiBaseUrl = (): string => {
+  return config.apiEndpoints.tradeIdentity;
+};
 
 export interface TrainingSession {
   date: string; // Format: dd/MM/yyyy
@@ -59,7 +64,7 @@ const getAuthToken = (): string | null => {
 export const getAllTrainings = async (): Promise<Training[]> => {
   try {
     const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}${BASE_URL}`, {
+    const response = await fetch(`${getApiBaseUrl()}${BASE_URL}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -87,7 +92,7 @@ export const createTraining = async (
 ): Promise<CreateTrainingResponse> => {
   try {
     const token = getAuthToken();
-    const response = await fetch(`${API_BASE_URL}${BASE_URL}`, {
+    const response = await fetch(`${getApiBaseUrl()}${BASE_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -118,7 +123,7 @@ export const enrollUserInTraining = async (
   try {
     const token = getAuthToken();
     const response = await fetch(
-      `${API_BASE_URL}/api/trade-identity/v1/training/user/${userId}/training/${trainingId}`,
+      `${getApiBaseUrl()}/training/user/${userId}/training/${trainingId}`,
       {
         method: 'POST',
         headers: {
@@ -147,7 +152,7 @@ export const getUserTrainings = async (userId: number): Promise<Training[]> => {
   try {
     const token = getAuthToken();
     const response = await fetch(
-      `${API_BASE_URL}/api/trade-identity/v1/training/user/${userId}`,
+      `${getApiBaseUrl()}/training/user/${userId}`,
       {
         method: 'GET',
         headers: {
@@ -176,7 +181,7 @@ export const getEnrolledUsers = async (trainingId: number): Promise<EnrolledUser
   try {
     const token = getAuthToken();
     const response = await fetch(
-      `${API_BASE_URL}${BASE_URL}/${trainingId}`,
+      `${getApiBaseUrl()}${BASE_URL}/${trainingId}`,
       {
         method: 'GET',
         headers: {

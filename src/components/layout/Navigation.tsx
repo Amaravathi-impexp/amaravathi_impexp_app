@@ -28,7 +28,7 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
     <>
       {showTopRibbon && <TopRibbon />}
       <AppBar 
-        position="sticky" 
+        position="fixed" 
         sx={{ 
           top: '40px', 
           bgcolor: '#f0f7ed', 

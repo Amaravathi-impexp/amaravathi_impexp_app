@@ -163,23 +163,6 @@ export function Footer({ hideAuthButtons = false }: FooterProps) {
               >
                 Enroll Now
               </Button>
-              <Button
-                onClick={() => dispatch(setCurrentView('signin'))}
-                sx={{
-                  color: '#B8D4C8',
-                  justifyContent: 'flex-start',
-                  px: 0,
-                  py: 0.5,
-                  fontSize: '0.9375rem',
-                  textTransform: 'none',
-                  '&:hover': {
-                    color: '#D3FF62',
-                    bgcolor: 'transparent',
-                  },
-                }}
-              >
-                Login
-              </Button>
             </Box>
           </Box>
 

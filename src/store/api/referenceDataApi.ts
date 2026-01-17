@@ -5,7 +5,7 @@
  */
 
 import { baseApi } from './baseApi';
-import config from '../../config/env';
+import { config } from '../../config/env';
 
 export interface Country {
   id: number;

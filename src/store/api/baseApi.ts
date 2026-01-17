@@ -9,7 +9,7 @@
 import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../index';
 import { isRetryableError, getRetryDelay } from '../../utils/errorHandler';
-import config from '../../config/env';
+import { config } from '../../config/env';
 
 // Base query with authentication (uses Trade Identity API by default)
 const baseQuery = fetchBaseQuery({

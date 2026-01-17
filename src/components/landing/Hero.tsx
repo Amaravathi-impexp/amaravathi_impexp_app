@@ -3,9 +3,10 @@ import { ArrowRight } from 'lucide-react';
 
 interface HeroProps {
   onGetStarted?: () => void;
+  onEnrollClick?: () => void;
 }
 
-export function Hero({ onGetStarted }: HeroProps) {
+export function Hero({ onGetStarted, onEnrollClick }: HeroProps) {
   return (
     <Box
       sx={{
@@ -240,7 +241,7 @@ export function Hero({ onGetStarted }: HeroProps) {
           <Button
             variant="contained"
             size="large"
-            onClick={onGetStarted}
+            onClick={onEnrollClick}
             endIcon={<ArrowRight size={24} />}
             sx={{
               bgcolor: '#D3FF62',

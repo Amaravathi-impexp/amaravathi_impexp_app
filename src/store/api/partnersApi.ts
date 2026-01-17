@@ -4,7 +4,7 @@
  */
 
 import { baseApi } from './baseApi';
-import config from '../../config/env';
+import { config } from '../../config/env';
 
 // Partner Type interface
 export interface PartnerType {

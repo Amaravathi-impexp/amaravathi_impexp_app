@@ -137,7 +137,10 @@ function AppContent() {
         onContactClick={() => dispatch(setCurrentView('contact'))}
         currentView={currentView}
       />
-      <Hero onGetStarted={() => dispatch(setCurrentView('signup'))} />
+      <Hero 
+        onGetStarted={() => dispatch(setCurrentView('signin'))} 
+        onEnrollClick={() => dispatch(setCurrentView('signup'))}
+      />
       <WhyTimpex />
       <IdealForNRTs />
       <WhoIsThisFor />

@@ -4,11 +4,12 @@
  */
 
 import { store } from '../store';
+import { config } from '../config/env';
 
 // API Configuration
 const API_CONFIG = {
-  baseURL: process.env.REACT_APP_API_URL || 'https://api.amaravathi.com/v1',
-  timeout: 30000, // 30 seconds
+  baseURL: config.apiEndpoints.tradeIdentity,
+  timeout: config.api.timeout,
   headers: {
     'Content-Type': 'application/json',
   },
