@@ -14,9 +14,10 @@ export function Hero({ onGetStarted }: HeroProps) {
         height: { xs: '650px', md: '750px', lg: '800px' },
         mt: '40px', // Account for fixed TopRibbon
         overflow: 'hidden',
+        bgcolor: '#F7FBF9',
       }}
     >
-      {/* Background Image with Overlay */}
+      {/* Geometric Square Pattern Background */}
       <Box
         sx={{
           position: 'absolute',
@@ -24,48 +25,106 @@ export function Hero({ onGetStarted }: HeroProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: 'url(https://images.unsplash.com/photo-1767487018578-15bde4bf231f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjYXJnbyUyMHNoaXAlMjBvY2VhbiUyMGdsb2JhbCUyMHRyYWRlfGVufDF8fHx8MTc2ODMxMDUyM3ww&ixlib=rb-4.1.0&q=80&w=1080)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'linear-gradient(135deg, rgba(26, 61, 50, 0.92) 0%, rgba(61, 122, 104, 0.88) 50%, rgba(26, 61, 50, 0.92) 100%)',
-            zIndex: 1,
-          },
+          backgroundImage: `
+            linear-gradient(90deg, rgba(26, 61, 50, 0.03) 1px, transparent 1px),
+            linear-gradient(rgba(26, 61, 50, 0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '60px 60px',
+          zIndex: 0,
         }}
       />
+      
+      {/* Accent Squares Pattern */}
+      <Box
+        sx={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          opacity: 0.4,
+          zIndex: 0,
+        }}
+      >
+        {/* Large Decorative Squares */}
+        <Box sx={{
+          position: 'absolute',
+          top: '10%',
+          right: '15%',
+          width: '150px',
+          height: '150px',
+          border: '3px solid #1A3D32',
+          borderRadius: '12px',
+          transform: 'rotate(15deg)',
+          opacity: 0.15,
+        }} />
+        <Box sx={{
+          position: 'absolute',
+          top: '15%',
+          right: '12%',
+          width: '100px',
+          height: '100px',
+          bgcolor: '#D3FF62',
+          borderRadius: '8px',
+          transform: 'rotate(-10deg)',
+          opacity: 0.2,
+        }} />
+        <Box sx={{
+          position: 'absolute',
+          bottom: '20%',
+          left: '10%',
+          width: '120px',
+          height: '120px',
+          border: '3px solid #3D7A68',
+          borderRadius: '10px',
+          transform: 'rotate(25deg)',
+          opacity: 0.15,
+        }} />
+        <Box sx={{
+          position: 'absolute',
+          bottom: '25%',
+          left: '8%',
+          width: '80px',
+          height: '80px',
+          bgcolor: '#1A3D32',
+          borderRadius: '6px',
+          transform: 'rotate(-15deg)',
+          opacity: 0.1,
+        }} />
+        <Box sx={{
+          position: 'absolute',
+          top: '60%',
+          right: '25%',
+          width: '90px',
+          height: '90px',
+          border: '2px solid #D3FF62',
+          borderRadius: '8px',
+          transform: 'rotate(35deg)',
+          opacity: 0.2,
+        }} />
+        <Box sx={{
+          position: 'absolute',
+          top: '30%',
+          left: '20%',
+          width: '70px',
+          height: '70px',
+          bgcolor: '#3D7A68',
+          borderRadius: '6px',
+          transform: 'rotate(-20deg)',
+          opacity: 0.12,
+        }} />
+      </Box>
 
-      {/* Decorative Elements */}
+      {/* Subtle Gradient Overlay */}
       <Box
         sx={{
           position: 'absolute',
-          top: '20%',
-          right: '10%',
-          width: '300px',
-          height: '300px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(211, 255, 98, 0.1) 0%, transparent 70%)',
-          zIndex: 1,
-          display: { xs: 'none', md: 'block' },
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          bottom: '15%',
-          left: '5%',
-          width: '250px',
-          height: '250px',
-          borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(211, 255, 98, 0.08) 0%, transparent 70%)',
-          zIndex: 1,
-          display: { xs: 'none', md: 'block' },
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'radial-gradient(ellipse at top, rgba(211, 255, 98, 0.08) 0%, transparent 50%, rgba(26, 61, 50, 0.05) 100%)',
+          zIndex: 0,
         }}
       />
 
@@ -87,18 +146,17 @@ export function Hero({ onGetStarted }: HeroProps) {
         {/* Badge/Tag */}
         <Box
           sx={{
-            bgcolor: 'rgba(211, 255, 98, 0.15)',
-            border: '2px solid #D3FF62',
+            bgcolor: 'rgba(26, 61, 50, 0.08)',
+            border: '2px solid #1A3D32',
             borderRadius: '50px',
             px: 3,
             py: 1,
             mb: 4,
-            backdropFilter: 'blur(10px)',
           }}
         >
           <Typography
             sx={{
-              color: '#D3FF62',
+              color: '#1A3D32',
               fontWeight: 700,
               fontSize: { xs: '0.875rem', sm: '1rem' },
               letterSpacing: '0.5px',
@@ -113,16 +171,11 @@ export function Hero({ onGetStarted }: HeroProps) {
         <Typography
           variant="h1"
           sx={{
-            color: 'white',
-            fontWeight: 900,
-            fontSize: { xs: '2.5rem', sm: '3.5rem', md: '4.5rem', lg: '5.5rem' },
+            color: '#1A3D32',
+            fontWeight: 700,
+            fontSize: { xs: '2.1875rem', sm: '3.1875rem', md: '4.1875rem', lg: '5.1875rem' },
             lineHeight: 1.1,
             mb: 2,
-            textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
-            background: 'linear-gradient(to right, white, #D3FF62)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
           }}
         >
           Telugu Import Export Club
@@ -141,14 +194,14 @@ export function Hero({ onGetStarted }: HeroProps) {
             sx={{
               height: '3px',
               width: '40px',
-              bgcolor: '#D3FF62',
+              bgcolor: '#1A3D32',
               borderRadius: '2px',
             }}
           />
           <Typography
             variant="h5"
             sx={{
-              color: '#D3FF62',
+              color: '#1A3D32',
               fontWeight: 700,
               fontSize: { xs: '1.125rem', sm: '1.375rem', md: '1.625rem' },
               lineHeight: 1.3,
@@ -161,7 +214,7 @@ export function Hero({ onGetStarted }: HeroProps) {
             sx={{
               height: '3px',
               width: '40px',
-              bgcolor: '#D3FF62',
+              bgcolor: '#1A3D32',
               borderRadius: '2px',
             }}
           />
@@ -171,13 +224,12 @@ export function Hero({ onGetStarted }: HeroProps) {
         <Typography
           variant="body1"
           sx={{
-            color: 'rgba(255, 255, 255, 0.95)',
-            fontWeight: 400,
+            color: '#3D7A68',
+            fontWeight: 500,
             fontSize: { xs: '1.0625rem', sm: '1.1875rem', md: '1.3125rem' },
             lineHeight: 1.7,
             mb: 5,
             maxWidth: '850px',
-            textShadow: '0 2px 12px rgba(0, 0, 0, 0.3)',
           }}
         >
           An APNRT guided platform designed to help Telugu NRTs become global trade entrepreneurs through structured training, simulations, and guided trade execution.
@@ -216,8 +268,8 @@ export function Hero({ onGetStarted }: HeroProps) {
             size="large"
             onClick={onGetStarted}
             sx={{
-              borderColor: 'rgba(255, 255, 255, 0.6)',
-              color: 'white',
+              borderColor: '#1A3D32',
+              color: '#1A3D32',
               fontSize: '1.125rem',
               fontWeight: 700,
               px: 6,
@@ -225,15 +277,15 @@ export function Hero({ onGetStarted }: HeroProps) {
               borderRadius: '50px',
               textTransform: 'none',
               borderWidth: 2,
-              backdropFilter: 'blur(10px)',
-              bgcolor: 'rgba(255, 255, 255, 0.05)',
+              bgcolor: 'transparent',
               transition: 'all 0.3s ease',
               '&:hover': {
-                borderColor: 'white',
-                bgcolor: 'rgba(255, 255, 255, 0.1)',
+                borderColor: '#1A3D32',
+                bgcolor: '#1A3D32',
+                color: 'white',
                 borderWidth: 2,
                 transform: 'translateY(-4px)',
-                boxShadow: '0 12px 32px rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 12px 32px rgba(26, 61, 50, 0.25)',
               },
             }}
           >

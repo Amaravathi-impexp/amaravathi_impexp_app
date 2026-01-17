@@ -91,7 +91,7 @@ export function SignIn({
             {/* Login Header */}
             <Box sx={{ mb: 3 }}>
               <h2 style={{ fontSize: '1.875rem', fontWeight: 600, margin: 0, marginBottom: '0.5rem', color: '#1a1a1a' }}>
-                Login
+                Welcome Back
               </h2>
               <p style={{ fontSize: '1rem', margin: 0, color: '#6b7280' }}>
                 Login to your TIMPEX.club account

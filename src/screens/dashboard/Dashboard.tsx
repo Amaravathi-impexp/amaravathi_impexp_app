@@ -1,7 +1,7 @@
 import { Package, DollarSign, Ship, FileText, Upload, Navigation as NavigationIcon, AlertCircle, Clock, AlertTriangle, Bell, Truck } from 'lucide-react';
 import { Box, Grid, Card, CardContent, Typography, Avatar, Link, Divider, Paper, List, ListItem, ListItemAvatar, ListItemText, ButtonBase } from '@mui/material';
-import { Breadcrumb } from './Breadcrumb';
-import { useAppSelector } from '../store/hooks';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useAppSelector } from '../../store/hooks';
 
 export function Dashboard() {
   // Get alerts and activities from Redux store

@@ -23,7 +23,7 @@ import {
   TableRow,
   InputAdornment,
 } from '@mui/material';
-import { Breadcrumb } from './Breadcrumb';
+import { Breadcrumb } from '../../components/Breadcrumb';
 import { useState } from 'react';
 
 export function UploadDocuments() {

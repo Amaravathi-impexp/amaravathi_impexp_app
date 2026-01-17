@@ -1,6 +1,6 @@
 import { User, Mail, Phone, Smartphone, Shield, Globe, Package, Calendar, CheckCircle, XCircle } from 'lucide-react';
-import { Breadcrumb } from './Breadcrumb';
-import { useAppSelector } from '../store/hooks';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useAppSelector } from '../../store/hooks';
 
 export function Profile() {
   const currentUser = useAppSelector((state) => state.auth.user);

@@ -1,5 +1,5 @@
 import { FileText, Upload, Download, Folder } from 'lucide-react';
-import { Breadcrumb } from './Breadcrumb';
+import { Breadcrumb } from '../../components/Breadcrumb';
 
 interface DocumentsProps {
   onNavigateToUpload?: () => void;

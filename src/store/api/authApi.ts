@@ -60,6 +60,14 @@ export interface SignUpRequest {
   email: string;
   phone: string;
   password: string;
+  residenceCountry: string;
+  city: string;
+  preferredLanguage: string;
+  occupation: string;
+  interest: string;
+  previousTradingExposure: string;
+  termsAccepted: boolean;
+  communicationConsent: boolean;
 }
 
 export interface SignUpResponse {

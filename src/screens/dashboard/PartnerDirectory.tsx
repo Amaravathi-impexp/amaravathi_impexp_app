@@ -28,11 +28,11 @@ import {
   DialogActions,
   Tooltip,
 } from '@mui/material';
-import { CreatePartner } from './CreatePartner';
-import type { Partner } from '../types';
-import { Breadcrumb } from './Breadcrumb';
-import { useGetPartnersQuery, useDeletePartnerMutation } from '../store/api/partnersApi';
-import { useGetCountriesQuery } from '../store/api/referenceDataApi';
+import { CreatePartner } from '../../components/CreatePartner'; // v4
+import type { Partner } from '../../types';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useGetPartnersQuery, useDeletePartnerMutation } from '../../store/api/partnersApi';
+import { useGetCountriesQuery } from '../../store/api/referenceDataApi';
 import { useSnackbar } from 'notistack';
 
 export function PartnerDirectory() {

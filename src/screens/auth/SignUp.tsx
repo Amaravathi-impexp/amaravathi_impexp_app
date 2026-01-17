@@ -106,16 +106,24 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
     }
     
     try {
-      // Call real API - no fallback
+      // Call real API with all required fields
       const response = await signUp({
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
+        residenceCountry: formData.country,
+        city: formData.city,
+        preferredLanguage: formData.language || 'Both',
+        occupation: formData.profileType || 'Working Professional',
+        interest: formData.primaryInterest || 'Both',
+        previousTradingExposure: formData.tradingExperience || 'Beginner',
+        termsAccepted: formData.agreeToTerms,
+        communicationConsent: formData.agreeToComms,
       }).unwrap();
       
-      // Show success message
-      setSuccessMessage('Account created successfully! Please check your email for verification.');
+      // Show success message from API
+      setSuccessMessage(response.message || 'Account created successfully! Please check your email for verification.');
       
       // Optionally redirect to sign in after a delay
       setTimeout(() => {
@@ -159,7 +167,7 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
       />
 
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
-        <Box sx={{ width: '100%', maxWidth: 600, px: 3 }}>
+        <Box sx={{ width: '100%', maxWidth: 700, px: 3 }}>
           <Paper 
             elevation={0}
             sx={{ 
@@ -173,10 +181,10 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
             {/* Enroll Header */}
             <Box sx={{ mb: 3 }}>
               <h2 style={{ fontSize: '1.875rem', fontWeight: 600, margin: 0, marginBottom: '0.5rem', color: '#1a1a1a' }}>
-                Enroll
+                Create Your TIMPEX.club Account
               </h2>
               <p style={{ fontSize: '1rem', margin: 0, color: '#6b7280' }}>
-                Create your TIMPEX.club account
+                Register to access the Telugu Import Export Club platform.
               </p>
             </Box>
 
@@ -373,6 +381,97 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
                     ),
                   }}
                 />
+                
+                {/* Password Requirements */}
+                {hasPasswordBeenFocused && (
+                  <Paper variant="outlined" sx={{ mt: -1.5, mb: 2.5, p: 2, bgcolor: 'grey.50' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                      Password must contain:
+                    </Typography>
+                    <List dense disablePadding>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.minLength ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="Minimum 8 characters"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.minLength ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasUppercase ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 uppercase letter"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasUppercase ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasLowercase ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 lowercase letter"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasLowercase ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasNumber ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 number"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasNumber ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasSpecialChar ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 special character (! @ # $ % & * _ - .)"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasSpecialChar ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                    </List>
+                  </Paper>
+                )}
 
                 {/* Confirm Password */}
                 <TextField

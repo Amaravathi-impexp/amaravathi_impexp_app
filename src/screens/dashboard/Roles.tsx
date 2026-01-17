@@ -18,10 +18,10 @@ import {
   TableRow,
   Collapse,
 } from '@mui/material';
-import { Breadcrumb } from './Breadcrumb';
-import { ConfirmDialog } from './ConfirmDialog';
-import { useGetRolesQuery, useDeleteRoleMutation, useCreateRoleMutation } from '../store/api/rolesApi';
-import { logger } from '../utils/logger';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { ConfirmDialog } from '../../components/ConfirmDialog';
+import { useGetRolesQuery, useDeleteRoleMutation, useCreateRoleMutation } from '../../store/api/rolesApi';
+import { logger } from '../../utils/logger';
 
 interface CreateRoleFormProps {
   onBack: () => void;

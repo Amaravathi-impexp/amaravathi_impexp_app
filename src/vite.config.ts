@@ -2,7 +2,7 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
+// https://vitejs.dev/config/ (v2.1.3 - File reorganization complete)
 export default defineConfig(({ mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '');
@@ -17,6 +17,12 @@ export default defineConfig(({ mode }) => {
       },
     },
 
+    // Optimize dependencies
+    optimizeDeps: {
+      include: ['react', 'react-dom', '@mui/material', '@reduxjs/toolkit', 'react-redux'],
+      force: true, // Force dependency pre-bundling
+    },
+
     // Build configuration
     build: {
       outDir: 'dist',
@@ -24,7 +30,7 @@ export default defineConfig(({ mode }) => {
       minify: 'esbuild',
       target: 'es2015',
       
-      // Optimize chunk splitting
+      // Optimize chunk splitting (v2.1.3)
       rollupOptions: {
         output: {
           manualChunks: {

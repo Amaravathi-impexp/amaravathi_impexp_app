@@ -15,15 +15,15 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { User, Mail, Shield, Globe, Package, Bell, Smartphone, Save } from 'lucide-react';
-import { Breadcrumb } from './Breadcrumb';
-import { useAppSelector, useAppDispatch } from '../store/hooks';
-import { updateUser as updateUserAction } from '../store/slices/authSlice';
-import { logger } from '../utils/logger';
-import { useUpdateUserProfileMutation } from '../store/api/userApi';
-import { RoleDropdown } from './common/RoleDropdown';
-import { CountryDropdown } from './common/CountryDropdown';
-import { ProductTypeDropdown } from './common/ProductTypeDropdown';
-import type { Role, Country, ProductType } from '../store/api/referenceDataApi';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { updateUser as updateUserAction } from '../../store/slices/authSlice';
+import { logger } from '../../utils/logger';
+import { useUpdateUserProfileMutation } from '../../store/api/userApi';
+import { RoleDropdown } from '../../components/common/RoleDropdown';
+import { CountryDropdown } from '../../components/common/CountryDropdown';
+import { ProductTypeDropdown } from '../../components/common/ProductTypeDropdown';
+import type { Role, Country, ProductType } from '../../store/api/referenceDataApi';
 
 export function Settings() {
   const dispatch = useAppDispatch();

@@ -27,13 +27,13 @@ import {
   CircularProgress,
   Collapse,
 } from '@mui/material';
-import { CreateShipment } from "./CreateShipment";
-import { ViewShipmentDetails } from "./ViewShipmentDetails";
-import { ModifyShipment } from "./ModifyShipment";
-import { mockApi } from "../services/mock-api";
-import type { Shipment } from "../types";
-import { Breadcrumb } from "./Breadcrumb";
-import { logger } from '../utils/logger';
+import { CreateShipment } from "../../components/CreateShipment";
+import { ViewShipmentDetails } from "../../components/ViewShipmentDetails";
+import { ModifyShipment } from "../../components/ModifyShipment";
+import { mockApi } from "../../services/mock-api";
+import type { Shipment } from "../../types";
+import { Breadcrumb } from "../../components/Breadcrumb";
+import { logger } from '../../utils/logger';
 
 export function Shipments() {
   const [showCreateForm, setShowCreateForm] = useState(false);

@@ -19,20 +19,31 @@ import {
   Collapse,
   TablePagination,
 } from '@mui/material';
-import { CreateUser } from './CreateUser';
-import { ViewUser } from './ViewUser';
-import { Breadcrumb } from './Breadcrumb';
-import { useGetUsersQuery } from '../store/api/usersApi';
-import type { Role } from '../store/api/types';
+import { CreateUser } from '../../components/CreateUser';
+import { ViewUser } from '../../components/ViewUser';
+import { Breadcrumb } from '../../components/Breadcrumb';
+import { useGetUsersQuery } from '../../store/api/usersApi';
+import { useAppSelector } from '../../store/hooks';
+import { selectCurrentUser } from '../../store/selectors/authSelectors';
+import { hasPermission } from '../../utils/roleUtils';
+import { Permission } from '../../utils/permissions';
+import type { Role } from '../../store/api/types';
 
 export function Users() {
   const { data: users = [], isLoading, error } = useGetUsersQuery();
+  const currentUser = useAppSelector(selectCurrentUser);
+  
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [viewUserId, setViewUserId] = useState<number | null>(null);
   const [searchExpanded, setSearchExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  // Check permissions
+  const canCreateUser = hasPermission(currentUser, Permission.CREATE_USER);
+  const canEditUser = hasPermission(currentUser, Permission.EDIT_USER);
+  const canDeleteUser = hasPermission(currentUser, Permission.DELETE_USER);
 
   const getRoleColor = (role: Role) => {
     const roleCode = role.code.toUpperCase();
@@ -137,13 +148,15 @@ export function Users() {
             >
               <Search className="w-5 h-5" />
             </IconButton>
-            <Button
-              variant="contained"
-              startIcon={<Plus className="w-5 h-5" />}
-              onClick={() => setShowCreateForm(true)}
-            >
-              Create
-            </Button>
+            {canCreateUser && (
+              <Button
+                variant="contained"
+                startIcon={<Plus className="w-5 h-5" />}
+                onClick={() => setShowCreateForm(true)}
+              >
+                Create
+              </Button>
+            )}
           </Box>
         </Box>
 
@@ -239,13 +252,15 @@ export function Users() {
                         >
                           <Eye className="w-4 h-4" />
                         </IconButton>
-                        <IconButton
-                          size="small"
-                          color="default"
-                          title="Modify"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </IconButton>
+                        {canEditUser && (
+                          <IconButton
+                            size="small"
+                            color="default"
+                            title="Modify"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </IconButton>
+                        )}
                       </Box>
                     </TableCell>
                   </TableRow>

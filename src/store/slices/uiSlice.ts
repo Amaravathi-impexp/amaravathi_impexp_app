@@ -5,7 +5,7 @@
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-export type ViewType = 'home' | 'signin' | 'signup' | 'verification' | 'dashboard' | 'about' | 'careers' | 'contact';
+export type ViewType = 'home' | 'signin' | 'signup' | 'verification' | 'welcome' | 'dashboard' | 'about' | 'careers' | 'contact';
 
 interface Notification {
   id: string;

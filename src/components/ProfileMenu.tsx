@@ -1,15 +1,14 @@
-import { User, Settings, LogOut, Shield } from 'lucide-react';
+import { User, LogOut, Shield } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useAppSelector } from '../store/hooks';
 import { selectCurrentUser, selectRoleDisplayName } from '../store/selectors/authSelectors';
 
 interface ProfileMenuProps {
   onSignOut: () => void;
-  onSettingsClick: () => void;
   onProfileClick: () => void;
 }
 
-export function ProfileMenu({ onSignOut, onSettingsClick, onProfileClick }: ProfileMenuProps) {
+export function ProfileMenu({ onSignOut, onProfileClick }: ProfileMenuProps) {
   const currentUser = useAppSelector(selectCurrentUser);
   const roleDisplayName = useAppSelector(selectRoleDisplayName);
   const [isOpen, setIsOpen] = useState(false);
@@ -64,16 +63,6 @@ export function ProfileMenu({ onSignOut, onSettingsClick, onProfileClick }: Prof
           >
             <User className="w-4 h-4" />
             My Profile
-          </button>
-          <button 
-            onClick={() => {
-              onSettingsClick();
-              setIsOpen(false);
-            }}
-            className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center gap-2"
-          >
-            <Settings className="w-4 h-4" />
-            Settings
           </button>
           <div className="border-t border-gray-200 mt-2 pt-2">
             <button

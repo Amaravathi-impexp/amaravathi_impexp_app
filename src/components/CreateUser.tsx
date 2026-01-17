@@ -13,6 +13,12 @@ import {
   Divider,
   Card,
   CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  InputAdornment,
+  IconButton,
 } from '@mui/material';
 import {
   User,
@@ -25,6 +31,10 @@ import {
   Bell,
   Smartphone,
   UserPlus,
+  Eye,
+  EyeOff,
+  Check,
+  X,
 } from 'lucide-react';
 import { Breadcrumb } from './Breadcrumb';
 import { useCreateUserMutation } from '../store/api/usersApi';
@@ -43,6 +53,27 @@ export function CreateUser({ onBack }: CreateUserProps) {
   const { data: roles = [], isLoading: rolesLoading } = useGetRolesQuery();
   
   const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [hasPasswordBeenFocused, setHasPasswordBeenFocused] = useState(false);
+  
+  // Password validation states
+  const [passwordValidation, setPasswordValidation] = useState({
+    minLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+  });
+  
+  // Check if all password requirements are met
+  const allPasswordRequirementsMet = 
+    passwordValidation.minLength &&
+    passwordValidation.hasUppercase &&
+    passwordValidation.hasLowercase &&
+    passwordValidation.hasNumber &&
+    passwordValidation.hasSpecialChar;
+  
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -121,6 +152,37 @@ export function CreateUser({ onBack }: CreateUserProps) {
     }));
   };
 
+  const handlePasswordFocus = () => {
+    setPasswordFocused(true);
+    setHasPasswordBeenFocused(true);
+    console.log('Password focused, hasPasswordBeenFocused set to true');
+  };
+
+  const handlePasswordBlur = () => {
+    setPasswordFocused(false);
+    console.log('Password blurred');
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const password = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      password
+    }));
+    
+    // Validate password
+    const validation = {
+      minLength: password.length >= 8,
+      hasUppercase: /[A-Z]/.test(password),
+      hasLowercase: /[a-z]/.test(password),
+      hasNumber: /\d/.test(password),
+      hasSpecialChar: /[!@#$%&*_\-.]/.test(password),
+    };
+    
+    setPasswordValidation(validation);
+    console.log('Password validation:', validation);
+  };
+
   return (
     <div>
       {/* Breadcrumb */}
@@ -180,17 +242,137 @@ export function CreateUser({ onBack }: CreateUserProps) {
                 onChange={handleChange}
               />
 
-              {/* Password */}
-              <TextField
-                id="password"
-                name="password"
-                type="password"
-                label="Password"
-                required
-                fullWidth
-                value={formData.password}
-                onChange={handleChange}
-              />
+              {/* Password - Full Width with Requirements Below */}
+              <Box sx={{ gridColumn: { xs: '1', md: '1 / -1' } }}>
+                <TextField
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  label="Password"
+                  required
+                  fullWidth
+                  value={formData.password}
+                  onChange={(e) => {
+                    handlePasswordChange(e);
+                  }}
+                  onFocus={() => {
+                    setPasswordFocused(true);
+                    setHasPasswordBeenFocused(true);
+                    console.log('Password focused, hasPasswordBeenFocused set to true');
+                  }}
+                  onBlur={() => {
+                    setPasswordFocused(false);
+                    console.log('Password blurred');
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={() => setShowPassword(!showPassword)}
+                          edge="end"
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                {/* Password Requirements - Debug */}
+                {console.log('hasPasswordBeenFocused:', hasPasswordBeenFocused)}
+                
+                {/* Password Requirements */}
+                {hasPasswordBeenFocused && (
+                  <Paper variant="outlined" sx={{ mt: 2, p: 2, bgcolor: 'grey.50' }}>
+                    <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block' }}>
+                      Password must contain:
+                    </Typography>
+                    <List dense disablePadding>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.minLength ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="Minimum 8 characters"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.minLength ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasUppercase ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 uppercase letter"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasUppercase ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasLowercase ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 lowercase letter"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasLowercase ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasNumber ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 number"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasNumber ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                      <ListItem disablePadding sx={{ py: 0.25 }}>
+                        <ListItemIcon sx={{ minWidth: 32 }}>
+                          {passwordValidation.hasSpecialChar ? (
+                            <Check className="w-4 h-4 text-green-600" />
+                          ) : (
+                            <X className="w-4 h-4 text-gray-400" />
+                          )}
+                        </ListItemIcon>
+                        <ListItemText 
+                          primary="1 special character (! @ # $ % & * _ - .)"
+                          primaryTypographyProps={{
+                            variant: 'caption',
+                            color: passwordValidation.hasSpecialChar ? 'success.main' : 'text.secondary'
+                          }}
+                        />
+                      </ListItem>
+                    </List>
+                  </Paper>
+                )}
+              </Box>
 
               {/* Phone */}
               <TextField
@@ -485,7 +667,7 @@ export function CreateUser({ onBack }: CreateUserProps) {
           <Button
             type="submit"
             variant="contained"
-            disabled={isLoading}
+            disabled={isLoading || !allPasswordRequirementsMet}
             size="large"
             startIcon={isLoading ? <CircularProgress size={20} /> : <UserPlus className="w-5 h-5" />}
           >

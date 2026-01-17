@@ -15,7 +15,7 @@ import {
   Card,
   CardContent,
 } from '@mui/material';
-import { Breadcrumb } from './Breadcrumb';
+import { Breadcrumb } from '../../components/Breadcrumb';
 import { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area, PieChart as RePieChart, Pie, Cell, LineChart, Line } from 'recharts';
 

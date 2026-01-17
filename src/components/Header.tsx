@@ -98,7 +98,6 @@ export function Header({
               {/* Profile */}
               <ProfileMenu 
                 onSignOut={onSignOut} 
-                onSettingsClick={() => onMenuChange('settings')}
                 onProfileClick={() => onMenuChange('profile')}
               />
 

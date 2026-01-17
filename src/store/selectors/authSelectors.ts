@@ -1,11 +1,24 @@
 /**
  * Auth Selectors
  * Reusable selectors for auth state and role-based access control
+ * @version 2.0.0 - Updated to use ROLE_TRADER instead of ROLE_IMPORTER/ROLE_EXPORTER
  */
 
 import { RootState } from '../index';
 import { UserProfile } from '../api/authApi';
-import { isAdmin, isImporter, isExporter, getPrimaryRole, getRoleDisplayName } from '../../utils/roleUtils';
+import { 
+  isAdmin, 
+  isSuperUser,
+  isTrader, 
+  hasAdminAccess,
+  getPrimaryRole, 
+  getRoleDisplayName,
+  hasPermission,
+  hasAnyPermission,
+  hasAllPermissions,
+  getUserPermissions,
+} from '../../utils/roleUtils';
+import { Permission } from '../../utils/permissions';
 
 /**
  * Get current user
@@ -43,17 +56,24 @@ export const selectIsAdmin = (state: RootState): boolean => {
 };
 
 /**
- * Check if current user is an importer
+ * Check if current user is a super user
  */
-export const selectIsImporter = (state: RootState): boolean => {
-  return isImporter(state.auth.user);
+export const selectIsSuperUser = (state: RootState): boolean => {
+  return isSuperUser(state.auth.user);
 };
 
 /**
- * Check if current user is an exporter
+ * Check if current user has admin access
  */
-export const selectIsExporter = (state: RootState): boolean => {
-  return isExporter(state.auth.user);
+export const selectHasAdminAccess = (state: RootState): boolean => {
+  return hasAdminAccess(state.auth.user);
+};
+
+/**
+ * Check if current user is a trader
+ */
+export const selectIsTrader = (state: RootState): boolean => {
+  return isTrader(state.auth.user);
 };
 
 /**
@@ -82,4 +102,32 @@ export const selectUserFullName = (state: RootState): string | null => {
  */
 export const selectUserEmail = (state: RootState): string | null => {
   return state.auth.user?.email || null;
+};
+
+/**
+ * Check if user has a specific permission
+ */
+export const selectHasPermission = (state: RootState, permission: Permission): boolean => {
+  return hasPermission(state.auth.user, permission);
+};
+
+/**
+ * Check if user has any of the specified permissions
+ */
+export const selectHasAnyPermission = (state: RootState, permissions: Permission[]): boolean => {
+  return hasAnyPermission(state.auth.user, permissions);
+};
+
+/**
+ * Check if user has all of the specified permissions
+ */
+export const selectHasAllPermissions = (state: RootState, permissions: Permission[]): boolean => {
+  return hasAllPermissions(state.auth.user, permissions);
+};
+
+/**
+ * Get all permissions for the current user
+ */
+export const selectUserPermissions = (state: RootState): Permission[] => {
+  return getUserPermissions(state.auth.user);
 };

@@ -9,7 +9,9 @@ import {
   ChevronDown,
   ChevronLeft,
   ChevronRight,
-  Calendar
+  Calendar,
+  GraduationCap,
+  Home as HomeIcon
 } from 'lucide-react';
 import {
   Box,
@@ -22,6 +24,10 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
+import { useAppSelector } from '../store/hooks';
+import { selectCurrentUser } from '../store/selectors/authSelectors';
+import { hasPermission } from '../utils/roleUtils';
+import { Permission } from '../utils/permissions';
 
 interface LeftMenuProps {
   activeSection: string;
@@ -42,6 +48,20 @@ export function LeftMenu({
   adminExpanded,
   onAdminToggle,
 }: LeftMenuProps) {
+  const currentUser = useAppSelector(selectCurrentUser);
+
+  // Check permissions
+  const canViewDashboard = hasPermission(currentUser, Permission.VIEW_DASHBOARD);
+  const canViewShipments = hasPermission(currentUser, Permission.VIEW_SHIPMENTS);
+  const canViewAnalytics = hasPermission(currentUser, Permission.VIEW_ANALYTICS);
+  const canViewDocuments = hasPermission(currentUser, Permission.VIEW_DOCUMENTS);
+  const canViewPartners = hasPermission(currentUser, Permission.VIEW_PARTNERS);
+  const canViewPayments = hasPermission(currentUser, Permission.VIEW_PAYMENTS);
+  const canViewMyTrainings = hasPermission(currentUser, Permission.VIEW_MY_TRAININGS);
+  const canManageAllTrainings = hasPermission(currentUser, Permission.MANAGE_ALL_TRAININGS);
+  const canViewUsers = hasPermission(currentUser, Permission.VIEW_USERS);
+  const canViewRoles = hasPermission(currentUser, Permission.VIEW_ROLES);
+
   return (
     <Box
       component="aside"
@@ -63,10 +83,10 @@ export function LeftMenu({
         {/* Sidebar Content */}
         <Box component="nav" sx={{ flexGrow: 1, px: 1.5, py: 2 }}>
           <List disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {/* Dashboard */}
+            {/* Home */}
             <ListItemButton
-              onClick={() => onSectionChange("overview")}
-              selected={activeSection === "overview"}
+              onClick={() => onSectionChange("home")}
+              selected={activeSection === "home"}
               sx={{
                 borderRadius: 2,
                 gap: 1.5,
@@ -86,41 +106,73 @@ export function LeftMenu({
               }}
             >
               <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                <LayoutDashboard size={20} />
+                <HomeIcon size={20} />
               </ListItemIcon>
-              {sidebarOpen && <ListItemText primary="Dashboard" primaryTypographyProps={{ variant: 'body2' }} />}
+              {sidebarOpen && <ListItemText primary="Home" primaryTypographyProps={{ variant: 'body2' }} />}
             </ListItemButton>
+
+            {/* Dashboard */}
+            {canViewDashboard && (
+              <ListItemButton
+                onClick={() => onSectionChange("overview")}
+                selected={activeSection === "overview"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
+                  },
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <LayoutDashboard size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Dashboard" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
             {/* Shipments */}
-            <ListItemButton
-              onClick={() => onSectionChange("shipments")}
-              selected={activeSection === "shipments"}
-              sx={{
-                borderRadius: 2,
-                gap: 1.5,
-                px: 1.5,
-                py: 0.75,
-                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                '&.Mui-selected': {
-                  bgcolor: 'primary.lighter',
-                  color: 'primary.main',
-                  '&:hover': {
+            {canViewShipments && (
+              <ListItemButton
+                onClick={() => onSectionChange("shipments")}
+                selected={activeSection === "shipments"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
                     bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
                   },
-                },
-                '&:hover': {
-                  bgcolor: 'grey.100',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                <Ship size={20} />
-              </ListItemIcon>
-              {sidebarOpen && <ListItemText primary="Shipments" primaryTypographyProps={{ variant: 'body2' }} />}
-            </ListItemButton>
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <Ship size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Shipments" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
             {/* Analytics - Admin Only */}
-            {isAdmin && (
+            {canViewAnalytics && (
               <ListItemButton
                 onClick={() => onSectionChange("analytics")}
                 selected={activeSection === "analytics"}
@@ -150,119 +202,157 @@ export function LeftMenu({
             )}
 
             {/* Documents */}
-            <ListItemButton
-              onClick={() => onSectionChange("documents")}
-              selected={activeSection === "documents"}
-              sx={{
-                borderRadius: 2,
-                gap: 1.5,
-                px: 1.5,
-                py: 0.75,
-                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                '&.Mui-selected': {
-                  bgcolor: 'primary.lighter',
-                  color: 'primary.main',
-                  '&:hover': {
+            {canViewDocuments && (
+              <ListItemButton
+                onClick={() => onSectionChange("documents")}
+                selected={activeSection === "documents"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
                     bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
                   },
-                },
-                '&:hover': {
-                  bgcolor: 'grey.100',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                <Folder size={20} />
-              </ListItemIcon>
-              {sidebarOpen && <ListItemText primary="Documents" primaryTypographyProps={{ variant: 'body2' }} />}
-            </ListItemButton>
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <Folder size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Documents" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
             {/* Partner Directory */}
-            <ListItemButton
-              onClick={() => onSectionChange("partners")}
-              selected={activeSection === "partners"}
-              sx={{
-                borderRadius: 2,
-                gap: 1.5,
-                px: 1.5,
-                py: 0.75,
-                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                '&.Mui-selected': {
-                  bgcolor: 'primary.lighter',
-                  color: 'primary.main',
-                  '&:hover': {
+            {canViewPartners && (
+              <ListItemButton
+                onClick={() => onSectionChange("partners")}
+                selected={activeSection === "partners"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
                     bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
                   },
-                },
-                '&:hover': {
-                  bgcolor: 'grey.100',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                <UsersIcon size={20} />
-              </ListItemIcon>
-              {sidebarOpen && <ListItemText primary="Partner Directory" primaryTypographyProps={{ variant: 'body2' }} />}
-            </ListItemButton>
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <UsersIcon size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Partner Directory" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
             {/* Payments Invoicing */}
-            <ListItemButton
-              onClick={() => onSectionChange("payments")}
-              selected={activeSection === "payments"}
-              sx={{
-                borderRadius: 2,
-                gap: 1.5,
-                px: 1.5,
-                py: 0.75,
-                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                '&.Mui-selected': {
-                  bgcolor: 'primary.lighter',
-                  color: 'primary.main',
-                  '&:hover': {
+            {canViewPayments && (
+              <ListItemButton
+                onClick={() => onSectionChange("payments")}
+                selected={activeSection === "payments"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
                     bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
                   },
-                },
-                '&:hover': {
-                  bgcolor: 'grey.100',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                <DollarSign size={20} />
-              </ListItemIcon>
-              {sidebarOpen && <ListItemText primary="Payments Invoicing" primaryTypographyProps={{ variant: 'body2' }} />}
-            </ListItemButton>
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <DollarSign size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Payments Invoicing" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
-            {/* Training Schedule */}
-            <ListItemButton
-              onClick={() => onSectionChange("training")}
-              selected={activeSection === "training"}
-              sx={{
-                borderRadius: 2,
-                gap: 1.5,
-                px: 1.5,
-                py: 0.75,
-                justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                '&.Mui-selected': {
-                  bgcolor: 'primary.lighter',
-                  color: 'primary.main',
-                  '&:hover': {
+            {/* My Trainings - For ROLE_TRADER */}
+            {canViewMyTrainings && (
+              <ListItemButton
+                onClick={() => onSectionChange("my-trainings")}
+                selected={activeSection === "my-trainings"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
                     bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
                   },
-                },
-                '&:hover': {
-                  bgcolor: 'grey.100',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                <Calendar size={20} />
-              </ListItemIcon>
-              {sidebarOpen && <ListItemText primary="Training Schedule" primaryTypographyProps={{ variant: 'body2' }} />}
-            </ListItemButton>
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <Calendar size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="My Trainings" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
+
+            {/* Trainings - For ROLE_ADMIN and ROLE_SUPER_USER */}
+            {canManageAllTrainings && (
+              <ListItemButton
+                onClick={() => onSectionChange("trainings")}
+                selected={activeSection === "trainings"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
+                  },
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <GraduationCap size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Trainings" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
 
             {/* Admin - with submenu - Admin Only */}
-            {isAdmin && (
+            {(canViewUsers || canViewRoles) && (
               <Box>
                 <ListItemButton
                   onClick={() => {
@@ -310,57 +400,61 @@ export function LeftMenu({
                 {/* Submenu */}
                 <Collapse in={adminExpanded && sidebarOpen} timeout="auto" unmountOnExit>
                   <List disablePadding sx={{ ml: 4, mt: 0.5, display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                    <ListItemButton
-                      onClick={() => onSectionChange("users")}
-                      selected={activeSection === "users"}
-                      sx={{
-                        borderRadius: 2,
-                        gap: 1.5,
-                        px: 1.5,
-                        py: 1,
-                        '&.Mui-selected': {
-                          bgcolor: 'primary.lighter',
-                          color: 'primary.main',
-                          '&:hover': {
+                    {canViewUsers && (
+                      <ListItemButton
+                        onClick={() => onSectionChange("users")}
+                        selected={activeSection === "users"}
+                        sx={{
+                          borderRadius: 2,
+                          gap: 1.5,
+                          px: 1.5,
+                          py: 1,
+                          '&.Mui-selected': {
                             bgcolor: 'primary.lighter',
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'primary.lighter',
+                            },
                           },
-                        },
-                        '&:hover': {
-                          bgcolor: 'grey.100',
-                        },
-                      }}
-                    >
-                      <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                        <UsersIcon size={16} />
-                      </ListItemIcon>
-                      <ListItemText primary="Users" primaryTypographyProps={{ variant: 'body2' }} />
-                    </ListItemButton>
+                          '&:hover': {
+                            bgcolor: 'grey.100',
+                          },
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                          <UsersIcon size={16} />
+                        </ListItemIcon>
+                        <ListItemText primary="Users" primaryTypographyProps={{ variant: 'body2' }} />
+                      </ListItemButton>
+                    )}
 
-                    <ListItemButton
-                      onClick={() => onSectionChange("roles")}
-                      selected={activeSection === "roles"}
-                      sx={{
-                        borderRadius: 2,
-                        gap: 1.5,
-                        px: 1.5,
-                        py: 1,
-                        '&.Mui-selected': {
-                          bgcolor: 'primary.lighter',
-                          color: 'primary.main',
-                          '&:hover': {
+                    {canViewRoles && (
+                      <ListItemButton
+                        onClick={() => onSectionChange("roles")}
+                        selected={activeSection === "roles"}
+                        sx={{
+                          borderRadius: 2,
+                          gap: 1.5,
+                          px: 1.5,
+                          py: 1,
+                          '&.Mui-selected': {
                             bgcolor: 'primary.lighter',
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'primary.lighter',
+                            },
                           },
-                        },
-                        '&:hover': {
-                          bgcolor: 'grey.100',
-                        },
-                      }}
-                    >
-                      <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
-                        <Shield size={16} />
-                      </ListItemIcon>
-                      <ListItemText primary="Roles" primaryTypographyProps={{ variant: 'body2' }} />
-                    </ListItemButton>
+                          '&:hover': {
+                            bgcolor: 'grey.100',
+                          },
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                          <Shield size={16} />
+                        </ListItemIcon>
+                        <ListItemText primary="Roles" primaryTypographyProps={{ variant: 'body2' }} />
+                      </ListItemButton>
+                    )}
                   </List>
                 </Collapse>
               </Box>
