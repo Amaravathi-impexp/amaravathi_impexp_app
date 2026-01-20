@@ -76,7 +76,7 @@ export function SignIn({
         hideAuthButton={true}
       />
 
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', py: 8 }}>
+      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', py: 12, mt: 6 }}>
         <Box sx={{ width: '100%', maxWidth: 440, px: 3 }}>
           <Paper 
             elevation={0}

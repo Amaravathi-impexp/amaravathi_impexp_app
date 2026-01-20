@@ -78,6 +78,7 @@ export function Users() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'ACTIVE':
+      case 'ENROLLED':
         return 'success';
       case 'PENDING_VERIFICATION':
         return 'warning';
@@ -92,6 +93,11 @@ export function Users() {
     return status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
+  const formatFieldValue = (value: string | null | undefined) => {
+    if (!value) return '-';
+    return value.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
+  };
+
   // Filter users based on search query
   const filteredUsers = users.filter((user) => {
     if (!searchQuery) return true;
@@ -100,12 +106,9 @@ export function Users() {
       user.email.toLowerCase().includes(query) ||
       user.fullName.toLowerCase().includes(query) ||
       user.phone.toLowerCase().includes(query) ||
-      (user.roles && user.roles.length > 0 && user.roles.some(role => 
-        role.name.toLowerCase().includes(query)
-      )) ||
-      user.originCountry?.name.toLowerCase().includes(query) ||
-      user.destinationCountry?.name.toLowerCase().includes(query) ||
-      user.productType?.name.toLowerCase().includes(query)
+      (user.city && user.city.toLowerCase().includes(query)) ||
+      (user.residenceCountry && user.residenceCountry.toLowerCase().includes(query)) ||
+      (user.occupation && user.occupation.toLowerCase().includes(query))
     );
   });
 
@@ -179,15 +182,16 @@ export function Users() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Name</TableCell>
+                  <TableCell>Full Name</TableCell>
                   <TableCell>Email</TableCell>
                   <TableCell>Phone</TableCell>
-                  <TableCell>Role(s)</TableCell>
-                  <TableCell>Origin Country</TableCell>
-                  <TableCell>Destination Country</TableCell>
-                  <TableCell>Product Type</TableCell>
                   <TableCell>Status</TableCell>
-                  <TableCell>Email Verified</TableCell>
+                  <TableCell>Residence Country</TableCell>
+                  <TableCell>City</TableCell>
+                  <TableCell>Preferred Language</TableCell>
+                  <TableCell>Occupation</TableCell>
+                  <TableCell>Interest</TableCell>
+                  <TableCell>Trading Experience</TableCell>
                   <TableCell>Actions</TableCell>
                 </TableRow>
               </TableHead>
@@ -195,40 +199,13 @@ export function Users() {
                 {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => (
                   <TableRow key={user.id} hover>
                     <TableCell>
-                      <Typography variant="body2">{user.fullName}</Typography>
+                      <Typography variant="body2" fontWeight={500}>{user.fullName}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">{user.email}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">{user.phone}</Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {user.roles.map((role) => (
-                          <Chip
-                            key={role.id}
-                            label={formatRoleName(role)}
-                            color={getRoleColor(role) as any}
-                            size="small"
-                          />
-                        ))}
-                      </Box>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color={user.originCountry ? 'text.primary' : 'text.disabled'}>
-                        {user.originCountry?.name || '-'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color={user.destinationCountry ? 'text.primary' : 'text.disabled'}>
-                        {user.destinationCountry?.name || '-'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color={user.productType ? 'text.primary' : 'text.disabled'}>
-                        {user.productType?.name || '-'}
-                      </Typography>
                     </TableCell>
                     <TableCell>
                       <Chip
@@ -238,9 +215,22 @@ export function Users() {
                       />
                     </TableCell>
                     <TableCell>
-                      <Typography variant="body2" color={user.emailVerified ? 'success.main' : 'text.disabled'}>
-                        {user.emailVerified ? '✓ Verified' : 'Not verified'}
-                      </Typography>
+                      <Typography variant="body2">{formatFieldValue(user.residenceCountry)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{formatFieldValue(user.city)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{formatFieldValue(user.preferredLanguage)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{formatFieldValue(user.occupation)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{formatFieldValue(user.interest)}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{formatFieldValue(user.previousTradingExposure)}</Typography>
                     </TableCell>
                     <TableCell>
                       <Box sx={{ display: 'flex', gap: 0.5 }}>

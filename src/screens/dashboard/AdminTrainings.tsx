@@ -95,20 +95,11 @@ export function AdminTrainings() {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: 'flex-end',
           alignItems: 'center',
           mb: 3,
         }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            fontWeight: 700,
-            color: '#1A3D32',
-          }}
-        >
-          Training Management
-        </Typography>
         <Button
           variant="contained"
           startIcon={<Plus size={20} />}

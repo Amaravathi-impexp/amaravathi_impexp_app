@@ -17,6 +17,8 @@ import { Roles } from './Roles';
 import { UploadDocuments } from './UploadDocuments';
 import { TrainingSchedule } from './TrainingSchedule';
 import { AdminTrainings } from './AdminTrainings';
+import { LicensingRequirements } from './LicensingRequirements';
+import { ProfileVerification } from './ProfileVerification';
 import { ProtectedComponent } from '../../components/ProtectedComponent';
 import { useAppSelector } from '../../store/hooks';
 import { selectIsAdmin, selectCurrentUser } from '../../store/selectors/authSelectors';
@@ -31,7 +33,7 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
   const currentUser = useAppSelector(selectCurrentUser);
   const isAdmin = useAppSelector(selectIsAdmin);
   
-  const [activeSection, setActiveSection] = useState<'home' | 'overview' | 'shipments' | 'users' | 'partners' | 'settings' | 'profile' | 'payments' | 'analytics' | 'documents' | 'roles' | 'upload-documents' | 'my-trainings' | 'trainings'>('home');
+  const [activeSection, setActiveSection] = useState<'home' | 'overview' | 'shipments' | 'users' | 'partners' | 'settings' | 'profile' | 'payments' | 'analytics' | 'documents' | 'roles' | 'upload-documents' | 'my-trainings' | 'trainings' | 'licensing-requirements' | 'profile-verification'>('home');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [adminExpanded, setAdminExpanded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -155,6 +157,20 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
           {activeSection === "trainings" && (
             <ProtectedComponent permission={Permission.MANAGE_ALL_TRAININGS}>
               <AdminTrainings />
+            </ProtectedComponent>
+          )}
+          
+          {/* Licensing Requirements - For ROLE_ADMIN and ROLE_SUPER_USER */}
+          {activeSection === "licensing-requirements" && (
+            <ProtectedComponent permission={Permission.VIEW_LICENSING}>
+              <LicensingRequirements />
+            </ProtectedComponent>
+          )}
+          
+          {/* Profile Verification - For ROLE_ADMIN and ROLE_SUPER_USER */}
+          {activeSection === "profile-verification" && (
+            <ProtectedComponent permission={Permission.VIEW_PROFILE_VERIFICATION}>
+              <ProfileVerification />
             </ProtectedComponent>
           )}
         </Box>

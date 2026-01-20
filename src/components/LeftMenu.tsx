@@ -11,7 +11,9 @@ import {
   ChevronRight,
   Calendar,
   GraduationCap,
-  Home as HomeIcon
+  Home as HomeIcon,
+  FileCheck,
+  UserCheck
 } from 'lucide-react';
 import {
   Box,
@@ -59,6 +61,8 @@ export function LeftMenu({
   const canViewPayments = hasPermission(currentUser, Permission.VIEW_PAYMENTS);
   const canViewMyTrainings = hasPermission(currentUser, Permission.VIEW_MY_TRAININGS);
   const canManageAllTrainings = hasPermission(currentUser, Permission.MANAGE_ALL_TRAININGS);
+  const canViewLicensing = hasPermission(currentUser, Permission.VIEW_LICENSING);
+  const canViewProfileVerification = hasPermission(currentUser, Permission.VIEW_PROFILE_VERIFICATION);
   const canViewUsers = hasPermission(currentUser, Permission.VIEW_USERS);
   const canViewRoles = hasPermission(currentUser, Permission.VIEW_ROLES);
 
@@ -348,6 +352,66 @@ export function LeftMenu({
                   <GraduationCap size={20} />
                 </ListItemIcon>
                 {sidebarOpen && <ListItemText primary="Trainings" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
+
+            {/* Licensing Requirements - For ROLE_SUPER_USER and ROLE_TRADER */}
+            {canViewLicensing && (
+              <ListItemButton
+                onClick={() => onSectionChange("licensing-requirements")}
+                selected={activeSection === "licensing-requirements"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
+                  },
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <FileCheck size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Licensing Requirements" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
+            )}
+
+            {/* Profile Verification - For ROLE_SUPER_USER and ROLE_TRADER */}
+            {canViewProfileVerification && (
+              <ListItemButton
+                onClick={() => onSectionChange("profile-verification")}
+                selected={activeSection === "profile-verification"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
+                  },
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <UserCheck size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Profile Verification" primaryTypographyProps={{ variant: 'body2' }} />}
               </ListItemButton>
             )}
 

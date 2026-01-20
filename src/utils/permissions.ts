@@ -60,6 +60,13 @@ export enum Permission {
   VIEW_MY_TRAININGS = 'VIEW_MY_TRAININGS', // For ROLE_TRADER
   MANAGE_ALL_TRAININGS = 'MANAGE_ALL_TRAININGS', // For ROLE_ADMIN and ROLE_SUPER_USER
   
+  // Licensing
+  VIEW_LICENSING = 'VIEW_LICENSING', // For ROLE_SUPER_USER and ROLE_TRADER
+  
+  // Profile Verification
+  VIEW_PROFILE_VERIFICATION = 'VIEW_PROFILE_VERIFICATION', // For ROLE_SUPER_USER and ROLE_TRADER
+  SUBMIT_PROFILE_VERIFICATION = 'SUBMIT_PROFILE_VERIFICATION', // For ROLE_SUPER_USER only
+  
   // Profile
   VIEW_PROFILE = 'VIEW_PROFILE',
   EDIT_PROFILE = 'EDIT_PROFILE',
@@ -78,6 +85,9 @@ export const ROLE_PERMISSIONS: Record<RoleCode, Permission[]> = {
     // Training Management
     Permission.MANAGE_ALL_TRAININGS, // Can create/manage/view all training schedules
     
+    // User Management
+    Permission.VIEW_USERS, // Can view users
+    
     // Profile - Accessible to all roles
     Permission.VIEW_PROFILE,
     Permission.EDIT_PROFILE,
@@ -86,6 +96,12 @@ export const ROLE_PERMISSIONS: Record<RoleCode, Permission[]> = {
   [RoleCode.TRADER]: [
     // My Trainings - View and enroll
     Permission.VIEW_MY_TRAININGS,
+    
+    // Licensing
+    Permission.VIEW_LICENSING, // Can view licensing requirements
+    
+    // Profile Verification
+    Permission.VIEW_PROFILE_VERIFICATION, // Can view profile verification (but cannot submit)
     
     // Profile - Accessible to all roles
     Permission.VIEW_PROFILE,
