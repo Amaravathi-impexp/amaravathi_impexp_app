@@ -24,6 +24,7 @@ interface SignInProps {
   onSignInSuccess: () => void;
   onAboutClick?: () => void;
   onContactClick?: () => void;
+  onScrollToSection?: (sectionId: string) => void;
 }
 
 export function SignIn({
@@ -32,6 +33,7 @@ export function SignIn({
   onSignInSuccess,
   onAboutClick,
   onContactClick,
+  onScrollToSection,
 }: SignInProps) {
   const dispatch = useAppDispatch();
   const [signIn, { isLoading }] = useSignInMutation();
@@ -72,6 +74,7 @@ export function SignIn({
         onHomeClick={onClose}
         onAboutClick={onAboutClick}
         onContactClick={onContactClick}
+        onScrollToSection={onScrollToSection}
         currentView="signin"
         hideAuthButton={true}
       />

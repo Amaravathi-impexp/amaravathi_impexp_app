@@ -12,7 +12,7 @@ export function Hero({ onGetStarted, onEnrollClick }: HeroProps) {
       sx={{
         position: 'relative',
         width: '100%',
-        height: { xs: '650px', md: '750px', lg: '800px' },
+        height: { xs: '600px', md: '680px', lg: '720px' },
         mt: '40px', // Account for fixed TopRibbon
         overflow: 'hidden',
         bgcolor: '#F7FBF9',
@@ -164,7 +164,7 @@ export function Hero({ onGetStarted, onEnrollClick }: HeroProps) {
               textTransform: 'uppercase',
             }}
           >
-            APNRT Initiative • Global Trade Platform
+            Telugu diaspora's global trade platform
           </Typography>
         </Box>
 

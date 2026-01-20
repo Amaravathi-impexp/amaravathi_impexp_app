@@ -18,6 +18,7 @@ export interface Training {
   trainingId: number;
   firstSession: TrainingSession;
   secondSession: TrainingSession;
+  thirdSession?: TrainingSession;
 }
 
 export interface CreateTrainingRequest {
@@ -27,6 +28,11 @@ export interface CreateTrainingRequest {
     endTime: string; // Format: HH:mm
   };
   secondSession: {
+    date: string; // Format: dd/MM/yyyy
+    startTime: string; // Format: HH:mm
+    endTime: string; // Format: HH:mm
+  };
+  thirdSession?: {
     date: string; // Format: dd/MM/yyyy
     startTime: string; // Format: HH:mm
     endTime: string; // Format: HH:mm
@@ -199,6 +205,35 @@ export const getEnrolledUsers = async (trainingId: number): Promise<EnrolledUser
     return data;
   } catch (error) {
     console.error('Error fetching enrolled users:', error);
+    throw error;
+  }
+};
+
+/**
+ * Delete a training schedule
+ */
+export const deleteTraining = async (trainingId: number): Promise<string> => {
+  try {
+    const token = getAuthToken();
+    const response = await fetch(
+      `${getApiBaseUrl()}${BASE_URL}/${trainingId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.text();
+    return result;
+  } catch (error) {
+    console.error('Error deleting training:', error);
     throw error;
   }
 };

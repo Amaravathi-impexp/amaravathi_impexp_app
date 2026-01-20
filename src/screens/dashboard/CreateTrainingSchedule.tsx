@@ -48,18 +48,24 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
   const [session2StartTime, setSession2StartTime] = useState('');
   const [session2EndTime, setSession2EndTime] = useState('');
 
+  // Session 3 state
+  const [session3Date, setSession3Date] = useState<Date | null>(null);
+  const [session3StartTime, setSession3StartTime] = useState('');
+  const [session3EndTime, setSession3EndTime] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleSave = async () => {
     if (!session1Date || !session1StartTime || !session1EndTime || 
-        !session2Date || !session2StartTime || !session2EndTime) {
-      alert('Please fill in all fields for both sessions');
+        !session2Date || !session2StartTime || !session2EndTime ||
+        !session3Date || !session3StartTime || !session3EndTime) {
+      alert('Please fill in all fields for all sessions');
       return;
     }
 
-    // Validate that end time is after start time for both sessions
+    // Validate that end time is after start time for all sessions
     if (session1EndTime <= session1StartTime) {
       alert('Session 1: End time must be after start time');
       return;
@@ -70,6 +76,11 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
       return;
     }
 
+    if (session3EndTime <= session3StartTime) {
+      alert('Session 3: End time must be after start time');
+      return;
+    }
+
     // Format dates for display
     const session1DateStr = session1Date.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -77,6 +88,11 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
       month: 'long',
     });
     const session2DateStr = session2Date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
+    const session3DateStr = session3Date.toLocaleDateString('en-US', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -92,6 +108,11 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
         date: session2DateStr,
         startTime: session2StartTime,
         endTime: session2EndTime,
+      },
+      session3: {
+        date: session3DateStr,
+        startTime: session3StartTime,
+        endTime: session3EndTime,
       },
     };
 
@@ -109,6 +130,11 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
           date: formatDateToDDMMYYYY(session2Date),
           startTime: session2StartTime,
           endTime: session2EndTime,
+        },
+        thirdSession: {
+          date: formatDateToDDMMYYYY(session3Date),
+          startTime: session3StartTime,
+          endTime: session3EndTime,
         },
       });
       console.log('Training Schedule Created:', scheduleData);
@@ -129,7 +155,8 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
 
   const isFormValid = 
     session1Date && session1StartTime && session1EndTime &&
-    session2Date && session2StartTime && session2EndTime;
+    session2Date && session2StartTime && session2EndTime &&
+    session3Date && session3StartTime && session3EndTime;
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -185,7 +212,7 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
               color: 'text.secondary',
             }}
           >
-            Define a two-session training schedule with dates and times
+            Define a three-session training schedule with dates and times
           </Typography>
 
           <Typography
@@ -384,6 +411,103 @@ export function CreateTrainingSchedule({ onBack }: CreateTrainingScheduleProps) 
                     }}
                   >
                     {getEndTimeOptions(session2StartTime).map((time) => (
+                      <MenuItem key={time} value={time}>
+                        {time}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Session 3 */}
+          <Box sx={{ mb: 5 }}>
+            <Typography
+              variant="h6"
+              sx={{
+                mb: 3,
+                fontWeight: 600,
+                color: 'text.primary',
+                fontSize: '1.125rem',
+              }}
+            >
+              Session 3
+            </Typography>
+
+            <Box sx={{ display: 'flex', gap: 3, alignItems: 'flex-start' }}>
+              <Box sx={{ flex: 1 }}>
+                <DatePicker
+                  label="Date *"
+                  value={session3Date}
+                  onChange={(newValue) => setSession3Date(newValue)}
+                  slotProps={{
+                    textField: {
+                      fullWidth: true,
+                      variant: 'outlined',
+                      sx: {
+                        '& .MuiOutlinedInput-root': {
+                          height: '56px',
+                        },
+                      },
+                    },
+                  }}
+                />
+              </Box>
+
+              <Box sx={{ flex: 1 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Start Time *</InputLabel>
+                  <Select
+                    value={session3StartTime}
+                    onChange={(e) => {
+                      setSession3StartTime(e.target.value);
+                      // Reset end time if it's now invalid
+                      if (session3EndTime && session3EndTime <= e.target.value) {
+                        setSession3EndTime('');
+                      }
+                    }}
+                    label="Start Time *"
+                    sx={{
+                      height: '56px',
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 300,
+                        },
+                      },
+                    }}
+                  >
+                    {timeOptions.map((time) => (
+                      <MenuItem key={time} value={time}>
+                        {time}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+
+              <Box sx={{ flex: 1 }}>
+                <FormControl fullWidth>
+                  <InputLabel>End Time *</InputLabel>
+                  <Select
+                    value={session3EndTime}
+                    onChange={(e) => setSession3EndTime(e.target.value)}
+                    label="End Time *"
+                    disabled={!session3StartTime}
+                    sx={{
+                      height: '56px',
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          maxHeight: 300,
+                        },
+                      },
+                    }}
+                  >
+                    {getEndTimeOptions(session3StartTime).map((time) => (
                       <MenuItem key={time} value={time}>
                         {time}
                       </MenuItem>

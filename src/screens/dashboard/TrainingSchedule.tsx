@@ -88,7 +88,17 @@ export function TrainingSchedule() {
     const session2Start = formatTimeToHHMM(training.secondSession.startTime);
     const session2End = formatTimeToHHMM(training.secondSession.endTime);
 
-    return `${session1Display} (${session1Start} - ${session1End} IST), ${session2Display} (${session2Start} - ${session2End} IST)`;
+    let label = `${session1Display} (${session1Start} - ${session1End} IST), ${session2Display} (${session2Start} - ${session2End} IST)`;
+
+    // Add third session if it exists and has a date
+    if (training.thirdSession && training.thirdSession.date) {
+      const session3Display = getDisplayDate(training.thirdSession.date);
+      const session3Start = formatTimeToHHMM(training.thirdSession.startTime);
+      const session3End = formatTimeToHHMM(training.thirdSession.endTime);
+      label += `, ${session3Display} (${session3Start} - ${session3End} IST)`;
+    }
+
+    return label;
   };
 
   // Check if user is enrolled in this training
@@ -146,9 +156,14 @@ export function TrainingSchedule() {
               color: '#3D7A68',
               fontWeight: 500,
               fontSize: '0.95rem',
+              lineHeight: 1.7,
             }}
           >
-            Choose a live training slot. Seat confirmation will be shared via email/WhatsApp.
+            Training will be conducted over 3 days, with 3-hour live webinars each day. Training scheduled either from: 7:00 AM – 10:00 AM IST (convenient for the USA, Australia, etc.) and 7:00 PM – 10:00 PM IST (convenient for Europe, the Gulf, etc.).
+            <br /><br />
+            You can select your preferred training slot. The training fee is USD 150. Once a slot is selected, the TIMPEX.club team will contact you via email and WhatsApp with your slot confirmation, webinar link, and payment link.
+            <br /><br />
+            <strong style={{ color: '#DC2626' }}>⚠️ Payment must be completed at least 48 hours before the training session begins. Unpaid slots will be automatically released.</strong>
           </Typography>
 
           <Typography

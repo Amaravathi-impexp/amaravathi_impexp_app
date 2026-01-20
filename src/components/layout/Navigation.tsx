@@ -6,22 +6,20 @@ import { TopRibbon } from './TopRibbon';
 
 interface NavigationProps {
   onSignInClick?: () => void;
-  onHomeClick?: () => void;
-  onAboutClick?: () => void;
-  onCareersClick?: () => void;
-  onContactClick?: () => void;
+  onScrollToSection?: (sectionId: string) => void;
   currentView?: string;
   hideAuthButton?: boolean;
   showTopRibbon?: boolean;
 }
 
-export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareersClick, onContactClick, currentView = 'home', hideAuthButton = false, showTopRibbon = true }: NavigationProps) {
+export function Navigation({ onSignInClick, onScrollToSection, currentView = 'home', hideAuthButton = false, showTopRibbon = true }: NavigationProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const navItems = [
-    { label: 'Home', onClick: onHomeClick, view: 'home' },
-    { label: 'About', onClick: onAboutClick, view: 'about' },
-    { label: 'Contact', onClick: onContactClick, view: 'contact' },
+    { label: 'Why TIMPEX.club', sectionId: 'why-timpex' },
+    { label: 'Who is this for', sectionId: 'who-is-this-for' },
+    { label: 'What We Offer', sectionId: 'what-we-offer' },
+    { label: 'How it Works', sectionId: 'how-it-works' },
   ];
 
   return (
@@ -44,7 +42,7 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
             {/* Logo */}
             <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: { xs: 1, md: 0 }, height: 96, overflow: 'hidden' }}>
               <IconButton 
-                onClick={onHomeClick} 
+                onClick={onScrollToSection ? () => onScrollToSection('home') : undefined} 
                 sx={{ 
                   p: 0,
                   height: '100%',
@@ -60,20 +58,41 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
             </Box>
 
             {/* Desktop Navigation - aligned right */}
-            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 3, ml: 'auto' }}>
+            <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 1.5, ml: 'auto', flexWrap: 'nowrap' }}>
               {navItems.map((item) => (
                 <Button
-                  key={item.view}
-                  onClick={item.onClick}
+                  key={item.sectionId}
+                  onClick={onScrollToSection ? () => onScrollToSection(item.sectionId) : undefined}
                   sx={{
-                    color: currentView === item.view ? 'primary.main' : 'text.primary',
-                    fontWeight: currentView === item.view ? 600 : 400,
-                    fontSize: '1.125rem',
+                    color: currentView === item.sectionId ? 'primary.main' : 'text.primary',
+                    fontWeight: currentView === item.sectionId ? 600 : 400,
+                    fontSize: '0.875rem',
+                    px: 1.5,
+                    py: 1,
+                    minWidth: 'auto',
+                    whiteSpace: 'nowrap',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: 0,
+                      left: '50%',
+                      width: 0,
+                      height: '2px',
+                      bgcolor: 'primary.main',
+                      transition: 'all 0.3s ease',
+                      transform: 'translateX(-50%)',
+                    },
                     '&:hover': {
                       color: 'primary.main',
-                      bgcolor: 'transparent',
+                      bgcolor: 'rgba(26, 61, 50, 0.05)',
+                      transform: 'translateY(-2px)',
+                      '&::before': {
+                        width: '80%',
+                      },
                     },
-                    transition: 'color 0.2s',
+                    transition: 'all 0.3s ease',
                   }}
                 >
                   {item.label}
@@ -84,11 +103,17 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
                   onClick={onSignInClick}
                   variant="contained"
                   sx={{
-                    px: 3,
-                    py: 1.25,
-                    fontSize: '1.125rem',
+                    px: 2.5,
+                    py: 1,
+                    fontSize: '0.9rem',
                     boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
                     whiteSpace: 'nowrap',
+                    minWidth: 'auto',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 12px rgba(26, 61, 50, 0.3)',
+                    },
+                    transition: 'all 0.3s ease',
                   }}
                 >
                   Login / Enroll
@@ -127,10 +152,10 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
       >
         <List sx={{ py: 2 }}>
           {navItems.map((item) => (
-            <ListItem key={item.view} disablePadding>
+            <ListItem key={item.sectionId} disablePadding>
               <ListItemButton
                 onClick={() => {
-                  item.onClick?.();
+                  onScrollToSection?.(item.sectionId);
                   setIsMenuOpen(false);
                 }}
               >
@@ -138,8 +163,8 @@ export function Navigation({ onSignInClick, onHomeClick, onAboutClick, onCareers
                   primary={item.label}
                   sx={{
                     '& .MuiTypography-root': {
-                      color: currentView === item.view ? 'primary.main' : 'text.primary',
-                      fontWeight: currentView === item.view ? 600 : 400,
+                      color: currentView === item.sectionId ? 'primary.main' : 'text.primary',
+                      fontWeight: currentView === item.sectionId ? 600 : 400,
                     },
                   }}
                 />

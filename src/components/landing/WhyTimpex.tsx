@@ -4,7 +4,8 @@ export function WhyTimpex() {
   return (
     <Box
       sx={{
-        py: { xs: 8, md: 12 },
+        pt: { xs: 8, md: 12 },
+        pb: { xs: 4, md: 6 },
         bgcolor: '#FAFAF9',
       }}
     >

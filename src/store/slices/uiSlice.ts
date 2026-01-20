@@ -19,6 +19,7 @@ interface UIState {
   notifications: Notification[];
   sidebarCollapsed: boolean;
   theme: 'light' | 'dark';
+  pendingScrollSection: string | null;
 }
 
 const initialState: UIState = {
@@ -26,6 +27,7 @@ const initialState: UIState = {
   notifications: [],
   sidebarCollapsed: false,
   theme: 'light',
+  pendingScrollSection: null,
 };
 
 const uiSlice = createSlice({
@@ -58,6 +60,9 @@ const uiSlice = createSlice({
     setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
       state.theme = action.payload;
     },
+    setPendingScrollSection: (state, action: PayloadAction<string | null>) => {
+      state.pendingScrollSection = action.payload;
+    },
   },
 });
 
@@ -69,6 +74,7 @@ export const {
   toggleSidebar,
   setSidebarCollapsed,
   setTheme,
+  setPendingScrollSection,
 } = uiSlice.actions;
 
 export default uiSlice.reducer;

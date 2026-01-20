@@ -184,6 +184,7 @@ export function Users() {
                 <TableRow>
                   <TableCell>Full Name</TableCell>
                   <TableCell>Email</TableCell>
+                  <TableCell>Country Code</TableCell>
                   <TableCell>Phone</TableCell>
                   <TableCell>Status</TableCell>
                   <TableCell>Residence Country</TableCell>
@@ -203,6 +204,9 @@ export function Users() {
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">{user.email}</Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{user.countryCode}</Typography>
                     </TableCell>
                     <TableCell>
                       <Typography variant="body2">{user.phone}</Typography>

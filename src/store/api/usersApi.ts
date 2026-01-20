@@ -10,6 +10,7 @@ export interface User {
   id: number;
   email: string;
   fullName: string;
+  countryCode: string | null;
   phone: string;
   status: 'ENROLLED' | 'ACTIVE' | 'CREATED' | 'PENDING_VERIFICATION' | 'INACTIVE';
   emailVerified: boolean;

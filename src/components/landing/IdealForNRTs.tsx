@@ -25,7 +25,7 @@ const benefits = [
 
 export function IdealForNRTs() {
   return (
-    <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: '#f8f9fa' }}>
+    <Box sx={{ pt: { xs: 4, md: 6 }, pb: { xs: 8, md: 12 }, bgcolor: '#f8f9fa' }}>
       <Container maxWidth="lg">
         {/* Title */}
         <Typography
@@ -35,6 +35,7 @@ export function IdealForNRTs() {
             mb: 6,
             color: 'text.primary',
             fontWeight: 700,
+            fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' },
           }}
         >
           International Trading is Ideal for NRTs

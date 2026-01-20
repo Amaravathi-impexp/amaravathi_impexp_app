@@ -1,5 +1,5 @@
 import { Box, Container, Link, IconButton } from '@mui/material';
-import { Phone, Mail, Facebook, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react';
+import { Mail, Facebook, Twitter, Linkedin, Instagram, Youtube } from 'lucide-react';
 
 export function TopRibbon() {
   return (
@@ -26,34 +26,6 @@ export function TopRibbon() {
         >
           {/* Left side - Contact Info */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Link
-              href="tel:+1234567890"
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 0.75,
-                color: 'white',
-                textDecoration: 'none',
-                '&:hover': {
-                  color: '#D3FF62 !important', // Lime accent
-                },
-                transition: 'color 0.2s',
-              }}
-            >
-              <Phone className="w-3.5 h-3.5" />
-              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
-                +1 (234) 567-890
-              </Box>
-            </Link>
-            <Box
-              component="span"
-              sx={{
-                color: '#3D7A68', // Sage green divider
-                display: { xs: 'none', sm: 'inline' },
-              }}
-            >
-              |
-            </Box>
             <Link
               href="mailto:info@timpex.club"
               sx={{

@@ -18,7 +18,7 @@ import { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { useAppSelector, useAppDispatch } from './store/hooks';
-import { setCurrentView } from './store/slices/uiSlice';
+import { setCurrentView, setPendingScrollSection } from './store/slices/uiSlice';
 import { logout } from './store/slices/authSlice';
 import { useLogoutMutation } from './store/api/authApi';
 import { baseApi } from './store/api/baseApi';
@@ -36,6 +36,7 @@ import { useNetworkStatus } from './hooks/useNetworkStatus';
 function AppContent() {
   const dispatch = useAppDispatch();
   const currentView = useAppSelector((state) => state.ui.currentView);
+  const pendingScrollSection = useAppSelector((state) => state.ui.pendingScrollSection);
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const [logoutApi] = useLogoutMutation();
   
@@ -45,6 +46,17 @@ function AppContent() {
   useEffect(() => {
     document.title = 'TIMPEX.club - Telugu Import Export Club';
   }, []);
+
+  // Handle pending scroll section when returning to home
+  useEffect(() => {
+    if (currentView === 'home' && pendingScrollSection) {
+      // Small delay to ensure page is rendered
+      setTimeout(() => {
+        handleScrollToSection(pendingScrollSection);
+        dispatch(setPendingScrollSection(null));
+      }, 100);
+    }
+  }, [currentView, pendingScrollSection]);
 
   const handleSignOut = async () => {
     try {
@@ -63,6 +75,25 @@ function AppContent() {
     }
   };
 
+  const handleScrollToSection = (sectionId: string) => {
+    if (sectionId === 'home') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const yOffset = -136; // Offset for fixed header (40px TopRibbon + 96px Toolbar)
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const handleNavigateToSectionFromAuth = (sectionId: string) => {
+    dispatch(setPendingScrollSection(sectionId));
+    dispatch(setCurrentView('home'));
+  };
+
   if (currentView === 'signin') {
     return (
       <SignIn 
@@ -71,6 +102,7 @@ function AppContent() {
         onSignInSuccess={() => dispatch(setCurrentView('dashboard'))}
         onAboutClick={() => dispatch(setCurrentView('about'))}
         onContactClick={() => dispatch(setCurrentView('contact'))}
+        onScrollToSection={handleNavigateToSectionFromAuth}
       />
     );
   }
@@ -83,6 +115,7 @@ function AppContent() {
         onSignUpSuccess={() => dispatch(setCurrentView('dashboard'))}
         onAboutClick={() => dispatch(setCurrentView('about'))}
         onContactClick={() => dispatch(setCurrentView('contact'))}
+        onScrollToSection={handleNavigateToSectionFromAuth}
       />
     );
   }
@@ -131,21 +164,26 @@ function AppContent() {
     <Box sx={{ minHeight: '100vh', bgcolor: 'white' }}>
       <Navigation 
         onSignInClick={() => dispatch(setCurrentView('signin'))}
-        onHomeClick={() => dispatch(setCurrentView('home'))}
-        onAboutClick={() => dispatch(setCurrentView('about'))}
-        onCareersClick={() => dispatch(setCurrentView('careers'))}
-        onContactClick={() => dispatch(setCurrentView('contact'))}
+        onScrollToSection={handleScrollToSection}
         currentView={currentView}
       />
       <Hero 
         onGetStarted={() => dispatch(setCurrentView('signin'))} 
         onEnrollClick={() => dispatch(setCurrentView('signup'))}
       />
-      <WhyTimpex />
+      <Box id="why-timpex">
+        <WhyTimpex />
+      </Box>
       <IdealForNRTs />
-      <WhoIsThisFor />
-      <WhatWeOffer />
-      <HowItWorks />
+      <Box id="who-is-this-for">
+        <WhoIsThisFor />
+      </Box>
+      <Box id="what-we-offer">
+        <WhatWeOffer />
+      </Box>
+      <Box id="how-it-works">
+        <HowItWorks />
+      </Box>
       <OutcomesForParticipants />
       <Footer onHomeClick={() => dispatch(setCurrentView('home'))} />
     </Box>

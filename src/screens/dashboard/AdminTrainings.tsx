@@ -15,8 +15,14 @@ import {
   IconButton,
   Tooltip,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
 } from '@mui/material';
-import { Plus, Users } from 'lucide-react';
+import { Plus, Users, Trash2 } from 'lucide-react';
 import { Breadcrumb } from '../../components/Breadcrumb';
 import { CreateTrainingSchedule } from './CreateTrainingSchedule';
 import { EnrolledUsers } from './EnrolledUsers';
@@ -25,6 +31,7 @@ import {
   Training,
   getDisplayDate,
   formatTimeToHHMM,
+  deleteTraining,
 } from '../../services/trainingApi';
 
 export function AdminTrainings() {
@@ -33,6 +40,10 @@ export function AdminTrainings() {
   const [error, setError] = useState('');
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [selectedTrainingId, setSelectedTrainingId] = useState<number | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [trainingToDelete, setTrainingToDelete] = useState<Training | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   // Fetch trainings on component mount
   useEffect(() => {
@@ -69,6 +80,29 @@ export function AdminTrainings() {
   // Handle view enrolled users
   const handleViewUsers = (trainingId: number) => {
     setSelectedTrainingId(trainingId);
+  };
+
+  // Handle delete training
+  const handleDeleteTraining = (training: Training) => {
+    setTrainingToDelete(training);
+    setDeleteDialogOpen(true);
+  };
+
+  // Confirm delete training
+  const confirmDeleteTraining = async () => {
+    if (trainingToDelete) {
+      try {
+        await deleteTraining(trainingToDelete.trainingId);
+        setSnackbarMessage('Training deleted successfully.');
+        setSnackbarOpen(true);
+        fetchTrainings();
+      } catch (err) {
+        setError('Failed to delete training. Please try again.');
+        console.error('Error deleting training:', err);
+      } finally {
+        setDeleteDialogOpen(false);
+      }
+    }
   };
 
   // If create form is shown, render it instead
@@ -174,16 +208,6 @@ export function AdminTrainings() {
                       py: 1.5,
                     }}
                   >
-                    Training Schedule
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      fontWeight: 700,
-                      color: '#1A3D32',
-                      fontSize: '0.875rem',
-                      py: 1.5,
-                    }}
-                  >
                     Session 1
                   </TableCell>
                   <TableCell
@@ -195,6 +219,16 @@ export function AdminTrainings() {
                     }}
                   >
                     Session 2
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 700,
+                      color: '#1A3D32',
+                      fontSize: '0.875rem',
+                      py: 1.5,
+                    }}
+                  >
+                    Session 3
                   </TableCell>
                   <TableCell
                     align="center"
@@ -231,11 +265,6 @@ export function AdminTrainings() {
                         }}
                       />
                     </TableCell>
-                    <TableCell sx={{ py: 1.5, maxWidth: 400 }}>
-                      <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
-                        {formatTrainingSlot(training)}
-                      </Typography>
-                    </TableCell>
                     <TableCell sx={{ py: 1.5 }}>
                       <Typography
                         variant="body2"
@@ -266,6 +295,32 @@ export function AdminTrainings() {
                         {formatTimeToHHMM(training.secondSession.endTime)} IST
                       </Typography>
                     </TableCell>
+                    <TableCell sx={{ py: 1.5 }}>
+                      {training.thirdSession && training.thirdSession.date ? (
+                        <>
+                          <Typography
+                            variant="body2"
+                            sx={{ fontSize: '0.875rem', color: '#374151' }}
+                          >
+                            {getDisplayDate(training.thirdSession.date)}
+                          </Typography>
+                          <Typography
+                            variant="caption"
+                            sx={{ color: '#6B7280', display: 'block' }}
+                          >
+                            {formatTimeToHHMM(training.thirdSession.startTime)} -{' '}
+                            {formatTimeToHHMM(training.thirdSession.endTime)} IST
+                          </Typography>
+                        </>
+                      ) : (
+                        <Typography
+                          variant="body2"
+                          sx={{ fontSize: '0.875rem', color: '#9CA3AF', fontStyle: 'italic' }}
+                        >
+                          Not scheduled
+                        </Typography>
+                      )}
+                    </TableCell>
                     <TableCell align="center" sx={{ py: 1.5 }}>
                       <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
                         <Tooltip title="View Enrolled Users">
@@ -281,6 +336,19 @@ export function AdminTrainings() {
                             <Users size={18} />
                           </IconButton>
                         </Tooltip>
+                        <Tooltip title="Delete Training">
+                          <IconButton
+                            onClick={() => handleDeleteTraining(training)}
+                            sx={{
+                              color: '#FF5733',
+                              '&:hover': {
+                                bgcolor: '#FFD7D7',
+                              },
+                            }}
+                          >
+                            <Trash2 size={18} />
+                          </IconButton>
+                        </Tooltip>
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -290,6 +358,46 @@ export function AdminTrainings() {
           </TableContainer>
         )}
       </Paper>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Delete Training</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this training?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            color="primary"
+            variant="outlined"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={confirmDeleteTraining}
+            color="error"
+            variant="contained"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar for success messages */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMessage}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      />
     </Box>
   );
 }

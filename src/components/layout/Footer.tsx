@@ -1,5 +1,5 @@
 import { Box, Container, Button, Typography } from '@mui/material';
-import { Mail, Phone, Globe } from 'lucide-react';
+import { Mail, Globe } from 'lucide-react';
 import { useAppDispatch } from '../../store/hooks';
 import { setCurrentView } from '../../store/slices/uiSlice';
 import logoImage from 'figma:asset/98b22d8ba3cccddd432e81bdbe1d183f77d139b9.png';
@@ -204,33 +204,6 @@ export function Footer({ hideAuthButtons = false }: FooterProps) {
                   }}
                 >
                   support@timpex.club
-                </Typography>
-              </Box>
-
-              {/* Phone */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                <Box
-                  sx={{
-                    width: 32,
-                    height: 32,
-                    borderRadius: '50%',
-                    bgcolor: '#D3FF62',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Phone size={16} strokeWidth={2.5} color="#1A3D32" />
-                </Box>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: '0.9375rem',
-                    color: '#B8D4C8',
-                  }}
-                >
-                  +91 XXX XXX XXXX
                 </Typography>
               </Box>
 

@@ -70,8 +70,7 @@ export function Home() {
               color: '#374151',
             }}
           >
-            Your journey to streamlined global trade starts here. Access powerful tools,
-            connect with verified partners, and take control of your shipping operations.
+            Complete your training, verify your profile, apply for licenses, explore past and live trades by fellow members, and access curated trade opportunities. Your first 10 trades will be hand-held by the TIMPEX.club team.
           </Typography>
         </Box>
       </Box>
