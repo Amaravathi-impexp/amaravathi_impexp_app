@@ -85,7 +85,7 @@ export function MainLayout({ onSignOut }: MainLayoutProps) {
         activeMenu={activeSection}
         onMenuChange={handleSectionChange}
         onSignOut={onSignOut}
-        onLogoClick={() => handleSectionChange('overview')}
+        onLogoClick={() => handleSectionChange('home')}
       />
 
       {/* Main Content Wrapper */}

@@ -1,11 +1,11 @@
-import { Box, Container, Button, Typography } from '@mui/material';
+import { Box, Container, Button, Typography, IconButton } from '@mui/material';
 import { Logo } from './Logo';
 
 /**
  * Footer Component - Version 2.0 GREEN THEME
  * Updated: Dark Forest Green Background
  */
-export function Footer() {
+export function Footer({ onHomeClick }: { onHomeClick?: () => void }) {
   return (
     <Box
       component="footer"
@@ -19,13 +19,13 @@ export function Footer() {
           sx={{
             display: 'flex',
             flexDirection: { xs: 'column', md: 'row' },
-            justifyContent: 'space-between',
+            justifyContent: { md: 'space-between' },
             alignItems: 'center',
-            gap: 2,
-            fontSize: '0.875rem',
+            gap: 4,
           }}
         >
-          <Box
+          <IconButton
+            onClick={onHomeClick}
             sx={{
               bgcolor: 'white',
               px: 4,
@@ -35,10 +35,15 @@ export function Footer() {
               display: 'flex',
               alignItems: 'center',
               overflow: 'hidden',
+              '&:hover': { 
+                opacity: 0.8,
+                bgcolor: 'white',
+              },
+              transition: 'opacity 0.2s',
             }}
           >
             <Logo className="h-[200px]" />
-          </Box>
+          </IconButton>
 
           <Box sx={{ display: 'flex', gap: 3 }}>
             <Button

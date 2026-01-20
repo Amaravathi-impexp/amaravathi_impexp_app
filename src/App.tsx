@@ -147,7 +147,7 @@ function AppContent() {
       <WhatWeOffer />
       <HowItWorks />
       <OutcomesForParticipants />
-      <Footer />
+      <Footer onHomeClick={() => dispatch(setCurrentView('home'))} />
     </Box>
   );
 }
