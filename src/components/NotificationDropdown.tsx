@@ -1,35 +1,39 @@
 import { Bell } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 
 export function NotificationDropdown() {
   const [showNotifications, setShowNotifications] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const notifications = [
-    {
-      id: 1,
-      message: 'Shipment AMRV-2024-001 is now in transit',
-      time: '2 hours ago',
-    },
-    {
-      id: 2,
-      message: 'Customs clearance completed for AMRV-2024-004',
-      time: '5 hours ago',
-    },
-    {
-      id: 3,
-      message: 'Shipment AMRV-2024-002 has been delivered',
-      time: '1 day ago',
-    },
-  ];
+  const notifications: any[] = [];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    };
+
+    if (showNotifications) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showNotifications]);
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setShowNotifications(!showNotifications)}
         className="p-2 hover:bg-gray-100 rounded-full relative transition-colors"
       >
         <Bell className="w-6 h-6 text-gray-700" />
-        <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+        {notifications.length > 0 && (
+          <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+        )}
       </button>
 
       {/* Notifications Dropdown */}
@@ -39,23 +43,31 @@ export function NotificationDropdown() {
             <h3 className="text-sm">Notifications</h3>
           </div>
           <div className="max-h-96 overflow-y-auto">
-            {notifications.map((notification) => (
-              <div
-                key={notification.id}
-                className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
-              >
-                <p className="text-sm">{notification.message}</p>
-                <p className="text-xs text-gray-500 mt-1">
-                  {notification.time}
-                </p>
+            {notifications.length === 0 ? (
+              <div className="px-4 py-8 text-center text-gray-500">
+                <p className="text-sm">No notifications</p>
               </div>
-            ))}
+            ) : (
+              notifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                >
+                  <p className="text-sm">{notification.message}</p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    {notification.time}
+                  </p>
+                </div>
+              ))
+            )}
           </div>
-          <div className="px-4 py-2 border-t border-gray-200 text-center">
-            <button className="text-sm text-blue-600 hover:text-blue-700">
-              View all notifications
-            </button>
-          </div>
+          {notifications.length > 0 && (
+            <div className="px-4 py-2 border-t border-gray-200 text-center">
+              <button className="text-sm text-blue-600 hover:text-blue-700">
+                View all notifications
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
