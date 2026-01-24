@@ -385,7 +385,7 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
-    countryCode: '+1',
+    countryCode: '',  // Empty by default, user must select
     phone: '',
     country: '',
     city: '',
@@ -449,22 +449,26 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
     }
     
     try {
-      // Call real API with all required fields
-      const response = await signUp({
+      // Build payload with only required fields + optional fields that user filled in
+      const payload: any = {
         fullName: formData.fullName,
         email: formData.email,
-        countryCode: formData.countryCode,
         phone: formData.phone,
         password: formData.password,
-        residenceCountry: formData.country,
-        city: formData.city,
-        preferredLanguage: formData.language || 'Both',
-        occupation: formData.profileType || 'Working Professional',
-        interest: formData.primaryInterest || 'Both',
-        previousTradingExposure: formData.tradingExperience || 'Beginner',
-        termsAccepted: formData.agreeToTerms,
-        communicationConsent: formData.agreeToComms,
-      }).unwrap();
+      };
+
+      // Add optional fields only if user provided them
+      if (formData.countryCode) payload.countryCode = formData.countryCode;
+      if (formData.country) payload.residenceCountry = formData.country;
+      if (formData.city) payload.city = formData.city;
+      if (formData.language) payload.preferredLanguage = formData.language;
+      if (formData.profileType) payload.occupation = formData.profileType;
+      if (formData.primaryInterest) payload.interest = formData.primaryInterest;
+      if (formData.tradingExperience) payload.previousTradingExposure = formData.tradingExperience;
+      if (formData.agreeToTerms) payload.termsAccepted = formData.agreeToTerms;
+      if (formData.agreeToComms) payload.communicationConsent = formData.agreeToComms;
+
+      const response = await signUp(payload).unwrap();
       
       // Show success message from API
       setSuccessMessage(response.message || 'Account created successfully! Please check your email for verification.');
@@ -576,7 +580,7 @@ export function SignUp({ onClose, onSwitchToSignIn, onSignUpSuccess, onAboutClic
                   <Autocomplete
                     options={countryCodes}
                     getOptionLabel={(option) => option.label}
-                    value={countryCodes.find(c => c.code === formData.countryCode) || countryCodes.find(c => c.code === '+1')}
+                    value={countryCodes.find(c => c.code === formData.countryCode) || null}
                     onChange={(_, newValue) => {
                       if (newValue) {
                         handleChange('countryCode', newValue.code);

@@ -1,23 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- Background circle -->
-  <circle cx="32" cy="32" r="32" fill="#1A3D32"/>
-  
-  <!-- Globe -->
-  <circle cx="32" cy="32" r="18" stroke="#D3FF62" stroke-width="2" fill="none"/>
-  
-  <!-- Globe meridian lines -->
-  <ellipse cx="32" cy="32" rx="8" ry="18" stroke="#D3FF62" stroke-width="1.5" fill="none"/>
-  <ellipse cx="32" cy="32" rx="18" ry="8" stroke="#D3FF62" stroke-width="1.5" fill="none"/>
-  
-  <!-- Ship/Container -->
-  <rect x="24" y="27" width="16" height="8" rx="1" fill="#FF8C42" stroke="#FF8C42" stroke-width="1"/>
-  <rect x="26" y="29" width="4" height="4" fill="#1A3D32"/>
-  <rect x="34" y="29" width="4" height="4" fill="#1A3D32"/>
-  
-  <!-- Arrow pointing right (forward/export) -->
-  <path d="M 42 32 L 48 32 M 45 29 L 48 32 L 45 35" stroke="#FF8C42" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  
-  <!-- Small accent dots -->
-  <circle cx="20" cy="22" r="1.5" fill="#D3FF62"/>
-  <circle cx="44" cy="42" r="1.5" fill="#D3FF62"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <style>
+    .bg { fill: #1A3D32; }
+    .letter { fill: #D3FF62; font-family: Arial, sans-serif; font-size: 70px; font-weight: bold; }
+  </style>
+  <rect class="bg" width="100" height="100"/>
+  <text class="letter" x="50" y="75" text-anchor="middle">T</text>
 </svg>

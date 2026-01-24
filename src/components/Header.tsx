@@ -1,11 +1,13 @@
-import { Search, Bell, Menu, X, LayoutDashboard, Ship, Users, BarChart3, FileText, Settings as SettingsIcon, User, LogOut } from 'lucide-react';
+import { Search, Bell, Menu, X, LayoutDashboard, Ship, Users, BarChart3, FileText, Settings as SettingsIcon, User, LogOut, Home as HomeIcon, DollarSign, Shield, Calendar, GraduationCap, FileCheck, UserCheck } from 'lucide-react';
 import { Box, TextField, InputAdornment, IconButton, Collapse, List, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import { useState } from 'react';
 import { NotificationDropdown } from './NotificationDropdown';
 import { ProfileMenu } from './ProfileMenu';
 import { Logo } from './Logo';
 import { useAppSelector } from '../store/hooks';
-import { selectIsAdmin } from '../store/selectors/authSelectors';
+import { selectIsAdmin, selectCurrentUser } from '../store/selectors/authSelectors';
+import { hasPermission } from '../utils/roleUtils';
+import { Permission } from '../utils/permissions';
 
 interface HeaderProps {
   searchQuery: string;
@@ -28,8 +30,23 @@ export function Header({
   onSignOut,
   onLogoClick,
 }: HeaderProps) {
-  // Check if user is admin
+  // Check if user is admin and get current user for permissions
   const isAdmin = useAppSelector(selectIsAdmin);
+  const currentUser = useAppSelector(selectCurrentUser);
+  
+  // Check permissions
+  const canViewDashboard = hasPermission(currentUser, Permission.VIEW_DASHBOARD);
+  const canViewShipments = hasPermission(currentUser, Permission.VIEW_SHIPMENTS);
+  const canViewAnalytics = hasPermission(currentUser, Permission.VIEW_ANALYTICS);
+  const canViewDocuments = hasPermission(currentUser, Permission.VIEW_DOCUMENTS);
+  const canViewPartners = hasPermission(currentUser, Permission.VIEW_PARTNERS);
+  const canViewPayments = hasPermission(currentUser, Permission.VIEW_PAYMENTS);
+  const canViewMyTrainings = hasPermission(currentUser, Permission.VIEW_MY_TRAININGS);
+  const canManageAllTrainings = hasPermission(currentUser, Permission.MANAGE_ALL_TRAININGS);
+  const canViewLicensing = hasPermission(currentUser, Permission.VIEW_LICENSING);
+  const canViewProfileVerification = hasPermission(currentUser, Permission.VIEW_PROFILE_VERIFICATION);
+  const canViewUsers = hasPermission(currentUser, Permission.VIEW_USERS);
+  const canViewRoles = hasPermission(currentUser, Permission.VIEW_ROLES);
   
   const handleMobileMenuClick = (menu: string) => {
     onMenuChange(menu);
@@ -111,13 +128,14 @@ export function Header({
             </Box>
           </Box>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - Now with RBAC permissions */}
           <Collapse in={showMobileMenu}>
             <Box sx={{ display: { md: 'none' }, py: 2, borderTop: 1, borderColor: 'divider', bgcolor: 'white' }}>
               <List component="nav" disablePadding sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                {/* Home - Always visible */}
                 <ListItemButton
-                  onClick={() => handleMobileMenuClick('dashboard')}
-                  selected={activeMenu === 'dashboard'}
+                  onClick={() => handleMobileMenuClick('home')}
+                  selected={activeMenu === 'home'}
                   sx={{
                     borderRadius: 1,
                     px: 2,
@@ -132,99 +150,321 @@ export function Header({
                   }}
                 >
                   <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                    <LayoutDashboard size={20} />
+                    <HomeIcon size={20} />
                   </ListItemIcon>
-                  <ListItemText primary="Dashboard" />
+                  <ListItemText primary="Home" />
                 </ListItemButton>
 
-                <ListItemButton
-                  onClick={() => handleMobileMenuClick('shipments')}
-                  selected={activeMenu === 'shipments'}
-                  sx={{
-                    borderRadius: 1,
-                    px: 2,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.lighter',
-                      color: 'primary.main',
-                      '&:hover': {
+                {/* Dashboard - Permission required */}
+                {canViewDashboard && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('overview')}
+                    selected={activeMenu === 'overview'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
                         bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
                       },
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                    <Ship size={20} />
-                  </ListItemIcon>
-                  <ListItemText primary="Shipments" />
-                </ListItemButton>
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <LayoutDashboard size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Dashboard" />
+                  </ListItemButton>
+                )}
 
-                <ListItemButton
-                  onClick={() => handleMobileMenuClick('partner-directory')}
-                  selected={activeMenu === 'partner-directory'}
-                  sx={{
-                    borderRadius: 1,
-                    px: 2,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.lighter',
-                      color: 'primary.main',
-                      '&:hover': {
+                {/* Shipments - Permission required */}
+                {canViewShipments && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('shipments')}
+                    selected={activeMenu === 'shipments'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
                         bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
                       },
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                    <Users size={20} />
-                  </ListItemIcon>
-                  <ListItemText primary="Partner Directory" />
-                </ListItemButton>
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <Ship size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Shipments" />
+                  </ListItemButton>
+                )}
 
-                <ListItemButton
-                  onClick={() => handleMobileMenuClick('analytics')}
-                  selected={activeMenu === 'analytics'}
-                  sx={{
-                    borderRadius: 1,
-                    px: 2,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.lighter',
-                      color: 'primary.main',
-                      '&:hover': {
+                {/* Partner Directory - Permission required */}
+                {canViewPartners && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('partners')}
+                    selected={activeMenu === 'partners'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
                         bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
                       },
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                    <BarChart3 size={20} />
-                  </ListItemIcon>
-                  <ListItemText primary="Analytics" />
-                </ListItemButton>
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <Users size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Partner Directory" />
+                  </ListItemButton>
+                )}
 
-                <ListItemButton
-                  onClick={() => handleMobileMenuClick('documents')}
-                  selected={activeMenu === 'documents'}
-                  sx={{
-                    borderRadius: 1,
-                    px: 2,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.lighter',
-                      color: 'primary.main',
-                      '&:hover': {
+                {/* Analytics - Permission required */}
+                {canViewAnalytics && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('analytics')}
+                    selected={activeMenu === 'analytics'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
                         bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
                       },
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                    <FileText size={20} />
-                  </ListItemIcon>
-                  <ListItemText primary="Documents" />
-                </ListItemButton>
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <BarChart3 size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Analytics" />
+                  </ListItemButton>
+                )}
 
+                {/* Documents - Permission required */}
+                {canViewDocuments && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('documents')}
+                    selected={activeMenu === 'documents'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <FileText size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Documents" />
+                  </ListItemButton>
+                )}
+
+                {/* Payments & Invoicing - Permission required */}
+                {canViewPayments && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('payments')}
+                    selected={activeMenu === 'payments'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <DollarSign size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Payments" />
+                  </ListItemButton>
+                )}
+
+                {/* Training Schedule - Permission required */}
+                {canViewMyTrainings && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('my-trainings')}
+                    selected={activeMenu === 'my-trainings'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <Calendar size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="My Training Schedule" />
+                  </ListItemButton>
+                )}
+
+                {/* Licensing Requirements - Permission required */}
+                {canViewLicensing && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('licensing-requirements')}
+                    selected={activeMenu === 'licensing-requirements'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <FileCheck size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Licensing Requirements" />
+                  </ListItemButton>
+                )}
+
+                {/* Profile Verification - Permission required */}
+                {canViewProfileVerification && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('profile-verification')}
+                    selected={activeMenu === 'profile-verification'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <UserCheck size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Profile Verification" />
+                  </ListItemButton>
+                )}
+
+                {/* Admin Section - Only for users with admin permissions */}
+                {(canViewUsers || canViewRoles || canManageAllTrainings) && (
+                  <>
+                    <Divider sx={{ my: 1 }} />
+                    
+                    {/* Admin Training Management - Permission required */}
+                    {canManageAllTrainings && (
+                      <ListItemButton
+                        onClick={() => handleMobileMenuClick('trainings')}
+                        selected={activeMenu === 'trainings'}
+                        sx={{
+                          borderRadius: 1,
+                          px: 2,
+                          py: 1,
+                          '&.Mui-selected': {
+                            bgcolor: 'primary.lighter',
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'primary.lighter',
+                            },
+                          },
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                          <GraduationCap size={20} />
+                        </ListItemIcon>
+                        <ListItemText primary="Training Management" />
+                      </ListItemButton>
+                    )}
+
+                    {/* Users - Permission required */}
+                    {canViewUsers && (
+                      <ListItemButton
+                        onClick={() => handleMobileMenuClick('users')}
+                        selected={activeMenu === 'users'}
+                        sx={{
+                          borderRadius: 1,
+                          px: 2,
+                          py: 1,
+                          '&.Mui-selected': {
+                            bgcolor: 'primary.lighter',
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'primary.lighter',
+                            },
+                          },
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                          <Users size={20} />
+                        </ListItemIcon>
+                        <ListItemText primary="Users" />
+                      </ListItemButton>
+                    )}
+
+                    {/* Roles - Permission required */}
+                    {canViewRoles && (
+                      <ListItemButton
+                        onClick={() => handleMobileMenuClick('roles')}
+                        selected={activeMenu === 'roles'}
+                        sx={{
+                          borderRadius: 1,
+                          px: 2,
+                          py: 1,
+                          '&.Mui-selected': {
+                            bgcolor: 'primary.lighter',
+                            color: 'primary.main',
+                            '&:hover': {
+                              bgcolor: 'primary.lighter',
+                            },
+                          },
+                        }}
+                      >
+                        <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                          <Shield size={20} />
+                        </ListItemIcon>
+                        <ListItemText primary="Roles" />
+                      </ListItemButton>
+                    )}
+                  </>
+                )}
+
+                <Divider sx={{ my: 1 }} />
+
+                {/* Settings - Always visible */}
                 <ListItemButton
                   onClick={() => handleMobileMenuClick('settings')}
                   selected={activeMenu === 'settings'}

@@ -47,7 +47,6 @@ export function SignIn({
     setError("");
 
     try {
-      // Call real API - no fallback
       const response = await signIn({
         email,
         password,

@@ -56,18 +56,21 @@ export interface SignInResponse extends UserProfile {}
 
 // Sign-up request/response
 export interface SignUpRequest {
+  // Required fields
   fullName: string;
   email: string;
   phone: string;
   password: string;
-  residenceCountry: string;
-  city: string;
-  preferredLanguage: string;
-  occupation: string;
-  interest: string;
-  previousTradingExposure: string;
-  termsAccepted: boolean;
-  communicationConsent: boolean;
+  // Optional fields - only send if user provided them
+  countryCode?: string;
+  residenceCountry?: string;
+  city?: string;
+  preferredLanguage?: string;
+  occupation?: string;
+  interest?: string;
+  previousTradingExposure?: string;
+  termsAccepted?: boolean;
+  communicationConsent?: boolean;
 }
 
 export interface SignUpResponse {

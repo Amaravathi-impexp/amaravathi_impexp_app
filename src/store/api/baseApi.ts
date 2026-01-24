@@ -10,6 +10,7 @@ import { createApi, fetchBaseQuery, retry } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../index';
 import { isRetryableError, getRetryDelay } from '../../utils/errorHandler';
 import { config } from '../../config/env';
+import { logger } from '../../utils/logger';
 
 // Base query with authentication (uses Trade Identity API by default)
 const baseQuery = fetchBaseQuery({
@@ -55,7 +56,7 @@ const customRetry = retry(
   }
 );
 
-// Base API with retry logic and error handling
+// Base query with reauth
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   // Use retry wrapper for resilient API calls
   let result = await customRetry(args, api, extraOptions);
