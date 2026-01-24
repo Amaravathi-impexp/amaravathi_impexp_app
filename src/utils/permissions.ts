@@ -88,6 +88,10 @@ export const ROLE_PERMISSIONS: Record<RoleCode, Permission[]> = {
     // User Management
     Permission.VIEW_USERS, // Can view users
     
+    // Settings - Personal settings (accessible to all roles)
+    Permission.VIEW_SETTINGS,
+    Permission.EDIT_SETTINGS,
+    
     // Profile - Accessible to all roles
     Permission.VIEW_PROFILE,
     Permission.EDIT_PROFILE,
@@ -102,6 +106,10 @@ export const ROLE_PERMISSIONS: Record<RoleCode, Permission[]> = {
     
     // Profile Verification
     Permission.VIEW_PROFILE_VERIFICATION, // Can view profile verification (but cannot submit)
+    
+    // Settings - Personal settings (accessible to all roles)
+    Permission.VIEW_SETTINGS,
+    Permission.EDIT_SETTINGS,
     
     // Profile - Accessible to all roles
     Permission.VIEW_PROFILE,

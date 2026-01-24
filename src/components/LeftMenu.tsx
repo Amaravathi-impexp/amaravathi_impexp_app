@@ -13,7 +13,8 @@ import {
   GraduationCap,
   Home as HomeIcon,
   FileCheck,
-  UserCheck
+  UserCheck,
+  Settings as SettingsIcon
 } from 'lucide-react';
 import {
   Box,
@@ -65,6 +66,7 @@ export function LeftMenu({
   const canViewProfileVerification = hasPermission(currentUser, Permission.VIEW_PROFILE_VERIFICATION);
   const canViewUsers = hasPermission(currentUser, Permission.VIEW_USERS);
   const canViewRoles = hasPermission(currentUser, Permission.VIEW_ROLES);
+  const canViewSettings = hasPermission(currentUser, Permission.VIEW_SETTINGS);
 
   return (
     <Box
@@ -522,6 +524,36 @@ export function LeftMenu({
                   </List>
                 </Collapse>
               </Box>
+            )}
+
+            {/* Settings */}
+            {canViewSettings && (
+              <ListItemButton
+                onClick={() => onSectionChange("settings")}
+                selected={activeSection === "settings"}
+                sx={{
+                  borderRadius: 2,
+                  gap: 1.5,
+                  px: 1.5,
+                  py: 0.75,
+                  justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.lighter',
+                    color: 'primary.main',
+                    '&:hover': {
+                      bgcolor: 'primary.lighter',
+                    },
+                  },
+                  '&:hover': {
+                    bgcolor: 'grey.100',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 'auto', color: 'inherit' }}>
+                  <SettingsIcon size={20} />
+                </ListItemIcon>
+                {sidebarOpen && <ListItemText primary="Settings" primaryTypographyProps={{ variant: 'body2' }} />}
+              </ListItemButton>
             )}
           </List>
         </Box>

@@ -47,6 +47,7 @@ export function Header({
   const canViewProfileVerification = hasPermission(currentUser, Permission.VIEW_PROFILE_VERIFICATION);
   const canViewUsers = hasPermission(currentUser, Permission.VIEW_USERS);
   const canViewRoles = hasPermission(currentUser, Permission.VIEW_ROLES);
+  const canViewSettings = hasPermission(currentUser, Permission.VIEW_SETTINGS);
   
   const handleMobileMenuClick = (menu: string) => {
     onMenuChange(menu);
@@ -205,31 +206,6 @@ export function Header({
                   </ListItemButton>
                 )}
 
-                {/* Partner Directory - Permission required */}
-                {canViewPartners && (
-                  <ListItemButton
-                    onClick={() => handleMobileMenuClick('partners')}
-                    selected={activeMenu === 'partners'}
-                    sx={{
-                      borderRadius: 1,
-                      px: 2,
-                      py: 1,
-                      '&.Mui-selected': {
-                        bgcolor: 'primary.lighter',
-                        color: 'primary.main',
-                        '&:hover': {
-                          bgcolor: 'primary.lighter',
-                        },
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                      <Users size={20} />
-                    </ListItemIcon>
-                    <ListItemText primary="Partner Directory" />
-                  </ListItemButton>
-                )}
-
                 {/* Analytics - Permission required */}
                 {canViewAnalytics && (
                   <ListItemButton
@@ -280,7 +256,32 @@ export function Header({
                   </ListItemButton>
                 )}
 
-                {/* Payments & Invoicing - Permission required */}
+                {/* Partner Directory - Permission required */}
+                {canViewPartners && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('partners')}
+                    selected={activeMenu === 'partners'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
+                        bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <Users size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Partner Directory" />
+                  </ListItemButton>
+                )}
+
+                {/* Payments Invoicing - Permission required */}
                 {canViewPayments && (
                   <ListItemButton
                     onClick={() => handleMobileMenuClick('payments')}
@@ -301,11 +302,11 @@ export function Header({
                     <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
                       <DollarSign size={20} />
                     </ListItemIcon>
-                    <ListItemText primary="Payments" />
+                    <ListItemText primary="Payments Invoicing" />
                   </ListItemButton>
                 )}
 
-                {/* Training Schedule - Permission required */}
+                {/* My Trainings - Permission required */}
                 {canViewMyTrainings && (
                   <ListItemButton
                     onClick={() => handleMobileMenuClick('my-trainings')}
@@ -326,7 +327,7 @@ export function Header({
                     <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
                       <Calendar size={20} />
                     </ListItemIcon>
-                    <ListItemText primary="My Training Schedule" />
+                    <ListItemText primary="My Trainings" />
                   </ListItemButton>
                 )}
 
@@ -385,7 +386,7 @@ export function Header({
                   <>
                     <Divider sx={{ my: 1 }} />
                     
-                    {/* Admin Training Management - Permission required */}
+                    {/* Admin Trainings - Permission required */}
                     {canManageAllTrainings && (
                       <ListItemButton
                         onClick={() => handleMobileMenuClick('trainings')}
@@ -406,7 +407,7 @@ export function Header({
                         <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
                           <GraduationCap size={20} />
                         </ListItemIcon>
-                        <ListItemText primary="Training Management" />
+                        <ListItemText primary="Trainings" />
                       </ListItemButton>
                     )}
 
@@ -464,28 +465,30 @@ export function Header({
 
                 <Divider sx={{ my: 1 }} />
 
-                {/* Settings - Always visible */}
-                <ListItemButton
-                  onClick={() => handleMobileMenuClick('settings')}
-                  selected={activeMenu === 'settings'}
-                  sx={{
-                    borderRadius: 1,
-                    px: 2,
-                    py: 1,
-                    '&.Mui-selected': {
-                      bgcolor: 'primary.lighter',
-                      color: 'primary.main',
-                      '&:hover': {
+                {/* Settings - Permission required */}
+                {canViewSettings && (
+                  <ListItemButton
+                    onClick={() => handleMobileMenuClick('settings')}
+                    selected={activeMenu === 'settings'}
+                    sx={{
+                      borderRadius: 1,
+                      px: 2,
+                      py: 1,
+                      '&.Mui-selected': {
                         bgcolor: 'primary.lighter',
+                        color: 'primary.main',
+                        '&:hover': {
+                          bgcolor: 'primary.lighter',
+                        },
                       },
-                    },
-                  }}
-                >
-                  <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-                    <SettingsIcon size={20} />
-                  </ListItemIcon>
-                  <ListItemText primary="Settings" />
-                </ListItemButton>
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+                      <SettingsIcon size={20} />
+                    </ListItemIcon>
+                    <ListItemText primary="Settings" />
+                  </ListItemButton>
+                )}
 
                 <Divider sx={{ my: 1 }} />
 
