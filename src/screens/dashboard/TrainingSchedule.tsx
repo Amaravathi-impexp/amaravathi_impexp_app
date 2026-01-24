@@ -159,9 +159,9 @@ export function TrainingSchedule() {
               lineHeight: 1.7,
             }}
           >
-            Training will be conducted over 3 days, with 3-hour live webinars each day. Training scheduled either from: 7:00 AM – 10:00 AM IST (convenient for the USA, Australia, etc.) and 7:00 PM – 10:00 PM IST (convenient for Europe, the Gulf, etc.).
+            Training will be conducted over 3 days, with 3-hour live webinars each day. Training is scheduled either from 7:00 AM – 10:00 AM IST (convenient for the USA, Australia, etc.) or 7:00 PM – 10:00 PM IST (convenient for Europe, the Gulf, etc.).
             <br /><br />
-            You can select your preferred training slot. The training fee is USD 150. Once a slot is selected, the TIMPEX.club team will contact you via email and WhatsApp with your slot confirmation, webinar link, and payment link.
+            You can select your preferred training slot. The training fee is USD 150. Once a slot is selected, the TIMPEX.club team will contact you via email / WhatsApp with your slot confirmation, webinar link, and payment link.
             <br /><br />
             <strong style={{ color: '#DC2626' }}>⚠️ Payment must be completed at least 48 hours before the training session begins. Unpaid slots will be automatically released.</strong>
           </Typography>

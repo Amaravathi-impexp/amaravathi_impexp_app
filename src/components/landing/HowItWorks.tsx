@@ -1,35 +1,39 @@
 import React from 'react';
-import { Box, Container, Typography, Grid } from '@mui/material';
-import { CheckCircle, Users, TrendingUp, Handshake } from 'lucide-react';
+import { Box, Container, Typography } from '@mui/material';
 
 const steps = [
   {
-    icon: Users,
-    title: 'Join the Community',
-    description: 'Sign up and become part of the Telugu Import Export Club, connecting with fellow entrepreneurs.',
+    number: '1',
+    title: 'Create Account',
+    description: 'Register on the TIMPEX.club platform and complete your basic profile.',
   },
   {
-    icon: CheckCircle,
-    title: 'Verify Your Profile',
-    description: 'Complete your business profile and get verified to access exclusive features and partnerships.',
+    number: '2',
+    title: 'Attend Training & Simulations',
+    description: 'Participate in live, instructor-led workshops covering the complete trade lifecycle.',
   },
   {
-    icon: Handshake,
-    title: 'Find Partners',
-    description: 'Browse our partner directory, connect with exporters, importers, and service providers.',
+    number: '3',
+    title: 'Discover Trade Opportunities',
+    description: 'Access real import-export opportunities curated by the TIMPEX.club team.',
   },
   {
-    icon: TrendingUp,
-    title: 'Grow Your Business',
-    description: 'Execute trades, manage shipments, and scale your import-export business with confidence.',
+    number: '4',
+    title: 'Execute Trades with Support',
+    description: 'Receive hands-on support for documentation, logistics, coordination, and execution.',
+  },
+  {
+    number: '5',
+    title: 'Scale Independently',
+    description: 'Build a sustainable and scalable global trading business.',
   },
 ];
 
 export function HowItWorks() {
   return (
-    <Box sx={{ py: { xs: 6, md: 10 }, bgcolor: '#F8FAF6' }}>
-      <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: 6 }}>
+    <Box sx={{ py: { xs: 8, md: 12 }, bgcolor: '#F8FAF6' }}>
+      <Container maxWidth="md">
+        <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
           <Typography
             variant="h2"
             sx={{
@@ -39,75 +43,72 @@ export function HowItWorks() {
               mb: 2,
             }}
           >
-            How It Works
-          </Typography>
-          <Typography
-            variant="body1"
-            sx={{
-              fontSize: { xs: '1rem', md: '1.125rem' },
-              color: '#3D7A68',
-              maxWidth: '700px',
-              mx: 'auto',
-            }}
-          >
-            Get started with TIMPEX in four simple steps
+            How TIMPEX.club Works
           </Typography>
         </Box>
 
-        <Grid container spacing={4}>
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-                <Box
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {steps.map((step, index) => (
+            <Box
+              key={index}
+              sx={{
+                display: 'flex',
+                gap: 3,
+                alignItems: 'flex-start',
+              }}
+            >
+              {/* Numbered Circle */}
+              <Box
+                sx={{
+                  minWidth: 56,
+                  width: 56,
+                  height: 56,
+                  borderRadius: '50%',
+                  bgcolor: '#D3FF62',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+              >
+                <Typography
                   sx={{
-                    textAlign: 'center',
-                    p: 3,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: '#1A3D32',
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 80,
-                      height: 80,
-                      borderRadius: '50%',
-                      bgcolor: '#1A3D32',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      mb: 3,
-                    }}
-                  >
-                    <Icon size={40} color="#D3FF62" />
-                  </Box>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontSize: '1.25rem',
-                      fontWeight: 600,
-                      color: '#1A3D32',
-                      mb: 2,
-                    }}
-                  >
-                    {step.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: '#3D7A68',
-                      lineHeight: 1.6,
-                    }}
-                  >
-                    {step.description}
-                  </Typography>
-                </Box>
-              </Grid>
-            );
-          })}
-        </Grid>
+                  {step.number}
+                </Typography>
+              </Box>
+
+              {/* Content */}
+              <Box sx={{ flex: 1, pt: 0.5 }}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: { xs: '1.125rem', md: '1.25rem' },
+                    fontWeight: 600,
+                    color: '#1A3D32',
+                    mb: 1,
+                  }}
+                >
+                  {step.title}
+                </Typography>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontSize: { xs: '0.9375rem', md: '1rem' },
+                    color: '#3D7A68',
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {step.description}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+        </Box>
       </Container>
     </Box>
   );

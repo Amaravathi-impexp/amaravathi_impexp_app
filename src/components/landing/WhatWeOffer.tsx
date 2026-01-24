@@ -39,7 +39,7 @@ export function WhatWeOffer() {
     <Box
       sx={{
         py: { xs: 8, md: 12 },
-        bgcolor: '#FAFAF9',
+        bgcolor: 'white',
       }}
     >
       <Container maxWidth="lg">
